@@ -1,0 +1,13 @@
+{
+    "name": "dev/php-web",
+    "version": "1.0.0",
+    "description": "Projeto web com php.",
+    "autoload": {
+        "psr-4": {
+            "web\\": "src/"
+        }
+    },
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
