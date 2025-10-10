@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!--Configurações de exibição (caracteres especiais/design responsivo)-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--Nome da Aba-->
+    <title>D.Web-PHP</title>
+
+    <!--Font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!--Favicon-->
+    
+    <!--Toastfy-->    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <!--Bootstrap Icons-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    
+    <!--CSS da página-->
+    <link rel="stylesheet" href="../../static/css/login-register.css">
+
+    <style>
+        .toastify{
+            box-shadow: none;
+            font-size: clamp(0.5rem, 1vw, 1.2rem);
+            border-radius: var(--radius);
+            font-family: "Work Sans", sans-serif;
+            font-weight: 600;
+            min-width: 15%;
+            justify-items: center;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!--Header-->
+    <header class="header-container" id="header">
+        <nav class="nav-container">
+            <a class="logo" style="text-decoration: none; cursor: pointer; color: inherit;" href="/">
+                <i class="bi bi-music-note-beamed"></i>
+                <span>LOGO</span>
+            </a>
+        </nav>
+    </header>
+    
+    <!--Conteudo-->
+    <main>
+        <section id="login-section" class="main-container">
+            <div class="form-container">
+                <h1 class="title">Sign in</h1>
+
+                <form class="form">
+                    <div class="container">
+                        <label class="label" for="email">Email</label>
+                        <input type="email" name="email" autocomplete="email" class="input" id="email" placeholder="example@gmail.com">
+                    </div>
+                    <div class="container">
+                        <label class="label" for="password">Senha</label>
+                        <input type="password" name="password" class="input" id="password">
+
+                        <div class="forgot">
+                            <a rel="noopener noreferrer" href="#">Esqueceu a senha ?</a>
+                        </div>
+                    </div>
+
+                    <div class="message">
+                        <div id="login-message-container"></div>
+                    </div>
+
+                    <button class="sign">Entrar</button>
+                </form>
+
+                <div class="social-message">
+                    <div class="line"></div>
+                    <p class="ou">ou</p>
+                    <div class="line"></div>
+                </div>
+
+                <div class="social-icons">
+                    <button aria-label="Log in with Google" class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" class="w-5 h-5 fill-current">
+                            <path d="M16.318 13.714v5.484h9.078c-0.37 2.354-2.745 6.901-9.078 6.901-5.458 0-9.917-4.521-9.917-10.099s4.458-10.099 9.917-10.099c3.109 0 5.193 1.318 6.38 2.464l4.339-4.182c-2.786-2.599-6.396-4.182-10.719-4.182-8.844 0-16 7.151-16 16s7.156 16 16 16c9.234 0 15.365-6.49 15.365-15.635 0-1.052-0.115-1.854-0.255-2.651z"></path>
+                        </svg>
+                    </button>
+
+                    <!--
+                    <button aria-label="Log in with GitHub" class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" class="w-5 h-5 fill-current">
+                            <path d="M16 0.396c-8.839 0-16 7.167-16 16 0 7.073 4.584 13.068 10.937 15.183 0.803 0.151 1.093-0.344 1.093-0.772 0-0.38-0.009-1.385-0.015-2.719-4.453 0.964-5.391-2.151-5.391-2.151-0.729-1.844-1.781-2.339-1.781-2.339-1.448-0.989 0.115-0.968 0.115-0.968 1.604 0.109 2.448 1.645 2.448 1.645 1.427 2.448 3.744 1.74 4.661 1.328 0.14-1.031 0.557-1.74 1.011-2.135-3.552-0.401-7.287-1.776-7.287-7.907 0-1.751 0.62-3.177 1.645-4.297-0.177-0.401-0.719-2.031 0.141-4.235 0 0 1.339-0.427 4.4 1.641 1.281-0.355 2.641-0.532 4-0.541 1.36 0.009 2.719 0.187 4 0.541 3.043-2.068 4.381-1.641 4.381-1.641 0.859 2.204 0.317 3.833 0.161 4.235 1.015 1.12 1.635 2.547 1.635 4.297 0 6.145-3.74 7.5-7.296 7.891 0.556 0.479 1.077 1.464 1.077 2.959 0 2.14-0.020 3.864-0.020 4.385 0 0.416 0.28 0.916 1.104 0.755 6.4-2.093 10.979-8.093 10.979-15.156 0-8.833-7.161-16-16-16z"></path>
+                        </svg>
+                    </button>
+                    -->
+                </div>
+
+                <p class="signup">Ainda não tem uma conta?
+                    <a href="register.html" id="switch-to-register" class="">Sign up</a>
+                </p>
+            </div>
+        </section>
+    </main>
+    
+    <!--Validação de Login-->
+    <script>
+        function showToast(mensage) {
+            Toastify({
+                text: mensage,
+                duration: 4000,
+                gravity: "top",
+                position: "center",
+                backgroundColor: "#013504",
+            }).showToast();
+        }
+        
+        const logmessageContainer = document.getElementById('login-message-container');
+        function showMessagelog(message, type) {
+            logmessageContainer.textContent = message;
+            logmessageContainer.className = `message-box ${type}`;
+            logmessageContainer.style.display = 'block';
+        }
+
+        const loginform = document.querySelector('#login-section .form');
+        loginform.addEventListener('submit', async (e) => {e.preventDefault();
+            logmessageContainer.style.display = 'none';
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            /* Validação
+            if (!email || !password) {
+                showMessage(logmessageContainer, 'Por favor, preencha todos os campos.', 'error');
+                return;
+            }*/
+            
+            const formData = new URLSearchParams();
+            formData.append('email', email);
+            formData.append('password', password);
+
+            try {
+                const response = await fetch('http://localhost:8000/login', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    const username = result.user.username;
+                    
+                    localStorage.setItem('authToken', result.token); 
+
+                    const successMessage = `Login bem-sucedido, Olá ${username}`;
+                    showToast(successMessage);
+                    setTimeout(() => { window.location.href = '../../index.php';}, 1500);
+                } else{
+                    const errorData = await response.json();
+                    showMessagelog(errorData.message, 'error');
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+                showMessagelog(logmessageContainer, 'Erro ao tentar conectar com o servidor. Tente novamente.', 'error');
+            }
+        });
+    </script>
+
+</body>
+
+</html>
