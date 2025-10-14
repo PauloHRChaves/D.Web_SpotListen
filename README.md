@@ -8,6 +8,7 @@ Temática: música.
     Dependências:
     ```
         "vlucas/phpdotenv": "^5.6"
+        "guzzlehttp/guzzle": "^7.10"
     ```
 - Banco de dados: ```MySQL```<br>
 - API's consumidas:
@@ -92,12 +93,12 @@ Arquitetura básica das pastas:
 
 ### Para "rodar" o Backend é necessario o comando:
 ```
-php -S localhost:8001 -t Backend/public
+php -S localhost:8131 -t Backend/public
 ```
 * Build-In-Server do php
 ### Para "rodar" o FRONTEND é necessario o comando:
 ```
-php -S localhost:8001 -t Frontend
+php -S localhost:8132 -t Frontend
 ```
 * ```Extensão Live Server``` funciona para os arquivos **.html** e não **.php**<br>
 

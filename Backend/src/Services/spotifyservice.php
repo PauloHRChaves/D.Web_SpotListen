@@ -1,44 +1,30 @@
 <?php
 namespace web\Services;
 
-use web\Exceptions\ApiException;
+use web\Utils\ApiConfig;
 
-class SpotifyService {
-    public function searchSptfy($accessToken, $query, $type = 'track') {
-        $safeQuery = urlencode($query);
+use GuzzleHttp\Client;
+
+class SpotifyService extends ApiConfig {
+    public function searchSptfy(string $accessToken, string $artistId) {
+        $safeQuery = urlencode($artistId);
+        $url = "https://api.spotify.com/v1/artists/{$safeQuery}";
         
-        $url = "https://api.spotify.com/v1/search?q={$safeQuery}&type={$type}&limit=10";
-        $ch = curl_init($url);
-
         $headers = [
-            'Authorization: Bearer ' . $accessToken,
+            'Authorization' => 'Bearer ' . $accessToken,
         ];
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
-        $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        return $this->_executarRequest($url, $headers);
+    }
 
-        // ********** TRATAMENTO DE ERRO DE SISTEMA (CURL) **********
-        if (curl_errno($ch)) {
-            $error_message = curl_error($ch);
-            curl_close($ch);
+    public function searchSptfyAsync(Client $client, string $accessToken, string $query, string $type) {
+        $safeQuery = urlencode($query);
+        $url = "https://api.spotify.com/v1/search?q={$safeQuery}&type={$type}&limit=1";
 
-            throw new Exception("CURL Error during search: " . $error_message);
-        }
-        // **********************************************************
-
-        curl_close($ch);
-        $data = json_decode($response, true);
-
-        if ($http_code === 200) {
-            return $data;
-        }else {
-            $errorMessage = $data['error']['message'] ?? 'Erro desconhecido da API Spotify.';
-            $logMessage = "Spotify API Error ({$http_code}): " . $errorMessage; 
-        
-            throw new ApiException($logMessage, $http_code);
-        }
+        return $client->getAsync($url, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $accessToken
+            ]
+        ]);
     }
 }

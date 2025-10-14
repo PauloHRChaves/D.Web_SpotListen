@@ -1,64 +1,57 @@
 <?php
 namespace web\Controllers;
 
+// Services
 use web\Services\SpotifyService;
+use web\Services\LastfmService;
+use web\Services\MbrainzService;
+
+// Tratamento de erros
 use web\Exceptions\ApiException;
 use Exception;
 
-class AuthController{
-    // API: SPOTIFY
-    // BUSCANDO O TOKEN DO SPOTIFY
-    public function getAccessToken(){
-        $client_id = $_ENV['SPOTIFY_CLIENT_ID'] ?? null;
-        $client_secret = $_ENV['SPOTIFY_CLIENT_SECRET'] ?? null;
+// Guzzle metodos async
+use GuzzleHttp\Client;
+use GuzzleHttp\Promise;
 
+class AuthController{
+    public function __construct() {
+        header('Content-Type: application/json');
+    }
+
+    // API: SPOTIFY
+    // BUSCANDO O ACCESS_TOKEN DO SPOTIFY
+    public function getAccessToken(){
+        $client_id = $_ENV['SPOTIFY_CLIENT_ID']; // .env SPOTIFY_CLIENT_ID='xxxxxxxxxxxxxxxxxxxxxxxxxx'
+        $client_secret = $_ENV['SPOTIFY_CLIENT_SECRET']; // .env SPOTIFY_CLIENT_SECRET='xxxxxxxxxxxxxxxxxxxxxxxxxx'
+        
         // Se já houver o access_token vai parar por aqui
-        if (isset($_SESSION['spotify_token']) && time() < $_SESSION['expires_at']) {
-            $data_cache = [
+        if (isset($_SESSION['spotify_token']) && isset($_SESSION['spotify_token']) && time() < $_SESSION['expires_at']) {
+            return [
                 'access_token' => $_SESSION['spotify_token'],
-                'expires_in' => $_SESSION['spotify_expires_in'] ?? 3600,
+                'expires_in' => $_SESSION['spotify_expires_in'],
             ];
-            return $data_cache;
         }
 
         // Requisitando o token do Spotify
         $url = 'https://accounts.spotify.com/api/token';
-        $ch = curl_init($url);
-
+        
         $headers = [
             'Authorization: Basic ' . base64_encode("$client_id:$client_secret"),
             'Content-Type: application/x-www-form-urlencoded', // Exigência do OAuth2.0
         ];
         $body = 'grant_type=client_credentials';
-
-        curl_setopt($ch, CURLOPT_POST, true); 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $body); 
-
-        $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        // ********** TRATAMENTO DE ERRO DE SISTEMA (CURL) **********
-        if (curl_errno($ch)) {
-            $error_message = curl_error($ch);
-            curl_close($ch);
-            // Lança Exception padrão para cair no catch(Exception $e) do routes.php
-            throw new Exception("CURL Error during token retrieval: " . $error_message);
-        }
-        // **********************************************************
         
-        curl_close($ch);
-
-        $data = json_decode($response, true);
+        $data = $this->_executarRequest($url, $headers, $body);
+        
         $access_token = $data['access_token'] ?? null;
         $expires_in = $data['expires_in'] ?? 0;
 
         if ($http_code === 200 && $access_token) {
-
             $_SESSION['spotify_token'] = $access_token;
-            $_SESSION['expires_at'] = time() + $expires_in - 60;
+            $_SESSION['expires_at'] = time() + $expires_in - 120;
             $_SESSION['spotify_expires_in'] = $expires_in; 
+            http_response_code(200);
             return $data; 
 
         }else {
@@ -68,83 +61,104 @@ class AuthController{
             throw new ApiException($logMessage, $http_code);
         }
     }
-
-    // BUSCAR ARTISTA NO SPOTIFY ( rota: / )
-    public function searchSpotify() {
-        $query = $_GET['q'] ?? 'Johnny Cash'; // NOME DO ARTISTA
-        $type = $_GET['type'] ?? 'artist';
-        
-        // Erro por falta dos dados
-        if (empty($query)) {
-            http_response_code(400);
-            echo json_encode([
-                'error' => 'Parâmetro de busca "q" é obrigatório.'
-            ], JSON_UNESCAPED_UNICODE);
-            return;
-        }
+    
+    // BUSCAR ARTISTA NO SPOTIFY
+    public function searchSpotify(): array {
+        $artistId = '4V8LLVI7PbaPR0K2TGSxFF';
 
         $token_info = $this->getAccessToken();
         $accessToken = $token_info['access_token'];
 
         $spotifyService = new SpotifyService();
-
-        $results = $spotifyService->searchSptfy($accessToken, $query, $type); 
+        $results = $spotifyService->searchSptfy($accessToken, $artistId);
         
-        http_response_code(200);
-        echo json_encode($results, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        
-        return;
+        return $results;
     }
 
+/**************************************************************** */
+    // API: MusicBrainz
+    public function getMbrainz(string $mbidtag, string $artistName): array {
+        $appName = 'SpotListen';
+        $appVersion = '1.0';
+        $appContact = $_ENV['EMAIL']; // .env EMAIL='example@gmail.com'
+
+        $token_info = $this->getAccessToken();
+        $accessToken = $token_info['access_token'];
+
+        $spotifyId = null;
+
+        // BUSCA MBID NO MUSICBRAINZ
+        // Só chama o Service se o MBID existir
+        if (!empty($mbidtag)) {
+            $mbrainzService = new MbrainzService();
+            $spotifyId = $mbrainzService->Mbrainzinfo($appName, $appVersion, $appContact, $mbidtag);
+        }
+
+        // FALLBACK: TENTA BUSCAR DIRETAMENTE NO SPOTIFY PELO NOME
+        if (empty($spotifyId) && !empty($artistName)) {
+            $spotifyService = new SpotifyService();
+            $result = $spotifyService->searchSptfy($accessToken, $artistName, 'artist');
+            $spotifyId = $result['artists']['items'][0]['id'] ?? null;
+        }
+
+        return  $spotifyId;
+    }
+    
+/**************************************************************** */
     // API: Lastfm
     // Top Artistas Global
-    public function getLastfm() {
-        $apikey = $_ENV['LASTFM_KEY'] ?? null;
+    // Dados no Carousel : Lastfm -> Spotify
+    public function getLastfm(): array {
+        $apikey = $_ENV['LASTFM_KEY'];
+        $fmService = new LastfmService();
+        $spotifyService = new SpotifyService();
+        $client = new Client();
 
-        // Top Artistas Global
-        $url = "http://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&api_key={$apikey}&format=json&limit=500";
-        
-        $ch = curl_init($url);
+        $artists = $fmService->getTopArtists($apikey);
+        $token_info = $this->getAccessToken();
+        $accessToken = $token_info['access_token'];
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
-        $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $promises = [];
 
-        // ********** TRATAMENTO DE ERRO DE SISTEMA (CURL) **********
-        if (curl_errno($ch)) {
-            $error_message = curl_error($ch);
-            curl_close($ch);
-            throw new Exception("CURL Error during Deezer API call: " . $error_message);
+        foreach ($artists as $artist) {
+            $promises[$artist['name']] = $spotifyService->searchSptfyAsync(
+                $client, $accessToken, $artist['name'], 'artist'
+            );
         }
-        // **********************************************************
 
-        curl_close($ch);
-        $data = json_decode($response, true); 
+        $responses = \GuzzleHttp\Promise\Utils::settle($promises)->wait();
+        $finalData = [];
 
-        if ($http_code === 200) {
-            $artists = $data['artists']['artist'] ?? [];
-            
-            // Filtragem e Limpeza dos Dados
-            $filtered_artists = [];
+        foreach ($artists as $artist) {
+            $name = $artist['name'];
+            $spotifyId = null;
+            $images = [];
+            $spotifyUrl = null;
 
-            foreach ($artists as $artist) {
-                $filtered_artists[] = [
-                    'name' => $artist['name'],
-                    'playcount' => $artist['playcount'],
-                    'listeners' => $artist['listeners'],
-                    'url' => $artist['url'],
-                    'mbid' => $artist['mbid'] ?? null
-                ];
+            $resp = $responses[$name];
+
+            if ($resp['state'] === 'fulfilled') {
+                $data = json_decode($resp['value']->getBody(), true);
+                $artistItem = $data['artists']['items'][0] ?? null;
+
+                if ($artistItem) {
+                    $spotifyId = $artistItem['id'] ?? null;
+                    $spotifyUrl = $artistItem['external_urls']['spotify'] ?? null; 
+                    $images = $artistItem['images'][0]['url'] ?? null;
+                }
             }
-            
-            // Retorna a lista de artistas limpa
-            return $filtered_artists;
 
-        }else {
-            $errorMessage = $data['error']['message'] ?? 'Erro desconhecido da API.';
-            $logMessage = "LastFM API Error ({$http_code}): " . $errorMessage;
-            throw new ApiException($logMessage, $http_code);
+            $finalData[] = [
+                'name' => $name,
+                'playcount' => $artist['playcount'],
+                'listeners' => $artist['listeners'],
+                'url' => $spotifyUrl,
+                'spotify_id' => $spotifyId,
+                'images' => $images
+            ];
         }
+
+        return $finalData;
     }
 }
+?>
