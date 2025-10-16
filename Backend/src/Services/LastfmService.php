@@ -7,7 +7,7 @@ use web\Utils\ApiConfig;
 use GuzzleHttp\Client;
 
 class LastfmService extends ApiConfig {
-    public function getTopArtists($apikey) {
+    public function getTopArtists($apikey): array {
         $url = "http://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&api_key={$apikey}&format=json&limit=15";
         
         $data = $this->_executarRequest($url); 
@@ -23,4 +23,59 @@ class LastfmService extends ApiConfig {
             ];
         }, $artists);
     }
+    public function getTopGenres(string $apikey): array {
+        $url = "http://ws.audioscrobbler.com/2.0/?method=tag.getTopTags&api_key={$apikey}&format=json";
+        
+        $data = $this->_executarRequest($url);
+
+        if (!isset($data['toptags']['tag'])) {
+            return [];
+        }
+
+        $top_tags_raw = $data['toptags']['tag'];
+        $valid_genres = [];
+        
+        // Lista de tags não-gênero que devem ser ignoradas (pode ser expandida)
+        $blacklist = ['seen live', 'male vocalists', 'female vocalists', 'favourite', 'best of', 'for fun', 'stylish'];
+
+        foreach ($top_tags_raw as $tag) {
+            $tagName = strtolower($tag['name']);
+            
+            if (in_array($tagName, $blacklist)) {
+                continue;
+            }
+            $valid_genres[] = [
+                'name' => $tag['name'],
+                'count' => (int)$tag['count']
+            ];
+        }
+        
+        return $valid_genres;
+    }
+    public function getTopTracks(string $apikey): array {
+        $url = "http://ws.audioscrobbler.com/2.0/?method=chart.gettoptracks&api_key={$apikey}&format=json&limit=50";
+        
+        $data = $this->_executarRequest($url);
+
+        if (!isset($data['tracks']['track'])) {
+            return [];
+        }
+
+        $top_tracks_raw = $data['tracks']['track'];
+        $top_tracks_clean = [];
+
+        // Processa a lista para retornar apenas o que é relevante
+        foreach ($top_tracks_raw as $track) {
+            $top_tracks_clean[] = [
+                'name' => $track['name'],
+                'artist' => $track['artist']['name'],
+                'listeners' => (int)$track['listeners'], // Número de ouvintes
+                'playcount' => (int)$track['playcount'], // Número de reproduções
+                'url' => $track['url']
+            ];
+        }
+
+        return $top_tracks_clean;
+    }
+    
 }

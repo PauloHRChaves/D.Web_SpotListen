@@ -5,6 +5,9 @@ namespace web\Controllers;
 use web\Services\SpotifyService;
 use web\Services\LastfmService;
 use web\Services\MbrainzService;
+use web\Services\RedisCacheService;
+
+use web\Utils\ApiConfig;
 
 // Tratamento de erros
 use web\Exceptions\ApiException;
@@ -21,7 +24,7 @@ class AuthController{
 
     // API: SPOTIFY
     // BUSCANDO O ACCESS_TOKEN DO SPOTIFY
-    public function getAccessToken(){
+    public function getAccessToken(): array{
         $client_id = $_ENV['SPOTIFY_CLIENT_ID']; // .env SPOTIFY_CLIENT_ID='xxxxxxxxxxxxxxxxxxxxxxxxxx'
         $client_secret = $_ENV['SPOTIFY_CLIENT_SECRET']; // .env SPOTIFY_CLIENT_SECRET='xxxxxxxxxxxxxxxxxxxxxxxxxx'
         
@@ -41,9 +44,13 @@ class AuthController{
             'Content-Type: application/x-www-form-urlencoded', // Exigência do OAuth2.0
         ];
         $body = 'grant_type=client_credentials';
+
+        $tokenconnect = new ApiConfig();
+        $result = $tokenconnect->_executarCurl($url, $headers, $body);
         
-        $data = $this->_executarRequest($url, $headers, $body);
-        
+        $data = $result['data'] ?? [];
+        $http_code = $result['http_code'] ?? 0;
+    
         $access_token = $data['access_token'] ?? null;
         $expires_in = $data['expires_in'] ?? 0;
 
@@ -71,6 +78,18 @@ class AuthController{
 
         $spotifyService = new SpotifyService();
         $results = $spotifyService->searchSptfy($accessToken, $artistId);
+        
+        return $results;
+    }
+
+    public function searchSpotifyGenre(): array {
+        $genre = 'pop';
+
+        $token_info = $this->getAccessToken();
+        $accessToken = $token_info['access_token'];
+
+        $spotifyService = new SpotifyService();
+        $results = $spotifyService->searchSptfygenre($accessToken, $genre);
         
         return $results;
     }
@@ -109,6 +128,15 @@ class AuthController{
     // Top Artistas Global
     // Dados no Carousel : Lastfm -> Spotify
     public function getLastfm(): array {
+        $cacheService = new RedisCacheService();
+        $cacheKey = 'carrossel:artists_data'; 
+        $cacheTTL = 86400; // 24 horas
+        
+        // Tenta buscar no Redis. Se a chave existir e for válida
+        if ($cachedData = $cacheService->get($cacheKey)) {
+            return $cachedData;
+        }
+
         $apikey = $_ENV['LASTFM_KEY'];
         $fmService = new LastfmService();
         $spotifyService = new SpotifyService();
@@ -132,7 +160,7 @@ class AuthController{
         foreach ($artists as $artist) {
             $name = $artist['name'];
             $spotifyId = null;
-            $images = [];
+            $images = null;
             $spotifyUrl = null;
 
             $resp = $responses[$name];
@@ -158,7 +186,26 @@ class AuthController{
             ];
         }
 
+        $cacheService->set($cacheKey, $finalData, $cacheTTL);
+
         return $finalData;
+    }
+
+    public function searchLastfmGenre(): array {
+        $lastfm_apikey = $_ENV['LASTFM_KEY']; 
+        $fmService = new LastfmService(); 
+        
+        $genres = $fmService->getTopGenres($lastfm_apikey);
+        
+        return array_slice($genres, 0, 30);
+    }
+    public function searchLastfmTrack(): array {
+        $apikey = $_ENV['LASTFM_KEY'];
+        $fmService = new LastfmService();
+        
+        $results = $fmService->getTopTracks($apikey, 5); 
+        
+        return $results;
     }
 }
 ?>

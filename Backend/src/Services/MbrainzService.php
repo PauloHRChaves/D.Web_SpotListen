@@ -32,7 +32,7 @@ class MbrainzService extends ApiConfig {
         return $this->extractSpotifyId($data);
     }
 
-    public function MbrainzinfoAsync(Client $client, $appName, $appVersion, $appContact, $mbidtag) {
+    public function MbrainzinfoAsync(Client $client, $appName, $appVersion, $appContact, $mbidtag): array {
         $url = "https://musicbrainz.org/ws/2/artist/$mbidtag?inc=aliases+url-rels&fmt=json";
         return $client->getAsync($url, [
             'headers' => [

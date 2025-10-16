@@ -17,20 +17,18 @@ class ApiConfig {
         ]);
     }
 
-    protected function _executarCurl(string $url, array $headers, string $body): array {
+    public function _executarCurl(string $url, array $headers, string $body): array {
         $ch = curl_init($url);
 
         $defaultOptions = [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST=> true,
-            CURLOPT_RETURNTRANSFER=> true,
+            CURLOPT_TIMEOUT=> 30,
             CURLOPT_HTTPHEADER=> $headers,
             CURLOPT_POSTFIELDS=> $body,
         ];
 
-        $allOptions = $headers + $defaultOptions;
-
-        curl_setopt_array($ch, $allOptions);
+        curl_setopt_array($ch, $defaultOptions);
 
         $response = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -47,15 +45,10 @@ class ApiConfig {
         curl_close($ch);
         $data = json_decode($response, true);
         
-        if ($http_code === 200) {
-            return $data;
-        } else {
-            $errorMessage = $data['error']['message'] ?? 'Erro desconhecido da API.';
-            $logMessage = "Error ({$http_code}): " . $errorMessage;
-            
-            // Note que aqui lançamos a exceção importada
-            throw new ApiException($logMessage, $http_code);
-        }
+        return [
+            'data' => $data,
+            'http_code' => $http_code 
+        ];
     }
     
     protected function _executarRequest(string $url, array $headers = []): array {

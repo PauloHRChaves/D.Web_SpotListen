@@ -16,6 +16,15 @@ class SpotifyService extends ApiConfig {
 
         return $this->_executarRequest($url, $headers);
     }
+    public function searchSptfygenre(string $accessToken, string $genre) {
+        $url = "https://api.spotify.com/v1/search?q=genre:{$genre}&type=artist";
+        
+        $headers = [
+            'Authorization' => 'Bearer ' . $accessToken,
+        ];
+
+        return $this->_executarRequest($url, $headers);
+    }
 
     public function searchSptfyAsync(Client $client, string $accessToken, string $query, string $type) {
         $safeQuery = urlencode($query);
