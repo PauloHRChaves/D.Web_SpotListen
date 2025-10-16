@@ -9,6 +9,7 @@ Temática: música.
     ```
         "vlucas/phpdotenv": "^5.6"
         "guzzlehttp/guzzle": "^7.10"
+        "predis/predis": "^3.2"
     ```
 - Banco de dados: ```MySQL```<br>
 - API's consumidas:
