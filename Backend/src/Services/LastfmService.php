@@ -1,7 +1,6 @@
 <?php
 namespace web\Services;
 
-
 use web\Utils\ApiConfig;
 
 use GuzzleHttp\Client;
@@ -23,6 +22,7 @@ class LastfmService extends ApiConfig {
             ];
         }, $artists);
     }
+
     public function getTopGenres(string $apikey): array {
         $url = "http://ws.audioscrobbler.com/2.0/?method=tag.getTopTags&api_key={$apikey}&format=json";
         
@@ -35,7 +35,6 @@ class LastfmService extends ApiConfig {
         $top_tags_raw = $data['toptags']['tag'];
         $valid_genres = [];
         
-        // Lista de tags não-gênero que devem ser ignoradas (pode ser expandida)
         $blacklist = ['seen live', 'male vocalists', 'female vocalists', 'favourite', 'best of', 'for fun', 'stylish'];
 
         foreach ($top_tags_raw as $tag) {
@@ -45,13 +44,13 @@ class LastfmService extends ApiConfig {
                 continue;
             }
             $valid_genres[] = [
-                'name' => $tag['name'],
-                'count' => (int)$tag['count']
+                'name' => $tag['name']
             ];
         }
         
-        return $valid_genres;
+        return array_slice($valid_genres, 0, 30);
     }
+    
     public function getTopTracks(string $apikey): array {
         $url = "http://ws.audioscrobbler.com/2.0/?method=chart.gettoptracks&api_key={$apikey}&format=json&limit=50";
         
@@ -64,13 +63,13 @@ class LastfmService extends ApiConfig {
         $top_tracks_raw = $data['tracks']['track'];
         $top_tracks_clean = [];
 
-        // Processa a lista para retornar apenas o que é relevante
+        // Retornar apenas o que é relevante
         foreach ($top_tracks_raw as $track) {
             $top_tracks_clean[] = [
                 'name' => $track['name'],
                 'artist' => $track['artist']['name'],
-                'listeners' => (int)$track['listeners'], // Número de ouvintes
-                'playcount' => (int)$track['playcount'], // Número de reproduções
+                'listeners' => (int)$track['listeners'], // N° de ouvintes
+                'playcount' => (int)$track['playcount'], // N° de reproduções
                 'url' => $track['url']
             ];
         }
