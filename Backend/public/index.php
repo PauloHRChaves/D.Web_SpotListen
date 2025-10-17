@@ -21,7 +21,7 @@ try {
 
     $route_uri = strtok($request_uri, '?');
     
-if (isset($routes[$request_method][$route_uri])){
+    if (isset($routes[$request_method][$route_uri])){
         [$controllerClass, $method] = $routes[$request_method][$route_uri];
 
         $controller = new $controllerClass();
@@ -47,12 +47,12 @@ if (isset($routes[$request_method][$route_uri])){
                     } elseif ($typeName === 'bool') {
                         $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                     }
-                    // caso precise de mais converções
+                    // caso precisar, add mais converções
                 }
                 $args[] = $value;
             } 
-            // Se o parâmetro for obrigatório e não estiver no $_GET, a chamada vai falhar.
-            // Se for opcional e não estiver no $_GET, o PHP usará o valor padrão, o que é correto.
+            // Se o parâmetro for obrigatório e não estiver no $_GET, a chamada vai falhar
+            // Se for opcional e não estiver no $_GET, o PHP usará o valor padrão
         }
         
         // Passa os argumentos filtrados para o método
@@ -79,7 +79,6 @@ if (isset($routes[$request_method][$route_uri])){
     echo json_encode($responseData, JSON_UNESCAPED_UNICODE);
 
 } catch (Exception $e) {
-    // Lógica de erro geral (já estava ótima)
     error_log("System Exception: " . $e->getMessage()); 
     http_response_code(500);
     $responseData = [

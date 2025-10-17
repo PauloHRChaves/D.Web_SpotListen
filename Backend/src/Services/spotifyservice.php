@@ -6,12 +6,11 @@ use web\Utils\ApiConfig;
 use GuzzleHttp\Client;
 
 class SpotifyService extends ApiConfig {
-
     public function getAccessToken(): array{
         $client_id = $_ENV['SPOTIFY_CLIENT_ID']; // .env SPOTIFY_CLIENT_ID='xxxxxxxxxxxxxxxxxxxxxxxxxx'
         $client_secret = $_ENV['SPOTIFY_CLIENT_SECRET']; // .env SPOTIFY_CLIENT_SECRET='xxxxxxxxxxxxxxxxxxxxxxxxxx'
         
-        // Se já houver o access_token vai parar por aqui
+        // Se já houver o access_token na sessão vai parar por aqui
         if (isset($_SESSION['spotify_token']) && isset($_SESSION['spotify_token']) && time() < $_SESSION['expires_at']) {
             return [
                 'access_token' => $_SESSION['spotify_token'],
@@ -52,6 +51,7 @@ class SpotifyService extends ApiConfig {
         }
     }
 
+    // aprimorar estrutura
     public function searchById(string $artistId) {
         $token = $this-> getAccessToken();
         $accessToken = $token['access_token'];
@@ -84,13 +84,13 @@ class SpotifyService extends ApiConfig {
 
         // Limpa gêneros indesejados
         $exclusion_rules = [
-            'Pop'           => ['rock', 'hip hop', 'eletronic', 'reggae', 'mpb', 'classic', 'indie', 'axé', 'sertanejo', 'forró'],
-            'Rock'          => ['pop', 'hip hop', 'eletronic', 'reggae', 'mpb', 'classic', 'indie', 'axé', 'sertanejo', 'forró'],
-            'Hip Hop'       => ['pop', 'rock', 'electronic', 'reggae', 'mpb', 'classic', 'indie', 'axé', 'sertanejo', 'forró'],
-            'Electronic'    => ['pop', 'rock', 'hip hop', 'reggae', 'mpb', 'classic', 'indie', 'axé', 'sertanejo', 'forró'],
-            'Reggae'        => ['pop', 'rock', 'hip hop', 'electronic', 'mpb', 'classic', 'indie', 'axé', 'sertanejo', 'forró'],
-            'Classic'       => ['pop', 'rock', 'hip hop', 'eletronic', 'reggae', 'mpb', 'indie', 'axé', 'sertanejo', 'forró'],
-            'Indie'         => ['pop', 'rock', 'hip hop', 'eletronic', 'reggae', 'mpb', 'axé', 'sertanejo', 'forró'],
+            'Pop'           => ['rock', 'hip hop', 'eletronic', 'reggae', 'mpb', 'classic', 'indie'],
+            'Rock'          => ['pop', 'hip hop', 'eletronic', 'reggae', 'mpb', 'classic', 'indie'],
+            'Hip Hop'       => ['pop', 'rock', 'electronic', 'reggae', 'mpb', 'classic', 'indie'],
+            'Electronic'    => ['pop', 'rock', 'hip hop', 'reggae', 'mpb', 'classic', 'indie'],
+            'Reggae'        => ['pop', 'rock', 'hip hop', 'electronic', 'mpb', 'classic', 'indie'],
+            'Classic'       => ['pop', 'rock', 'hip hop', 'eletronic', 'reggae', 'mpb', 'indie'],
+            'Indie'         => ['pop', 'rock', 'hip hop', 'eletronic', 'reggae', 'mpb'],
         ];
 
         $max_fetch = 300; // Limite de quantos artistas buscar no total

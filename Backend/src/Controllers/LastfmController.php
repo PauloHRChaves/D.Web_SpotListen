@@ -18,7 +18,6 @@ class LastfmController {
         $this->lfmService= new LastfmService();
     }
 
-    // Buscar Generos Musicais
     public function searchLastfmGenre(): array {
         $lastfm_apikey = $_ENV['LASTFM_KEY']; 
         
@@ -35,7 +34,6 @@ class LastfmController {
         return $list;
     }
 
-    // 
     public function searchLastfmTrack(): array {
         $apikey = $_ENV['LASTFM_KEY'];
         
@@ -106,4 +104,11 @@ class LastfmController {
         return $finalData;
     }
 
+    public function searchLastfm(string $artistName): array {
+        $apikey = $_ENV['LASTFM_KEY'];
+
+        $results = $this->lfmService->getByName($apikey, $artistName); 
+        
+        return $results;
+    }
 }

@@ -6,7 +6,7 @@ use web\Utils\ApiConfig;
 use GuzzleHttp\Client;
 
 class LastfmService extends ApiConfig {
-    public function getTopArtists($apikey): array {
+    public function getTopArtists(string $apikey): array {
         $url = "http://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&api_key={$apikey}&format=json&limit=15";
         
         $data = $this->_executarRequest($url); 
@@ -76,5 +76,40 @@ class LastfmService extends ApiConfig {
 
         return $top_tracks_clean;
     }
-    
+
+    public function getByName(string $apikey, string $artistName): array {
+        $url = "http://ws.audioscrobbler.com/2.0/?method=artist.getInfo&artist={$artistName}&api_key={$apikey}&format=json&lang=pt";
+        
+        $data = $this->_executarRequest($url);
+
+        if (!isset($data['artist'])) {
+            return ['error' => 'Artista não encontrado ou API falhou.'];
+        }
+
+        $artist = $data['artist'];
+
+        $result=[];
+
+        $result = [
+            'name' => $artist['name'] ?? null,
+            
+            'tags' => array_map(function($tag) {return $tag['name'];}, $artist['tags']['tag'] ?? []),
+            
+            'similars' => array_map(function($sim) {return $sim['name'];}, $artist['similar']['artist'] ?? []),
+            
+            'content' => $artist['bio']['content'] ?? null,
+        ];
+        return $result;
+
+
+        $artistInfo = $data['artists'][0];
+
+        $biography = $artistInfo['strBiographyPT'];
+
+        if (empty($biography)) {
+            $biography = $artistInfo['strBiographyEN'];
+        }
+
+        
+    }
 }

@@ -9,7 +9,6 @@ class SpotifyController {
         $this->sptService= new SpotifyService();
     }
 
-    // BUSCAR ARTISTA NO SPOTIFY PELO ID
     public function searchArtistById(): array {
         $artistId = '2UMj7NCbuqy1yUZmiSYGjJ';
 
