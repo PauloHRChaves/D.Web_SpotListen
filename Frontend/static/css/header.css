@@ -10,7 +10,6 @@
     --primary: #0981B0;
     --secundary: #0CABEB;
     --radius: 0.5rem;
-    --header-height: 80px;
 }
 
 * {
@@ -39,10 +38,11 @@ body {
     position: fixed;
     top: 0;
     backdrop-filter: blur(5px);
-    z-index: 5;
+    z-index: 100;
     border-bottom: 2px solid var(--border);
     opacity: 0;
     transition: opacity 0.2s ease;
+    background-color: #000000;
 }
 
 .nav-container {

@@ -67,112 +67,8 @@
     <main>
         <section class="first-container" id="home">
             <div class="first-content">
-                <h1 class="intro-title">TITLE</h1>
-                <p class="intro-subtitle">SUBTITLE!</p>
-            </div>
-
-            <!--Barra de busca (AINDA N IMPLEMENTADO)-->
-            <div class="search-container">
-                <div class="search-bar">
-                    <i class="bi bi-search"></i>
-                    <input type="text" id="searchInput" placeholder="placeholder...">
-                    <button class="search-btn" id="searchBtn" style="background: none; border: none; font-size: 2rem;">
-                        <i class="bi bi-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <section class="carousel">
-            <div class="carousel-section">
-                <div class="carousel-wrapper">
-                    <div class="carousel-item">
-                        <div class="img-cover">
-                            <img src="/static/imgs/Blank_img.png" alt="...">
-                        </div>
-                        <div class="highlight-content">
-                            <div class="img-cover-large">
-                                <img src="/static/imgs/Blank_img.png" alt="...">
-                            </div>
-                            <div class="highlight-info">
-                                <p class="author">NAME OWNER</p>
-                                <h1 style="font-family: '';">NAME TITLE</h1>
-                                <p class="synopsis">DESCRIPTION</p>
-                                <button>Saiba mais..</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="carousel-item">
-                        <div class="img-cover">
-                            <img src="/static/imgs/Blank_img.png" alt="...">
-                        </div>
-                        <div class="highlight-content">
-                            <div class="img-cover-large">
-                                <img src="/static/imgs/Blank_img.png" alt="...">
-                            </div>
-                            <div class="highlight-info">
-                                <p class="author">NAME OWNER</p>
-                                <h1 style="font-family: '';">NAME TITLE</h1>
-                                <p class="synopsis">DESCRIPTION</p>
-                                <button>Saiba mais..</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="carousel-item">
-                        <div class="img-cover">
-                            <img src="/static/imgs/Blank_img.png" alt="...">
-                        </div>
-                        <div class="highlight-content">
-                            <div class="img-cover-large">
-                                <img src="/static/imgs/Blank_img.png" alt="...">
-                            </div>
-                            <div class="highlight-info">
-                                <p class="author">NAME OWNER</p>
-                                <h1 style="font-family: '';">NAME TITLE</h1>
-                                <p class="synopsis">DESCRIPTION</p>
-                                <button>Saiba mais..</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="carousel-item">
-                        <div class="img-cover">
-                            <img src="/static/imgs/Blank_img.png" alt="...">
-                        </div>
-                        <div class="highlight-content">
-                            <div class="img-cover-large">
-                                <img src="/static/imgs/Blank_img.png" alt="...">
-                            </div>
-                            <div class="highlight-info">
-                                <p class="author">NAME OWNER</p>
-                                <h1 style="font-family: '';">NAME TITLE</h1>
-                                <p class="synopsis">DESCRIPTION</p>
-                                <button>Saiba mais..</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="carousel-item">
-                        <div class="img-cover">
-                            <img src="/static/imgs/Blank_img.png" alt="...">
-                        </div>
-                        <div class="highlight-content">
-                            <div class="img-cover-large">
-                                <img src="/static/imgs/Blank_img.png" alt="...">
-                            </div>
-                            <div class="highlight-info">
-                                <p class="author">NAME OWNER</p>
-                                <h1 style="font-family: '';">NAME TITLE</h1>
-                                <p class="synopsis">DESCRIPTION</p>
-                                <button>Saiba mais..</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <button class="carousel-button prev" onclick="prevBook()"><i class="bi bi-caret-left"></i></button>
-                <button class="carousel-button next" onclick="nextBook()"><i class="bi bi-caret-right"></i></button>
+                <h1 class="intro-title">A Música Que Define<br>Sua Vibe</h1>
+                <p class="intro-subtitle">Por trás dos hits: veja playcounts, ouvintes e o que move a indústria.</p>
             </div>
         </section>
 
@@ -197,17 +93,108 @@
 
         <section class="third-container">
             <div class="third-content">
-                <div class="box box1">
+                <a href="/templates/genres.php?genre=Pop" class="box box1">
                     <div class="box-bg"></div>
-                    <h1>TITLE</h1>
+                    <h1>POP</h1>
+                </a>
+                <a href="/templates/genres.php?genre=Rock" class="box box2">
+                    <div class="box-bg"></div>
+                    <h1>ROCK</h1>
+                </a>
+                <a href="/templates/genres.php?genre=Hip%20Hop" class="box box3">
+                    <div class="box-bg"></div>
+                    <h1>HIP HOP</h1>
+                </a>
+                <a href="/templates/genres.php?genre=Electronic" class="box box4">
+                    <div class="box-bg"></div>
+                    <h1>Eletrônica</h1>
+                </a>
+                <a href="/templates/genres.php?genre=Reggae" class="box box5">
+                    <div class="box-bg"></div>
+                    <h1>REGGAE</h1>
+                </a>
+                <a href="/templates/genres.php?genre=brazil%20mpb" class="box box6">
+                    <div class="box-bg"></div>
+                    <h1>MPB</h1>
+                </a>
+                <a href="/templates/genres.php?genre=Classic" class="box box7">
+                    <div class="box-bg"></div>
+                    <h1>CLÁSSICA</h1>
+                </a>
+                <a href="/templates/genres.php?genre=Indie" class="box box8">
+                    <div class="box-bg"></div>
+                    <h1>INDIE</h1>
+                </a>
+            </div>
+        </section>
+
+        <section class="showcarousel no" id="carousel">
+            <h1 class="topweekly">Top da Semana</h1>
+            <div class="carousel">     
+                <div class="carousel-section">
+                    <div class="carousel-wrapper" id="carousel-wrapper">
+
+                    </div>
                 </div>
-                <div class="box box2">
-                    <div class="box-bg"></div>
-                    <h1>TITLE</h1>
+            </div>
+        </section>
+
+        <section class="fourth-container">
+            <h1 class="topweekly">Marcados na História</h1> 
+            <div class="goatgrid">
+                <div class="content-item item-1" style="--bg-url: url('https://disconecta.com.br/wp-content/uploads/2025/04/the-beatles-credito-Apple-Corps-Ltd-e1744307427483.jpg');">
+                    <h2>The Beatles</h2>
                 </div>
-                <div class="box box3">
-                    <div class="box-bg"></div>
-                    <h1>TITLE</h1>
+                <div class="content-item item-2" style="--bg-url: url('https://segredosdomundo.r7.com/wp-content/uploads/2022/07/elvis-presley-15-curiosidade-sobre-o-rei-do-rock.jpg');">
+                    <h2>Elvis</h2>
+                </div>
+                <div class="content-item item-3" style="--bg-url: url('https://www.rollingstone.com/wp-content/uploads/2018/08/Aretha-Franklin-best-songs-2018-list-read.jpg');">
+                    <h2>Aretha Franklin</h2>
+                </div>
+                <div class="content-item item-4" style="--bg-url: url('https://rollingstone.com.br/wp-content/uploads/bob_dylan_em_2012_foto__ap___chris_pizzello___file.jpg');">
+                    <h2>Bob Dylan</h2>
+                </div>
+                <div class="content-item item-5" style="--bg-url: url('https://photo.kidzworld.com/images/2018131/6c72f59a-7cf0-42c4-9c49-a73b6fc1aa54/michael-jackson-child.jpg');">
+                    <h2>Michael Jackson</h2>
+                </div>
+                <div class="content-item item-6" style="--bg-url: url('https://i.abcnewsfe.com/a/59fc9d97-c5a7-4238-83b2-0710c6a45770/madonna-gty-jef-250930_1759252028617_hpMain_16x9.jpg?w=992');">
+                    <h2>Madonna</h2>
+                </div>
+                <div class="content-item item-7" style="--bg-url: url('https://taz.de/picture/2218850/1200/1727352.jpeg');">
+                    <h2>James Brown</h2>
+                </div>
+                <div class="content-item item-8" style="--bg-url: url('https://www.hellen.design/wp-content/uploads/2018/11/blog-historia-logotipo-banda-queen-e1647721184935.jpg');">
+                    <h2>Queen</h2>
+                </div>
+                <div class="content-item item-9" style="--bg-url: url('https://www.estadao.com.br/resizer/v2/XGNTEV4QOVGWZDPBSW3CQ3BEKY.jpg?quality=80&auth=4223dd6b2c9c1e8857965514b842bf9342c5b4040fac0aef5adf0a11da29d7d5&width=1200&height=675&smart=true');">
+                    <h2>Stevie Wonder</h2>
+                </div>
+                <div class="content-item item-10" style="--bg-url: url('https://ogimg.infoglobo.com.br/in/21082748-040-902/FT1086A/2008061384240.jpg');">
+                    <h2>Chuck Berry</h2>
+                </div>
+                <div class="content-item item-11" style="--bg-url: url('https://uploads.metroimg.com/wp-content/uploads/2016/05/11133915/bob-marley-reprodu%C3%A7%C3%A3o-internet.jpg');">
+                    <h2>Bob Marley</h2>
+                </div>
+                <div class="content-item item-12" style="--bg-url: url('https://riffmedia.s3.us-east-2.amazonaws.com/wp-content/uploads/2018/05/29022510/run-dmc.jpg');">
+                    <h2>Run DMC</h2>
+                </div>
+            </div>
+        </section>
+
+        <section class="fifth-container">
+            <div class="content">
+                <div class="textcontent">
+                    <h1>Titulo</h1>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit placeat rem iure voluptates vel aperiam. 
+                        Sunt soluta officia quidem dolorem.Numquam vero ipsum praesentium dicta veniam 
+                        rem ratione molestias mollitia. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut, maiores atque! 
+                        Amet nobis quidem vitae molestiae. Sunt eligendi minus totam voluptatem doloribus non reiciendis quod dignissimos ad!
+                        Fugiat, quibusdam minima.
+                    </p>
+                    <a href="">Saiba mais</a>
+                </div>
+                <div class="image3d">
+                    <img src="/static/imgs/vibing4.png" alt="...">
                 </div>
             </div>
         </section>
@@ -242,6 +229,9 @@
                 boxShadow:"none",
             }).showToast();
         }
+    </script>
+    <script>
+        
     </script>
     
     <script>
