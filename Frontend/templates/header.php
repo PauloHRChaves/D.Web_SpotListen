@@ -7,7 +7,7 @@
         <ul class="navbar" style="list-style-type: none;">
             <li><a href="/" class="nav-link active">Início</a></li>
             <li><a href="/templates/genres.php" class="nav-link">Categorias</a></li>
-            <li><a href="#" class="nav-link">y</a></li>
+            <li><a href="/templates/artist-info.php" class="nav-link">Info</a></li>
             <li><a href="/templates/profile.php" id="auth-link" class="nav-link">Perfil</a></li>
         </ul>
 

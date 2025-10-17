@@ -93,35 +93,35 @@
 
         <section class="third-container">
             <div class="third-content">
-                <a href="/templates/genres.php?genre=Pop" class="box box1">
+                <a href="/templates/genres.php?genre=pop" class="box box1">
                     <div class="box-bg"></div>
                     <h1>POP</h1>
                 </a>
-                <a href="/templates/genres.php?genre=Rock" class="box box2">
+                <a href="/templates/genres.php?genre=rock" class="box box2">
                     <div class="box-bg"></div>
                     <h1>ROCK</h1>
                 </a>
-                <a href="/templates/genres.php?genre=Hip%20Hop" class="box box3">
+                <a href="/templates/genres.php?genre=hip hop" class="box box3">
                     <div class="box-bg"></div>
                     <h1>HIP HOP</h1>
                 </a>
-                <a href="/templates/genres.php?genre=Electronic" class="box box4">
+                <a href="/templates/genres.php?genre=electronic" class="box box4">
                     <div class="box-bg"></div>
                     <h1>Eletrônica</h1>
                 </a>
-                <a href="/templates/genres.php?genre=Reggae" class="box box5">
+                <a href="/templates/genres.php?genre=reggae" class="box box5">
                     <div class="box-bg"></div>
                     <h1>REGGAE</h1>
                 </a>
-                <a href="/templates/genres.php?genre=brazil%20mpb" class="box box6">
+                <a href="/templates/genres.php?genre=brazil mpb" class="box box6">
                     <div class="box-bg"></div>
                     <h1>MPB</h1>
                 </a>
-                <a href="/templates/genres.php?genre=Classic" class="box box7">
+                <a href="/templates/genres.php?genre=classic" class="box box7">
                     <div class="box-bg"></div>
                     <h1>CLÁSSICA</h1>
                 </a>
-                <a href="/templates/genres.php?genre=Indie" class="box box8">
+                <a href="/templates/genres.php?genre=indie" class="box box8">
                     <div class="box-bg"></div>
                     <h1>INDIE</h1>
                 </a>
@@ -142,42 +142,42 @@
         <section class="fourth-container">
             <h1 class="topweekly">Marcados na História</h1> 
             <div class="goatgrid">
-                <div class="content-item item-1" style="--bg-url: url('https://disconecta.com.br/wp-content/uploads/2025/04/the-beatles-credito-Apple-Corps-Ltd-e1744307427483.jpg');">
+                <a href="/templates/artist-info.php?artist=The Beatles" class="content-item item-1" style="--bg-url: url('https://disconecta.com.br/wp-content/uploads/2025/04/the-beatles-credito-Apple-Corps-Ltd-e1744307427483.jpg');">
                     <h2>The Beatles</h2>
-                </div>
-                <div class="content-item item-2" style="--bg-url: url('https://segredosdomundo.r7.com/wp-content/uploads/2022/07/elvis-presley-15-curiosidade-sobre-o-rei-do-rock.jpg');">
+                </a>
+                <a href="/templates/artist-info.php?artist=Elvis Presley" class="content-item item-2" style="--bg-url: url('https://segredosdomundo.r7.com/wp-content/uploads/2022/07/elvis-presley-15-curiosidade-sobre-o-rei-do-rock.jpg');">
                     <h2>Elvis</h2>
-                </div>
-                <div class="content-item item-3" style="--bg-url: url('https://www.rollingstone.com/wp-content/uploads/2018/08/Aretha-Franklin-best-songs-2018-list-read.jpg');">
+                </a>
+                <a href="/templates/artist-info.php?artist=Aretha Franklin" class="content-item item-3" style="--bg-url: url('https://www.rollingstone.com/wp-content/uploads/2018/08/Aretha-Franklin-best-songs-2018-list-read.jpg');">
                     <h2>Aretha Franklin</h2>
-                </div>
-                <div class="content-item item-4" style="--bg-url: url('https://rollingstone.com.br/wp-content/uploads/bob_dylan_em_2012_foto__ap___chris_pizzello___file.jpg');">
+                </a>
+                <a href="/templates/artist-info.php?artist=Bob Dylan" class="content-item item-4" style="--bg-url: url('https://rollingstone.com.br/wp-content/uploads/bob_dylan_em_2012_foto__ap___chris_pizzello___file.jpg');">
                     <h2>Bob Dylan</h2>
-                </div>
-                <div class="content-item item-5" style="--bg-url: url('https://photo.kidzworld.com/images/2018131/6c72f59a-7cf0-42c4-9c49-a73b6fc1aa54/michael-jackson-child.jpg');">
+                </a>
+                <a href="/templates/artist-info.php?artist=Michael Jackson" class="content-item item-5" style="--bg-url: url('https://photo.kidzworld.com/images/2018131/6c72f59a-7cf0-42c4-9c49-a73b6fc1aa54/michael-jackson-child.jpg');">
                     <h2>Michael Jackson</h2>
-                </div>
-                <div class="content-item item-6" style="--bg-url: url('https://i.abcnewsfe.com/a/59fc9d97-c5a7-4238-83b2-0710c6a45770/madonna-gty-jef-250930_1759252028617_hpMain_16x9.jpg?w=992');">
+                </a>
+                <a href="/templates/artist-info.php?artist=Madonna" class="content-item item-6" style="--bg-url: url('https://i.abcnewsfe.com/a/59fc9d97-c5a7-4238-83b2-0710c6a45770/madonna-gty-jef-250930_1759252028617_hpMain_16x9.jpg?w=992');">
                     <h2>Madonna</h2>
-                </div>
-                <div class="content-item item-7" style="--bg-url: url('https://taz.de/picture/2218850/1200/1727352.jpeg');">
+                </a>
+                <a href="/templates/artist-info.php?artist=James Brown" class="content-item item-7" style="--bg-url: url('https://taz.de/picture/2218850/1200/1727352.jpeg');">
                     <h2>James Brown</h2>
-                </div>
-                <div class="content-item item-8" style="--bg-url: url('https://www.hellen.design/wp-content/uploads/2018/11/blog-historia-logotipo-banda-queen-e1647721184935.jpg');">
+                </a>
+                <a href="/templates/artist-info.php?artist=Queen" class="content-item item-8" style="--bg-url: url('https://www.hellen.design/wp-content/uploads/2018/11/blog-historia-logotipo-banda-queen-e1647721184935.jpg');">
                     <h2>Queen</h2>
-                </div>
-                <div class="content-item item-9" style="--bg-url: url('https://www.estadao.com.br/resizer/v2/XGNTEV4QOVGWZDPBSW3CQ3BEKY.jpg?quality=80&auth=4223dd6b2c9c1e8857965514b842bf9342c5b4040fac0aef5adf0a11da29d7d5&width=1200&height=675&smart=true');">
+                </a>
+                <a href="/templates/artist-info.php?artist=Stevie Wonder" class="content-item item-9" style="--bg-url: url('https://www.estadao.com.br/resizer/v2/XGNTEV4QOVGWZDPBSW3CQ3BEKY.jpg?quality=80&auth=4223dd6b2c9c1e8857965514b842bf9342c5b4040fac0aef5adf0a11da29d7d5&width=1200&height=675&smart=true');">
                     <h2>Stevie Wonder</h2>
-                </div>
-                <div class="content-item item-10" style="--bg-url: url('https://ogimg.infoglobo.com.br/in/21082748-040-902/FT1086A/2008061384240.jpg');">
+                </a>
+                <a href="/templates/artist-info.php?artist=Chuck Berry" class="content-item item-10" style="--bg-url: url('https://ogimg.infoglobo.com.br/in/21082748-040-902/FT1086A/2008061384240.jpg');">
                     <h2>Chuck Berry</h2>
-                </div>
-                <div class="content-item item-11" style="--bg-url: url('https://uploads.metroimg.com/wp-content/uploads/2016/05/11133915/bob-marley-reprodu%C3%A7%C3%A3o-internet.jpg');">
+                </a>
+                <a href="/templates/artist-info.php?artist=Bob Marley" class="content-item item-11" style="--bg-url: url('https://uploads.metroimg.com/wp-content/uploads/2016/05/11133915/bob-marley-reprodu%C3%A7%C3%A3o-internet.jpg');">
                     <h2>Bob Marley</h2>
-                </div>
-                <div class="content-item item-12" style="--bg-url: url('https://riffmedia.s3.us-east-2.amazonaws.com/wp-content/uploads/2018/05/29022510/run-dmc.jpg');">
+                </a>
+                <a href="/templates/artist-info.php?artist=Run DMC" class="content-item item-12" style="--bg-url: url('https://riffmedia.s3.us-east-2.amazonaws.com/wp-content/uploads/2018/05/29022510/run-dmc.jpg');">
                     <h2>Run DMC</h2>
-                </div>
+                </a>
             </div>
         </section>
 
@@ -229,9 +229,6 @@
                 boxShadow:"none",
             }).showToast();
         }
-    </script>
-    <script>
-        
     </script>
     
     <script>

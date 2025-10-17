@@ -21,14 +21,10 @@
 html {
     scroll-behavior: smooth;
 }
-
 body {
     font-family: "Open Sans", sans-serif;
     line-height: 1.6;
-    display: flex;
-    flex-direction: column;
     height: 100vh;
-    overflow: hidden;
 }
 
 /* Cabeçalho de navegação */

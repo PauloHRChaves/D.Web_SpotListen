@@ -1,8 +1,3 @@
-<?php
-$genre = htmlspecialchars($_GET['genre'] ?? '');
-$initialOffset = 0;
-$limit = 16;
-?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -74,10 +69,10 @@ $limit = 16;
                 border-radius: 0.5rem;
             }
         }
+        .pagination-controls{
+            background-color: white;
+        }
 
-    </style>
-    <style>
-        
     </style>
 </head>
 <body>
@@ -100,14 +95,14 @@ $limit = 16;
 
         <article class="secont-container" id="home">
             <div class="tags">
-                <li><a href="/templates/genres.php?genre=Pop" class="tag active">Pop</a></li>
-                <li><a href="/templates/genres.php?genre=Rock" class="tag">Rock</a></li>
-                <li><a href="/templates/genres.php?genre=Hip%20Hop" class="tag">HipHop</a></li>
-                <li><a href="/templates/genres.php?genre=Electronic" class="tag">Eletronica</a></li>
-                <li><a href="/templates/genres.php?genre=Reggae" class="tag">Reggae</a></li>
-                <li><a href="/templates/genres.php?genre=Brazil%20mpb" class="tag">MPB</a></li>
-                <li><a href="/templates/genres.php?genre=Classic"  class="tag">Clássica</a></li>
-                <li><a href="/templates/genres.php?genre=Indie" id="auth-tag" class="tag">Indie</a></li>
+                <li><span data-genre="pop" class="tag active">Pop</span></li>
+                <li><span data-genre="rock" class="tag">Rock</span></li>
+                <li><span data-genre="hip hop" class="tag">HipHop</span></li>
+                <li><span data-genre="electronic" class="tag">Eletronica</span></li>
+                <li><span data-genre="reggae" class="tag">Reggae</span></li>
+                <li><span data-genre="brazil mpb" class="tag">MPB</span></li>
+                <li><span data-genre="classic" class="tag">Clássica</span></li>
+                <li><span data-genre="indie" class="tag">Indie</span></li>
             </div>
 
             <div id="artists-container" class="artists-grid">
@@ -133,92 +128,149 @@ $limit = 16;
             }).showToast();
         }
     </script>
+    
     <script>
-        // Variáveis de estado
-        let currentGenre = "<?= $genre ?>"; 
-        let currentOffset = <?= $initialOffset ?>;
-        const limit = <?= $limit ?>;
+        let currentGenre = "<?php echo htmlspecialchars($_GET['genre'] ?? ''); ?>"; 
+        let currentOffset = 0;
+        const limit = 12;
         
         const API_URL = `http://localhost:8131/spotify/search/genre`;
         
+        let container, prevButton, nextButton, pageInfo, tagsContainer;
 
         async function fetchAndRenderArtists() {
-            const searchGenre = currentGenre === '' ? 'Pop' : currentGenre;
+            const searchGenre = currentGenre === '' ? 'pop' : currentGenre;
 
             const requestUrl = `${API_URL}?genre=${encodeURIComponent(searchGenre)}&limit=${limit}&offset=${currentOffset}`;
             
-            // ... (variáveis de container e botões) ...
-            const container = document.getElementById('artists-container');
-            const prevButton = document.getElementById('prev-button');
-            const nextButton = document.getElementById('next-button');
-            const pageInfo = document.getElementById('page-info');
-
-            container.innerHTML = '<p>Carregando artistas...</p>';
-            prevButton.disabled = true;
-            nextButton.disabled = true;
+            if (container) container.innerHTML = '<p>Carregando artistas...</p>';
+            if (prevButton) prevButton.disabled = true;
+            if (nextButton) nextButton.disabled = true;
 
             try {
                 const response = await fetch(requestUrl);
+                if (!response.ok) throw new Error(`Erro de rede: ${response.status}`);
+                
                 const data = await response.json();
-                
                 const results = data.items;
+                let htmlContent = '';
 
-                // ... (lógica de renderização dos cards de artista) ...
                 if (results && results.length > 0) {
-                    container.innerHTML = ''; 
                     results.forEach(artist => {
-                        const card = document.createElement('div');
                         const DEFAULT_IMAGE = '/static/imgs/profile-icon.png';
-                        card.className = 'artist-card';
-                        card.innerHTML = `
-                            <img src="${artist.image_url || DEFAULT_IMAGE}" alt="${artist.name}">
-                            <h2>${artist.name}</h2>
-                            <p>Popularidade: ${artist.popularity}</p>
+                        htmlContent += `
+                            <div class="artist-card">
+                                <img src="${artist.image_url || DEFAULT_IMAGE}" alt="${artist.name}">
+                                <h2>${artist.name}</h2>
+                                <p>Popularidade: ${artist.popularity}</p>
+                            </div>
                         `;
-                        container.appendChild(card);
                     });
-                }else {
-                    let message = `Nenhum artista encontrado para o gênero: <strong>${currentGenre}</strong>.`;
-
-                    if (currentGenre === '') {
-                        // Se a busca foi por "Pop" mas currentGenre é vazio, 
-                        // a mensagem deve refletir que é uma lista geral, não um erro.
-                        // Se você fez a busca com sucesso, mas o resultado é 0, a mensagem ainda é de erro:
-                        message = 'Nenhum artista popular encontrado na lista principal. Tente outro gênero.'; 
-                    }
-                    container.innerHTML = `<p>${message}</p>`;
+                } else {
+                    htmlContent = `<p>Nenhum artista encontrado para o gênero: <strong>${searchGenre.toUpperCase()}</strong>.</p>`;
                 }
+                if (container) container.innerHTML = htmlContent;
 
-                // Usa os metadados retornados pelo Service
-                const totalPages = Math.ceil(data.total / data.limit);
-                const currentPage = (data.offset / data.limit) + 1;
-
-                pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+                if (pageInfo) {
+                    const totalPages = Math.ceil(data.total / data.limit);
+                    const currentPage = (data.offset / data.limit) + 1;
+                    pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+                }
                 
-                // Usa as flags de navegação retornadas pelo Backend
-                prevButton.disabled = !data.has_previous; 
-                nextButton.disabled = !data.has_next;
+                if (prevButton) prevButton.disabled = !data.has_previous; 
+                if (nextButton) nextButton.disabled = !data.has_next;
                 
             } catch (error) {
                 console.error("Erro ao buscar dados:", error);
-                container.innerHTML = '<p>Erro ao carregar os dados. Tente novamente.</p>';
+                if (container) container.innerHTML = '<p>Erro ao carregar os dados. Tente novamente.</p>';
             }
         }
+
+        function updateBrowserUrl(newGenre) {
+            const baseUrl = window.location.pathname; 
+            const newUrl = `${baseUrl}?genre=${encodeURIComponent(newGenre)}`;
+            window.history.pushState({ genre: newGenre }, '', newUrl);
+        }
         
-        // Manipuladores de eventos de Paginação (INALTERADOS e CORRETOS)
-        document.getElementById('next-button').addEventListener('click', () => {
-            currentOffset += limit; 
+        function handleGenreClick(event) {
+            const clickedElement = event.currentTarget;
+            const newGenre = clickedElement.getAttribute('data-genre');
+            
+            if (!newGenre || newGenre === currentGenre) return; 
+
+            currentGenre = newGenre;
+            currentOffset = 0;
+
+            updateBrowserUrl(newGenre); 
+
+            document.querySelectorAll('.tags .tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            clickedElement.classList.add('active');
+
+            fetchAndRenderArtists();
+        }
+
+        window.addEventListener('popstate', (event) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const genreFromUrl = urlParams.get('genre') || 'pop'; 
+
+            if (genreFromUrl === currentGenre) return; 
+
+            currentGenre = genreFromUrl;
+            currentOffset = 0; 
+
+            document.querySelectorAll('.tags .tag').forEach(tag => {
+                tag.classList.remove('active');
+                if (tag.getAttribute('data-genre') === currentGenre) {
+                    tag.classList.add('active');
+                }
+            });
+            
+            // 3. Busca o conteúdo
             fetchAndRenderArtists();
         });
 
-        document.getElementById('prev-button').addEventListener('click', () => {
-            currentOffset = Math.max(0, currentOffset - limit); 
+        document.addEventListener('DOMContentLoaded', () => {
+            container = document.getElementById('artists-container');
+            prevButton = document.getElementById('prev-button');
+            nextButton = document.getElementById('next-button');
+            pageInfo = document.getElementById('page-info');
+            tagsContainer = document.querySelector('.tags');
+
+            if (!container) {
+                console.error("Elemento '#artists-container' não encontrado. O script não pode ser inicializado.");
+                return;
+            }
+
+            if (nextButton) {
+                nextButton.addEventListener('click', () => {
+                    currentOffset += limit; 
+                    fetchAndRenderArtists();
+                });
+            }
+
+            if (prevButton) {
+                prevButton.addEventListener('click', () => {
+                    currentOffset = Math.max(0, currentOffset - limit); 
+                    fetchAndRenderArtists();
+                });
+            }
+
+            const tagElements = tagsContainer ? tagsContainer.querySelectorAll('.tag') : [];
+            tagElements.forEach(tag => {
+                tag.addEventListener('click', handleGenreClick);
+            });
+            
+            document.querySelectorAll('.tags .tag').forEach(tag => {
+                tag.classList.remove('active');
+                if (tag.getAttribute('data-genre') === currentGenre) {
+                    tag.classList.add('active');
+                }
+            });
+
             fetchAndRenderArtists();
         });
-
-        // Inicia o carregamento
-        document.addEventListener('DOMContentLoaded', fetchAndRenderArtists);
-
     </script>
 
 </body>

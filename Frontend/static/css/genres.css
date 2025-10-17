@@ -1,10 +1,7 @@
 body {
-    font-family: "Open Sans", sans-serif;
-    line-height: 1.6;
     display: flex;
     background-color:#000000;
     flex-direction: column;
-    height: 100vh;
 
     background-attachment: fixed;
     background-size: cover;
@@ -82,7 +79,6 @@ main::-webkit-scrollbar-thumb {
 }
 
 article{
-
     .tags{
         display: flex;
         justify-content: flex-end;
@@ -94,7 +90,7 @@ article{
         list-style-type: none;
         background-color: #cacaca;
 
-        a{
+        .tag{
             font-family: 'Work Sans';
             color: rgb(0, 0, 0);
             background-color: #ffffff;
@@ -107,7 +103,7 @@ article{
             transition: color 0.3s ease;
             border: 2px solid rgb(0, 0, 0);
         }
-        a.active{
+        .tag.active{
             color: rgb(37, 1, 1);
             background-color: #bea8dc;
         }
