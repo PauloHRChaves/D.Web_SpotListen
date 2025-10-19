@@ -2,70 +2,68 @@
 session_start();
 define('ROOT_PATH', __DIR__ . '/../');
 
-require ROOT_PATH . 'vendor/autoload.php';
+
+spl_autoload_register(function ($class) { 
+    $file_path = str_replace('\\', '/', $class) . '.php'; 
+    $file = ROOT_PATH . $file_path; 
+    if (file_exists($file)) { 
+        require $file; 
+    } 
+});
+
 require ROOT_PATH . 'bootstrap.php';
 
-header("Access-Control-Allow-Origin: http://localhost:8231");
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
 use web\Exceptions\ApiException;
 
-$request_uri = $_SERVER['REQUEST_URI'];
+$uri = $_SERVER['REQUEST_URI'];
+$request_uri = parse_url($uri, PHP_URL_PATH);
+
 $request_method = $_SERVER['REQUEST_METHOD'];
 
 $routes = require ROOT_PATH . 'routes.php';
 
+
+function getRequestData(string $method): array {
+    switch ($method) {
+        case 'GET':
+            return $_GET;
+
+        case 'POST':
+            return $_POST ?: json_decode(file_get_contents('php://input'), true) ?? [];
+
+        default:
+            return [];
+    }
+}
+
+function castType($value) {
+    if (is_numeric($value)) return $value + 0;
+    if (in_array(strtolower($value), ['true', 'false'])) return strtolower($value) === 'true';
+    return $value;
+}
+
 try {
-    $allParams = $_GET;
-
-    $route_uri = strtok($request_uri, '?');
-    
-    if (isset($routes[$request_method][$route_uri])){
-        [$controllerClass, $method] = $routes[$request_method][$route_uri];
-
+    if (isset($routes[$request_method][$request_uri])) {
+        [$controllerClass, $method] = $routes[$request_method][$request_uri];
         $controller = new $controllerClass();
-        
-        // --- USA REFLECTION PARA MONTAR OS ARGUMENTOS CORRETOS ---
-        $reflection = new ReflectionMethod($controllerClass, $method);
-        $methodParameters = $reflection->getParameters();
-        
-        $args = [];
-        
-        // Itera sobre os parâmetros que o MÉTODO (do Controller) realmente espera
-        foreach ($methodParameters as $param) {
-            $paramName = $param->getName();
-            
-            // Verifica se o parâmetro esperado pelo método existe no $allParams (do $_GET)
-            if (isset($allParams[$paramName])) {
-                $value = $allParams[$paramName];
-                
-                if ($param->hasType()) {
-                    $typeName = $param->getType()->getName();
-                    if ($typeName === 'int') {
-                        $value = (int)$value;
-                    } elseif ($typeName === 'bool') {
-                        $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-                    }
-                    // caso precisar, add mais converções
-                }
-                $args[] = $value;
-            } 
-            // Se o parâmetro for obrigatório e não estiver no $_GET, a chamada vai falhar
-            // Se for opcional e não estiver no $_GET, o PHP usará o valor padrão
-        }
-        
-        // Passa os argumentos filtrados para o método
-        $responseData = $controller->$method(...$args);
 
-        header('Content-Type: application/json');
+        $data = array_map('castType', getRequestData($request_method));
+        $responseData = $controller->$method(...array_values($data));
 
-        echo json_encode($responseData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-
+        echo json_encode($responseData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     } else {
         http_response_code(404);
-        $responseData = ['message' => 'NOT FOUND'];
-        echo json_encode($responseData, JSON_UNESCAPED_UNICODE);    
+        echo json_encode(['message' => 'NOT FOUND'], JSON_UNESCAPED_UNICODE);
     }
 
 } catch (ApiException $e){

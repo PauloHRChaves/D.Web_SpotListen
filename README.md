@@ -4,19 +4,11 @@ Temática: música.
 
 ### Backend tools:
 - Linguagem: ```PHP^8.2.12```<br>
-- Gerenciador de dependências: ```COMPOSER```<br>
-    Dependências:
-    ```
-        "vlucas/phpdotenv": "^5.6"
-        "guzzlehttp/guzzle": "^7.10"
-        "predis/predis": "^3.2"
-    ```
 - Banco de dados: ```MySQL```<br>
 - API's consumidas:
     - <a href="https://developer.spotify.com/documentation/web-api">Spotify API</a>
     - <a href="https://www.last.fm/api">Last.fm API</a>
     - <a href="https://musicbrainz.org/doc/MusicBrainz_API">MusicBrainz API</a>
-    - <a href="https://pt.wikipedia.org/w/api.php">MediaWiki API</a>
 <br>
 
 ### Frontend tools:
@@ -35,8 +27,6 @@ Temática: música.
 
 # Backend:
 > Instalar PHP
-
-> Instalar o COMPOSER: <a href="https://getcomposer.org/download">getcomposer</a>
 <br>
 
 Modificar arquivo **php.ini**
@@ -48,17 +38,8 @@ Modificar arquivo **php.ini**
     * ;extension=mbstring
     * ;extension=curl
     * ;extension=pdo_mysql
-- Salvar arquivo ( atalho: ctrl + s )
+- Salvar arquivo
 <br><br>
-
-No terminal do projeto:
-```
-cd Backend
-```
-```
-composer install
-```
-<br>
 
 Arquitetura básica das pastas:
 <pre>

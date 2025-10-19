@@ -1,6 +1,3 @@
-<?php
-$artistName = htmlspecialchars($_GET['artist'] ?? 'Artista Desconhecido');
-?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -51,60 +48,27 @@ $artistName = htmlspecialchars($_GET['artist'] ?? 'Artista Desconhecido');
     <!--Cabeçalho de navegação-->
     <header id="header-placeholder"><?php include 'header.php'; ?></header>
 
-<main>
+    <main>
         <div id="artist-details-container">
-            <h1><?php echo $artistName; ?></h1>
+            <h1 id="artist-name-title"></h1> 
             <p id="loading-message">Buscando informações detalhadas...</p>
-            
             <div id="biography-content"></div> 
         </div>
     </main>
 
     <script>
-        const currentArtist = "<?php echo $artistName; ?>"; 
-        const API_URL = 'http://localhost:8131/wiki/artist-info';
-        
-        const loadingMessage = document.getElementById('loading-message');
-        const biographyContent = document.getElementById('biography-content');
-        const artistTitle = document.querySelector('#artist-details-container h1');
-        
-        async function fetchBiography() {
-            try {
-                const endpoint = `${API_URL}?artistName=${encodeURIComponent(currentArtist)}`;
-                
-                const response = await fetch(endpoint);
-                
-                if (!response.ok) {
-                    throw new Error(`Erro HTTP! Status: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                if (data.error) {
-                    biographyContent.innerHTML = `<p class="error">Erro: ${data.error}</p>`;
-                    return;
-                }
-                
-                artistTitle.textContent = data.title; 
-
-                biographyContent.innerHTML = data.biography_html;
-
-            } catch (error) {
-                console.error("Erro ao buscar biografia:", error);
-                biographyContent.innerHTML = `<p class="error">Falha ao carregar informações. Tente novamente mais tarde.</p>`;
-            } finally {
-                if (loadingMessage) {
-                    loadingMessage.remove();
-                }
-            }
+        function getArtistNameFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            
+            const artistName = params.get('artist');
+            
+            const titleElement = document.getElementById('artist-name-title');
+            
+            titleElement.textContent = artistName;
+            
         }
 
-        if (currentArtist && currentArtist !== 'Artista Desconhecido') {
-            fetchBiography();
-        } else {
-            loadingMessage.textContent = 'Por favor, selecione um artista válido.';
-        }
+        document.addEventListener('DOMContentLoaded', getArtistNameFromUrl);
     </script>
-
 </body>
 </html>

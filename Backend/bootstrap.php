@@ -1,15 +1,18 @@
 <?php
-use Dotenv\Dotenv;
-$dotenv = Dotenv::createImmutable(ROOT_PATH);
-$dotenv->safeLoad();
+$envFile = ROOT_PATH . '.env';
 
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        [$name, $value] = explode('=', $line, 2);
 
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit;
+        $name = trim($name);
+        $value = trim($value);
+
+        $value = trim($value, "\"'");
+
+        putenv("$name=$value");
+        $_ENV[$name] = $value;
+        $_SERVER[$name] = $value;
+    }
 }
-require ROOT_PATH . 'routes.php';

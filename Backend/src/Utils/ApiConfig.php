@@ -1,73 +1,112 @@
 <?php
-namespace web\Utils;
+namespace src\Utils;
 
-use web\Exceptions\ApiException;
+use src\Exceptions\ApiException;
 use Exception;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-
 class ApiConfig {
-    protected Client $client;
+    protected int $timeout;
 
-    public function __construct() {
-        $this->client = new Client([
-            'timeout'  => 10.0,
-            'http_errors' => false
-        ]);
+    public function __construct(int $timeout = 10) {
+        $this->timeout = $timeout;
     }
 
-    public function _executarCurl(string $url, array $headers, string $body): array {
-        $ch = curl_init($url);
+    protected function _executarRequest(string $url, array $headers = [], string $body = '', string $method = 'GET'): array {
+        $ch = curl_init();
+        $formattedHeaders = [];
+        foreach ($headers as $key => $value) {
+            $formattedHeaders[] = is_int($key) ? $value : "$key: $value";
+        }
 
-        $defaultOptions = [
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST=> true,
-            CURLOPT_TIMEOUT=> 30,
-            CURLOPT_HTTPHEADER=> $headers,
-            CURLOPT_POSTFIELDS=> $body,
-        ];
+            CURLOPT_HTTPHEADER => $formattedHeaders,
+            CURLOPT_TIMEOUT => $this->timeout,
+            CURLOPT_FAILONERROR => false,
+        ]);
 
-        curl_setopt_array($ch, $defaultOptions);
+        if (strtoupper($method) === 'POST') {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+        }
 
         $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        // ********** TRATAMENTO DE ERRO DE SISTEMA (CURL) **********
         if (curl_errno($ch)) {
-            $error_message = curl_error($ch);
-            curl_close($ch);
-            // Lança Exception padrão para cair no catch(Exception $e) do routes.php
-            throw new Exception("CURL Error during search on API: " . $error_message);
+            throw new Exception('cURL Error: ' . curl_error($ch));
         }
-        // **********************************************************
-        
+
         curl_close($ch);
-        $data = json_decode($response, true);
-        
-        return [
-            'data' => $data,
-            'http_code' => $http_code 
-        ];
+
+        $body = json_decode($response, true);
+        if ($httpCode !== 200) {
+            $message = $body['error']['message'] ?? 'Erro desconhecido';
+            throw new ApiException("API Error: $message", $httpCode);
+        }
+
+        return $body;
     }
     
-    protected function _executarRequest(string $url, array $headers = []): array {
-        try {
-            $response = $this->client->request('GET', $url, [
-                'headers' => $headers
-            ]);
+    protected function _executarMultiRequest(array $requests): array {
+        $multiHandle = curl_multi_init();
+        $handles = [];
+        $results = [];
 
-            $httpCode = $response->getStatusCode();
-            $body = json_decode($response->getBody(), true);
-
-            if ($httpCode !== 200) {
-                $message = $body['error']['message'] ?? 'Erro desconhecido';
-                throw new ApiException("API Error: $message", $httpCode);
+        foreach ($requests as $index => $request) {
+            $ch = curl_init();
+            $formattedHeaders = [];
+            foreach ($request['headers'] as $key => $value) {
+                $formattedHeaders[] = is_int($key) ? $value : "$key: $value";
             }
 
-            return $body;
-        } catch (RequestException $e) {
-            throw new Exception('Guzzle Error: ' . $e->getMessage());
+            curl_setopt_array($ch, [
+                CURLOPT_URL            => $request['url'],
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPHEADER     => $formattedHeaders,
+                CURLOPT_TIMEOUT        => $this->timeout,
+                CURLOPT_FAILONERROR    => false,
+            ]);
+
+            if (strtoupper($request['method']) === 'POST') {
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $request['body'] ?? '');
+            }
+            
+            curl_multi_add_handle($multiHandle, $ch);
+            $handles[$index] = $ch;
         }
+
+        $running = null;
+        do {
+            $status = curl_multi_exec($multiHandle, $running);
+            if ($running) {
+                curl_multi_select($multiHandle, 1.0);
+            }
+        } while ($running > 0 && $status === CURLM_OK);
+
+        foreach ($handles as $index => $ch) {
+            $response = curl_multi_getcontent($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+            if (curl_errno($ch)) {
+                throw new Exception("cURL Error for request $index: " . curl_error($ch));
+            }
+
+            curl_multi_remove_handle($multiHandle, $ch);
+            curl_close($ch);
+            $body = json_decode($response, true);
+            if ($httpCode !== 200) {
+                $message = $body['error']['message'] ?? 'Erro desconhecido';
+                throw new ApiException("API Error for request $index: $message", $httpCode);
+            }
+
+            $results[$index] = $body;
+        }
+
+        curl_multi_close($multiHandle);
+
+        return $results;
     }
 }
