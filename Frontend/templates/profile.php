@@ -32,8 +32,8 @@
         }
 
         main {
-            flex-grow: 1; 
-            margin-top: var(--header-height);
+            margin-top: 80px;
+            flex-grow: 1;
             overflow-y: auto;
             padding: 0 0.5rem;
         }

@@ -43,6 +43,10 @@
         }
     </style>
     <style>
+        .sixth-container{
+            height: 300px;
+            background: #ffffffff;
+        }
         .footer {
             background:  #010e18ae;
             color: #fff;
@@ -91,6 +95,8 @@
             </div>
         </section>
 
+        <hr>
+        
         <section class="third-container">
             <div class="third-content">
                 <a href="/templates/genres.php?genre=pop" class="box box1">
@@ -128,6 +134,8 @@
             </div>
         </section>
 
+        <hr>
+        
         <section class="showcarousel no" id="carousel">
             <h1 class="topweekly">Top da Semana</h1>
             <div class="carousel">     
@@ -139,7 +147,7 @@
             </div>
         </section>
 
-        <section class="fourth-container">
+        <!-- <section class="fourth-container">
             <h1 class="topweekly">Marcados na História</h1> 
             <div class="goatgrid">
                 <a href="/templates/artist-info.php?artist=The%20Beatles" class="content-item item-1" style="--bg-url: url('https://disconecta.com.br/wp-content/uploads/2025/04/the-beatles-credito-Apple-Corps-Ltd-e1744307427483.jpg');">
@@ -179,7 +187,7 @@
                     <h2>Run DMC</h2>
                 </a>
             </div>
-        </section>
+        </section> -->
 
         <section class="fifth-container">
             <div class="content">
@@ -197,6 +205,11 @@
                     <img src="/static/imgs/vibing4.png" alt="...">
                 </div>
             </div>
+        </section>
+
+        <hr>
+
+        <section class="sixth-container">
         </section>
 
         <footer class="footer">

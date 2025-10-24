@@ -1,5 +1,16 @@
 // ⚠️*************** REUTILIZANDO FUNÇÃO (MOCK) **********************⚠️
+function setupLogout() {
+    const logoutButton = document.getElementById('logout-button');
 
+    if (logoutButton) {
+        logoutButton.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            localStorage.removeItem('authToken');
+            window.location.href = '/templates/index.php';
+        });
+    }
+}
 // Função para verificar o status de login do usuário
 async function checkLoginStatus() {
     const token = localStorage.getItem('authToken');
@@ -76,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         
         activateNavLink();
-        //setupLogout();
+        setupLogout();
 
         const headerContainer = document.querySelector('.header-container');
         if (headerContainer) {

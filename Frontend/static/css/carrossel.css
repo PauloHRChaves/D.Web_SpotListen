@@ -176,3 +176,13 @@
 
 .nav.prev { left: 10px; }
 .nav.next { right: 10px; }
+
+.topweekly{
+    font-family: "Work Sans", sans-serif;
+    text-align: center;
+    color: white;
+    justify-self: center;
+    font-size: clamp(2.5rem, 1vw, 6rem);
+    padding-top: 1rem 0;
+    color: white;
+}

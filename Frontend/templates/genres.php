@@ -39,40 +39,6 @@
             font-family: "Work Sans", sans-serif;
             font-weight: 600;
         }
-        .second-container{
-            position: relative;
-
-            .pop{
-                width: 100%;
-                height: 200px;
-                background-color: #6f6f6fff;
-            }
-        }
-        .artists-grid {
-            color: white;
-            display: grid; 
-            
-            grid-template-columns: repeat(4, 1fr); 
-            
-            gap: 1.5rem;
-
-            .artist-card {
-                width: 100%; 
-                text-align: center;
-            }
-
-            img {
-                width: 100%; 
-                height: auto;
-                aspect-ratio: 1/1;
-                object-fit: cover;
-                border-radius: 0.5rem;
-            }
-        }
-        .pagination-controls{
-            background-color: white;
-        }
-
     </style>
 </head>
 <body>
@@ -93,7 +59,7 @@
             </div>
         </section>
 
-        <article class="secont-container" id="home">
+        <section class="second-container" id="home">
             <div class="tags">
                 <li><span data-genre="pop" class="tag active">Pop</span></li>
                 <li><span data-genre="rock" class="tag">Rock</span></li>
@@ -105,7 +71,7 @@
                 <li><span data-genre="indie" class="tag">Indie</span></li>
             </div>
 
-            <div id="artists-container" class="artists-grid">
+            <div class="artists-grid" id="artists-container">
             </div>
             
             <div class="pagination-controls">
@@ -113,7 +79,7 @@
                 <span id="page-info">Página 1</span>
                 <button id="next-button" disabled>Próxima &#x2192;</button>
             </div>
-        </article>
+        </section>
     </main>
 
     <script>

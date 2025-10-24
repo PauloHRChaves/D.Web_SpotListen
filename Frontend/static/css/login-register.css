@@ -46,15 +46,11 @@ body {
 
         .logo {
             display: flex;
-            align-items: center;
-            gap: var(--radius);
-            font-weight: 700;
-            font-size: clamp(2rem, 2vw, 4rem);
-            color: var(--white);
-        }
 
-        .bi-music-note-beamed::before{color: var(--white);}
-        span{color: var(--white);}
+            img{
+                width: 180px;
+            }
+        }
     }
 }
 

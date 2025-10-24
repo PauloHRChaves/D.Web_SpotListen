@@ -43,6 +43,77 @@ class SpotifyService extends ApiConfig {
         ];
     }
 
+    public function spotifyLogin() {
+        $client_id = $_ENV['SPOTIFY_CLIENT_ID'];
+        $redirect_uri = $_ENV['SPOTIFY_REDIRECT_URI'];
+        
+        $scopes = 'user-read-private playlist-read-private user-read-recently-played user-top-read 
+            playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-library-modify user-library-read 
+            user-read-playback-state user-modify-playback-state user-read-currently-playing';
+        
+        $state = bin2hex(random_bytes(16));
+
+        $_SESSION['spotify_auth_state'] = $state;
+
+        $query = http_build_query([
+            'response_type' => 'code',
+            'client_id' => $client_id,
+            'scope' => $scopes,
+            'redirect_uri' => $redirect_uri,
+            'state' => $state,
+        ]);
+
+        $url = 'https://accounts.spotify.com/authorize?' . $query;
+
+        header("Location: $auth_url");
+        exit;
+    }
+
+    public function spotifyCallback() {
+        $code = $_GET['code'] ?? null;
+        $state = $_GET['state'] ?? null;
+
+        if ($state === null || $state !== ($_SESSION['spotify_auth_state'] ?? null)) {
+            throw new ApiException("State mismatch: Possível ataque CSRF.", 403);
+        }
+        unset($_SESSION['spotify_auth_state']);
+
+        if (!$code) {
+            throw new ApiException("Autorização negada pelo usuário.", 401);
+        }
+
+        $client_id = $_ENV['SPOTIFY_CLIENT_ID'];
+        $client_secret = $_ENV['SPOTIFY_CLIENT_SECRET'];
+        $redirect_uri = $_ENV['SPOTIFY_REDIRECT_URI'];
+
+        $url = 'https://accounts.spotify.com/api/token';
+        $auth = base64_encode("$client_id:$client_secret");
+
+        $headers = [
+            "Authorization: Basic $auth",
+            "Content-Type: application/x-www-form-urlencoded",
+        ];
+        $body = http_build_query([
+            'grant_type' => 'authorization_code',
+            'code' => $code,
+            'redirect_uri' => $redirect_uri,
+        ]);
+
+        $result = $this->_executarRequest($url, $headers, $body, 'POST');
+
+        if (isset($result['access_token'])) {
+            $_SESSION['user_spotify_token'] = $result['access_token'];
+            $_SESSION['user_refresh_token'] = $result['refresh_token'] ?? null;
+
+            header('Location: /');
+            exit;
+        }
+
+        // Lidar com erro de token
+        $errorMessage = $result['error_description'] ?? 'TOKEN_USER_ERROR';
+        throw new ApiException("Erro ao obter token do usuário: $errorMessage", 500);
+    }
+
     // public function searchById(string $artistId) {
     //     $token = $this-> getAccessToken();
     //     $accessToken = $token['access_token'];

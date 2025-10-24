@@ -78,7 +78,9 @@ main::-webkit-scrollbar-thumb {
     }
 }
 
-article{
+.second-container {
+    position: relative;
+
     .tags{
         display: flex;
         justify-content: flex-end;
@@ -88,7 +90,7 @@ article{
         justify-content: flex-end;
         padding: 0.3rem 10%;
         list-style-type: none;
-        background-color: #cacaca;
+        background-color: #e3e3e3;
 
         .tag{
             font-family: 'Work Sans';
@@ -114,14 +116,30 @@ article{
         }
 
     }
-    .container{
-        display: flex;
+    
+    .artists-grid {
+        color: white;
+        display: grid; 
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 1rem;
+        padding: 1rem;
+    
+        .artist-card {
+            width: 100%; 
+            text-align: center;
+        }
+    
+        img {
+            width: 100%; 
+            height: auto;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 0.5rem;
+        }
     }
-    .results{
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        background-color: rgb(255, 255, 255);
-        padding:2rem;
-    }
+}
+
+
+.pagination-controls{
+    background-color: white;
 }
