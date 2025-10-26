@@ -14,7 +14,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!--Favicon-->
-
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon_io//favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon_io//favicon-16x16.png">
+    <link rel="manifest" href="/static/favicon_io//site.webmanifest">
+    
     <!--Toastfy-->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -43,8 +47,7 @@
     <header class="header-container" id="header">
         <nav class="nav-container">
             <a class="logo" style="text-decoration: none; cursor: pointer; color: inherit;" href="/">
-                <i class="bi bi-music-note-beamed"></i>
-                <span>LOGO</span>
+                <img src="/static/imgs/logo.png" alt="SpotListen" width="120px">
             </a>
         </nav>
     </header>
@@ -164,7 +167,7 @@
             formData.append('confirm-password', confirmPassword);
 
             try {
-                const response = await fetch('http://localhost:8000/register', {
+                const response = await fetch('http://localhost:8131/register', {
                     method: 'POST',
                     body: formData
                 });

@@ -1,3 +1,5 @@
-Backend/vendor/
 Backend/.env
 .vscode/
+
+.gitattributes
+Attention.md

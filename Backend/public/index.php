@@ -1,7 +1,7 @@
 <?php
 session_start();
-define('ROOT_PATH', __DIR__ . '/../');
 
+define('ROOT_PATH', __DIR__ . '/../');
 
 spl_autoload_register(function ($class) { 
     $file_path = str_replace('\\', '/', $class) . '.php'; 
@@ -33,13 +33,13 @@ $request_method = $_SERVER['REQUEST_METHOD'];
 $routes = require ROOT_PATH . 'routes.php';
 
 
-function getRequestData(string $method): array {
+function requestType(string $method) {
     switch ($method) {
         case 'GET':
             return $_GET;
 
         case 'POST':
-            return $_POST ?: json_decode(file_get_contents('php://input'), true) ?? [];
+            return $_POST;
 
         default:
             return [];
@@ -57,7 +57,7 @@ try {
         [$controllerClass, $method] = $routes[$request_method][$request_uri];
         $controller = new $controllerClass();
 
-        $data = array_map('castType', getRequestData($request_method));
+        $data = array_map('castType', requestType($request_method));
         $responseData = $controller->$method(...array_values($data));
 
         echo json_encode($responseData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);

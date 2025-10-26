@@ -2,7 +2,7 @@
     font-family: 'Greek';
     src: url('../fonts/dalek_pinpoint/DalekPinpointBold.ttf') format('truetype');
 }
-  @font-face {
+@font-face {
     font-family: 'Adonis';
     src: url('../fonts/adonais/Adonais.ttf') format('truetype');
 }
@@ -33,12 +33,12 @@ main::-webkit-scrollbar-thumb {
 }
 
 .first-container {
-    min-height: 60dvh;
+    min-height: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1rem 4rem;
+    padding: 4rem 0;
     text-align: center;
     border-radius: var(--radius);
 
@@ -49,7 +49,7 @@ main::-webkit-scrollbar-thumb {
     background-position: center;
     background-size: cover;
 
-    border-bottom:2px solid rgb(64, 64, 64);
+    box-shadow: inset 0px -20px 30px black;
 
     .first-content {
         max-width: 50dvw;
@@ -68,25 +68,16 @@ main::-webkit-scrollbar-thumb {
         color: transparent;
         text-shadow: 0 4px 12px rgba(255, 255, 255, 0.144);
     }
-    
-    .intro-subtitle {
-        font-size: clamp(0.6rem, 1.1vw, 4rem);
-        color: var(--white);
-        margin-bottom: 3rem;
-        font-weight: 500;
-        text-shadow: 0px 2px 4px black;
-    }
-
 }
 
 .second-container{
-
     .second-content{
         display: flex;
         background: black;
         height: fit-content;    
         gap: 1rem;
         color: rgb(255, 255, 255);
+        align-items: center;
 
         .image3d{
             position: relative;
@@ -94,10 +85,10 @@ main::-webkit-scrollbar-thumb {
             width:  clamp(280px, 50vw, 30%);
             img{
                 position: absolute;
-                bottom: -15%;
-                left: 30%;
-                height: clamp(250px, 17vw, 800px);
-                transform: scale(2.8);
+                bottom: -25%;
+                left: 12%;
+                height: clamp(270px, 24vw, 130%);
+                transform: scale(2.3);
                 z-index: 4;
             }
         }
@@ -109,17 +100,13 @@ main::-webkit-scrollbar-thumb {
             margin-right: 3%;
             margin-left: 5%;
 
-            h1{
-                font-family: "Work Sans", sans-serif;
-                font-size: clamp(2rem, 2vw, 9rem);
-                margin: 1.5rem 0;
-                align-self: center;
-            }
             p{
-                font-size: clamp(0.7rem, 1vw, 8rem);
+                font-size: clamp(1.2rem, 1vw, 8rem);
                 text-align: justify;
-                margin-bottom: 3rem;
-                font-weight: 600;
+                line-height: 1.8;
+                padding-top: 2rem;
+                margin-bottom: 2rem;
+                letter-spacing: 0.5px;
             }
             a{
                 font-size: clamp(0.8rem, 1vw, 7.2rem);
@@ -129,8 +116,6 @@ main::-webkit-scrollbar-thumb {
                 padding: 0.5rem 1rem;
                 font-weight: 600;
                 border-radius: clamp(0.2rem, 0.5vw, 1rem);
-                margin-bottom: 2rem;
-                align-self: end;
             }
         }
     }
@@ -214,105 +199,106 @@ main::-webkit-scrollbar-thumb {
         }
     }
 }
-
-.fourth-container{
-    background: linear-gradient(to bottom, #000000 0%, #c0c0c0 100%);
-    position: relative;
-    z-index: 5;
-}
 .topweekly{
     font-family: "Work Sans", sans-serif;
     text-align: center;
-    color: white;
-    justify-self: center;
     font-size: clamp(2.5rem, 1vw, 6rem);
-    padding-top: 1rem 0;
     color: white;
+    margin-bottom: 1rem;
+    padding-top: 2rem;
 }
-.goatgrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr; 
-    gap: 1rem; 
-    padding: 1rem 5rem;
-    grid-template-areas:
-        "header header header header"
-        "item-1 item-2 item-3 item-4"
-        "item-5 item-6 item-7 item-8"
-        "item-9 item-10 item-11 item-12";
-}
-
-.item-1 { grid-area: item-1;}
-.item-2 { grid-area: item-2;}
-.item-3 { grid-area: item-3;}
-.item-4 { grid-area: item-4;}
-.item-5 { grid-area: item-5;}
-.item-6 { grid-area: item-6;}
-.item-7 { grid-area: item-7;}
-.item-8 { grid-area: item-8;}
-.item-9 { grid-area: item-9;}
-.item-10 { grid-area: item-10;}
-.item-11 { grid-area: item-11;}
-.item-12 { grid-area: item-12;}
-
-
-.content-item {
-    color: #ccc;
-    padding: 1rem;
-    height: 8vw;
-    border-radius: 0.5rem;
-    font-family: "Open Sans", sans-serif;
-    font-size: large;
-    
+/* .fourth-container{
+    background: linear-gradient(to bottom, #000000 0%, #c0c0c0 100%);
     position: relative;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
+    z-index: 5;
+    .goatgrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr; 
+        gap: 1rem; 
+        padding: 1rem 5rem;
+        grid-template-areas:
+            "header header header header"
+            "item-1 item-2 item-3 item-4"
+            "item-5 item-6 item-7 item-8"
+            "item-9 item-10 item-11 item-12";
+    }
 
-.content-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
+    .item-1 { grid-area: item-1;}
+    .item-2 { grid-area: item-2;}
+    .item-3 { grid-area: item-3;}
+    .item-4 { grid-area: item-4;}
+    .item-5 { grid-area: item-5;}
+    .item-6 { grid-area: item-6;}
+    .item-7 { grid-area: item-7;}
+    .item-8 { grid-area: item-8;}
+    .item-9 { grid-area: item-9;}
+    .item-10 { grid-area: item-10;}
+    .item-11 { grid-area: item-11;}
+    .item-12 { grid-area: item-12;}
 
-    background-image: var(--bg-url); 
-    
-    background-size: cover;
-    background-position: center;
 
-    filter: blur(0px);
-    transition: filter 0.3s ease-in-out;
-}
+    .content-item {
+        color: #ccc;
+        padding: 1rem;
+        height: 8vw;
+        border-radius: 0.5rem;
+        font-family: "Open Sans", sans-serif;
+        font-size: large;
+        
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
 
-.content-item h2 {
-    position: relative;
-    z-index: 2;
-    color: white;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-    text-align: center;
-}
+    .content-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
 
-.content-item:hover::before {
-    filter: blur(8px) brightness(0.7);
-}
+        background-image: var(--bg-url); 
+        
+        background-size: cover;
+        background-position: center;
 
-.content-item:hover h2 {
-    opacity: 1;
-}
+        filter: blur(0px);
+        transition: filter 0.3s ease-in-out;
+    }
+
+    .content-item h2 {
+        position: relative;
+        z-index: 2;
+        color: white;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        text-align: center;
+    }
+
+    .content-item:hover::before {
+        filter: blur(8px) brightness(0.7);
+    }
+
+    .content-item:hover h2 {
+        opacity: 1;
+    }
+} */
 
 .fifth-container{
+    background: linear-gradient(to bottom, #000000 0%, #c0c0c0 100%);
+    position: relative;
+    z-index: 10;
     .content{   
         display: flex;
-        background: linear-gradient(to bottom, #c0c0c0 10%, white 70%);
+        /* background: linear-gradient(to bottom, #c0c0c0 10%, white 70%); */
         height: fit-content;    
         gap: 1rem;
-        color: rgb(0, 0, 0);
+        color: #ffffff;
         padding-top: 2%;
         justify-content: space-between;
 

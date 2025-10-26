@@ -43,6 +43,77 @@ class SpotifyService extends ApiConfig {
         ];
     }
 
+    public function spotifyLogin() {
+        $client_id = $_ENV['SPOTIFY_CLIENT_ID'];
+        $redirect_uri = $_ENV['SPOTIFY_REDIRECT_URI'];
+        
+        $scopes = 'user-read-private playlist-read-private user-read-recently-played user-top-read 
+            playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-library-modify user-library-read 
+            user-read-playback-state user-modify-playback-state user-read-currently-playing';
+        
+        $state = bin2hex(random_bytes(16));
+
+        $_SESSION['spotify_auth_state'] = $state;
+
+        $query = http_build_query([
+            'response_type' => 'code',
+            'client_id' => $client_id,
+            'scope' => $scopes,
+            'redirect_uri' => $redirect_uri,
+            'state' => $state,
+        ]);
+
+        $url = 'https://accounts.spotify.com/authorize?' . $query;
+
+        header("Location: $auth_url");
+        exit;
+    }
+
+    public function spotifyCallback() {
+        $code = $_GET['code'] ?? null;
+        $state = $_GET['state'] ?? null;
+
+        if ($state === null || $state !== ($_SESSION['spotify_auth_state'] ?? null)) {
+            throw new ApiException("State mismatch: Possível ataque CSRF.", 403);
+        }
+        unset($_SESSION['spotify_auth_state']);
+
+        if (!$code) {
+            throw new ApiException("Autorização negada pelo usuário.", 401);
+        }
+
+        $client_id = $_ENV['SPOTIFY_CLIENT_ID'];
+        $client_secret = $_ENV['SPOTIFY_CLIENT_SECRET'];
+        $redirect_uri = $_ENV['SPOTIFY_REDIRECT_URI'];
+
+        $url = 'https://accounts.spotify.com/api/token';
+        $auth = base64_encode("$client_id:$client_secret");
+
+        $headers = [
+            "Authorization: Basic $auth",
+            "Content-Type: application/x-www-form-urlencoded",
+        ];
+        $body = http_build_query([
+            'grant_type' => 'authorization_code',
+            'code' => $code,
+            'redirect_uri' => $redirect_uri,
+        ]);
+
+        $result = $this->_executarRequest($url, $headers, $body, 'POST');
+
+        if (isset($result['access_token'])) {
+            $_SESSION['user_spotify_token'] = $result['access_token'];
+            $_SESSION['user_refresh_token'] = $result['refresh_token'] ?? null;
+
+            header('Location: /');
+            exit;
+        }
+
+        // Lidar com erro de token
+        $errorMessage = $result['error_description'] ?? 'TOKEN_USER_ERROR';
+        throw new ApiException("Erro ao obter token do usuário: $errorMessage", 500);
+    }
+
     // public function searchById(string $artistId) {
     //     $token = $this-> getAccessToken();
     //     $accessToken = $token['access_token'];
@@ -74,16 +145,16 @@ class SpotifyService extends ApiConfig {
 
         // Limpa gêneros indesejados
         $exclusion_rules = [
-            'Pop'           => ['rock', 'hip hop', 'eletronic', 'reggae', 'mpb', 'classic', 'indie'],
-            'Rock'          => ['pop', 'hip hop', 'eletronic', 'reggae', 'mpb', 'classic', 'indie'],
-            'Hip Hop'       => ['pop', 'rock', 'electronic', 'reggae', 'mpb', 'classic', 'indie'],
-            'Electronic'    => ['pop', 'rock', 'hip hop', 'reggae', 'mpb', 'classic', 'indie'],
-            'Reggae'        => ['pop', 'rock', 'hip hop', 'electronic', 'mpb', 'classic', 'indie'],
-            'Classic'       => ['pop', 'rock', 'hip hop', 'eletronic', 'reggae', 'mpb', 'indie'],
-            'Indie'         => ['pop', 'rock', 'hip hop', 'eletronic', 'reggae', 'mpb'],
+            'Pop'           => ['rock', 'hip hop', 'eletronic', 'reggae', 'brazil mpb', 'classic', 'indie',],
+            'Rock'          => ['pop', 'hip hop', 'eletronic', 'reggae', 'brazil mpb', 'classic', 'indie',],
+            'Hip Hop'       => ['pop', 'rock', 'electronic', 'reggae', 'brazil mpb', 'classic', 'indie'],
+            'Electronic'    => ['pop', 'rock', 'hip hop', 'reggae', 'brazil mpb', 'classic', 'indie'],
+            'Reggae'        => ['pop', 'rock', 'hip hop', 'electronic', 'brazil mpb', 'classic', 'indie'],
+            'Classic'       => ['pop', 'rock', 'hip hop', 'eletronic', 'brazil mpb', 'mpb', 'indie'],
+            'Indie'         => ['pop', 'rock', 'hip hop', 'eletronic', 'brazil mpb', 'mpb'],
         ];
 
-        $max_fetch = 300; // Limite de quantos artistas buscar no total
+        $max_fetch = 1000; // Limite de quantos artistas buscar no total
         $spotify_limit = 50; // O máximo que o Spotify retorna por requisição
         $url = "https://api.spotify.com/v1/search?q=genre:{$genre}&type=artist&limit={$spotify_limit}&offset=0";
 
@@ -173,5 +244,42 @@ class SpotifyService extends ApiConfig {
             ];
         }
         return $this->_executarMultiRequest($requests);
+    }
+
+    public function searchArtistByNameSingle(string $artistName): array {
+        $token = $this->getAccessToken()['access_token'];
+        $headers = ["Authorization: Bearer $token"];
+        
+        $encodedArtistName = urlencode($artistName);
+        
+        $url = "https://api.spotify.com/v1/search?q={$encodedArtistName}&type=artist&limit=10";
+
+        $request = [
+            'url'     => $url,
+            'headers' => $headers,
+            'body'    => '',
+            'method'  => 'GET'
+        ];
+
+        $response = $this->_executarMultiRequest([$request]); 
+        
+        $rawArtistsList = $response[0]['artists']['items'] ?? [];
+        
+        $filteredList = [];
+        foreach ($rawArtistsList as $artist) {
+            
+            $filteredList[] = [
+                'id'              => $artist['id'],
+                'name'            => $artist['name'],
+                'popularity'      => $artist['popularity'] ?? 0,
+                'genres'          => $artist['genres'],
+                'href'            => $artist['href'],
+                'followers_total' => $artist['followers']['total'] ?? 0,
+                'profile_url'     => $artist['external_urls']['spotify'] ?? '#',
+                'image_url'       => isset($artist['images'][0]['url']) ? $artist['images'][0]['url'] : null,
+            ];
+        }
+
+        return ['items' => $filteredList];
     }
 }

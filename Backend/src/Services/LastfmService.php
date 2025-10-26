@@ -3,8 +3,6 @@ namespace src\Services;
 
 use src\Utils\ApiConfig;
 
-use GuzzleHttp\Client;
-
 class LastfmService extends ApiConfig {
     public function getTopArtists(string $apikey): array {
         $url = "http://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&api_key={$apikey}&format=json&limit=15";
@@ -52,10 +50,6 @@ class LastfmService extends ApiConfig {
         $url = "http://ws.audioscrobbler.com/2.0/?method=artist.getInfo&artist={$artistName}&api_key={$apikey}&format=json&lang=pt";
         
         $data = $this->_executarRequest($url);
-
-        if (!isset($data['artist'])) {
-            return ['error' => 'Artista não encontrado ou API falhou.'];
-        }
 
         $artist = $data['artist'];
 

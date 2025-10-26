@@ -1,7 +1,7 @@
 <?php
-namespace web\Services;
+namespace src\Services;
 
-use web\Utils\ApiConfig;
+use src\Utils\ApiConfig;
 
 class MbrainzService extends ApiConfig {  
     // public function Mbrainzinfo(string $appName, string $appVersion, string $appContact, string $artistName): array {

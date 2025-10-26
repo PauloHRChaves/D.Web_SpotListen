@@ -8,7 +8,7 @@
 }
 .showcarousel{
   z-index: 4;
-  height: 500px;
+  height: 510px;
   position: relative;
   transition: all 1s ease-in-out;
   background-color: black;

@@ -11,7 +11,7 @@
             <li><a href="/templates/profile.php" id="auth-link" class="nav-link">Perfil</a></li>
         </ul>
 
-        <a class="nav-actions logged-out-only" href="/">
+        <a class="nav-actions logged-out-only" href="/templates/auth/login.html">
             <button class="btn-primary">
                 <i class="bi bi-person-fill"></i>
                 <span>Sign in</span>

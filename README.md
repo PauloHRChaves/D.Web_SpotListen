@@ -25,10 +25,15 @@ Temática: música.
 <br>
 <hr>
 
+# SITES DE APOIO:
+- <a href="https://app.diagrams.net/?src=about#G11QIKXCWC59igkm2y7gtMlJptwaTAB7co#%7B%22pageId%22%3A%22N5WJ_hQnht7kS6Dh2qQb%22%7D">DB Diagram</a>
+- <a href="https://icons.getbootstrap.com/">Bootstrap Icons</a>
+
 # Backend:
 > Instalar PHP
 <br>
 
+**CASO NECESSÁRIO**
 Modificar arquivo **php.ini**
 - Buscar a pasta onde esta instalado o php: ex. **C:\php\php.ini** 
 - Abrir / Editar arquivo como bloco de notas
