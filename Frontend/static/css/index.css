@@ -2,7 +2,7 @@
     font-family: 'Greek';
     src: url('../fonts/dalek_pinpoint/DalekPinpointBold.ttf') format('truetype');
 }
-  @font-face {
+@font-face {
     font-family: 'Adonis';
     src: url('../fonts/adonais/Adonais.ttf') format('truetype');
 }
@@ -33,12 +33,12 @@ main::-webkit-scrollbar-thumb {
 }
 
 .first-container {
-    min-height: 60dvh;
+    min-height: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1rem 4rem;
+    padding: 4rem 0;
     text-align: center;
     border-radius: var(--radius);
 
@@ -48,6 +48,8 @@ main::-webkit-scrollbar-thumb {
     background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), url("../imgs/background_ex.png");
     background-position: center;
     background-size: cover;
+
+    box-shadow: inset 0px -20px 30px black;
 
     .first-content {
         max-width: 50dvw;
@@ -66,25 +68,16 @@ main::-webkit-scrollbar-thumb {
         color: transparent;
         text-shadow: 0 4px 12px rgba(255, 255, 255, 0.144);
     }
-    
-    .intro-subtitle {
-        font-size: clamp(0.6rem, 1.1vw, 4rem);
-        color: var(--white);
-        margin-bottom: 3rem;
-        font-weight: 500;
-        text-shadow: 0px 2px 4px black;
-    }
-
 }
 
 .second-container{
-
     .second-content{
         display: flex;
         background: black;
         height: fit-content;    
         gap: 1rem;
         color: rgb(255, 255, 255);
+        align-items: center;
 
         .image3d{
             position: relative;
@@ -92,10 +85,10 @@ main::-webkit-scrollbar-thumb {
             width:  clamp(280px, 50vw, 30%);
             img{
                 position: absolute;
-                bottom: -15%;
-                left: 30%;
-                height: clamp(250px, 17vw, 800px);
-                transform: scale(2.8);
+                bottom: -25%;
+                left: 12%;
+                height: clamp(270px, 24vw, 130%);
+                transform: scale(2.3);
                 z-index: 4;
             }
         }
@@ -107,17 +100,13 @@ main::-webkit-scrollbar-thumb {
             margin-right: 3%;
             margin-left: 5%;
 
-            h1{
-                font-family: "Work Sans", sans-serif;
-                font-size: clamp(2rem, 2vw, 9rem);
-                margin: 1.5rem 0;
-                align-self: center;
-            }
             p{
-                font-size: clamp(0.7rem, 1vw, 8rem);
+                font-size: clamp(1.2rem, 1vw, 8rem);
                 text-align: justify;
-                margin-bottom: 3rem;
-                font-weight: 600;
+                line-height: 1.8;
+                padding-top: 2rem;
+                margin-bottom: 2rem;
+                letter-spacing: 0.5px;
             }
             a{
                 font-size: clamp(0.8rem, 1vw, 7.2rem);
@@ -127,8 +116,6 @@ main::-webkit-scrollbar-thumb {
                 padding: 0.5rem 1rem;
                 font-weight: 600;
                 border-radius: clamp(0.2rem, 0.5vw, 1rem);
-                margin-bottom: 2rem;
-                align-self: end;
             }
         }
     }
@@ -215,12 +202,10 @@ main::-webkit-scrollbar-thumb {
 .topweekly{
     font-family: "Work Sans", sans-serif;
     text-align: center;
-    color: white;
-    justify-self: center;
     font-size: clamp(2.5rem, 1vw, 6rem);
-    padding-top: 1rem 0;
     color: white;
     margin-bottom: 1rem;
+    padding-top: 2rem;
 }
 /* .fourth-container{
     background: linear-gradient(to bottom, #000000 0%, #c0c0c0 100%);

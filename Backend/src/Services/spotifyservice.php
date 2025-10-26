@@ -145,16 +145,16 @@ class SpotifyService extends ApiConfig {
 
         // Limpa gêneros indesejados
         $exclusion_rules = [
-            'Pop'           => ['rock', 'hip hop', 'eletronic', 'reggae', 'mpb', 'classic', 'indie'],
-            'Rock'          => ['pop', 'hip hop', 'eletronic', 'reggae', 'mpb', 'classic', 'indie'],
-            'Hip Hop'       => ['pop', 'rock', 'electronic', 'reggae', 'mpb', 'classic', 'indie'],
-            'Electronic'    => ['pop', 'rock', 'hip hop', 'reggae', 'mpb', 'classic', 'indie'],
-            'Reggae'        => ['pop', 'rock', 'hip hop', 'electronic', 'mpb', 'classic', 'indie'],
-            'Classic'       => ['pop', 'rock', 'hip hop', 'eletronic', 'reggae', 'mpb', 'indie'],
-            'Indie'         => ['pop', 'rock', 'hip hop', 'eletronic', 'reggae', 'mpb'],
+            'Pop'           => ['rock', 'hip hop', 'eletronic', 'reggae', 'brazil mpb', 'classic', 'indie',],
+            'Rock'          => ['pop', 'hip hop', 'eletronic', 'reggae', 'brazil mpb', 'classic', 'indie',],
+            'Hip Hop'       => ['pop', 'rock', 'electronic', 'reggae', 'brazil mpb', 'classic', 'indie'],
+            'Electronic'    => ['pop', 'rock', 'hip hop', 'reggae', 'brazil mpb', 'classic', 'indie'],
+            'Reggae'        => ['pop', 'rock', 'hip hop', 'electronic', 'brazil mpb', 'classic', 'indie'],
+            'Classic'       => ['pop', 'rock', 'hip hop', 'eletronic', 'brazil mpb', 'mpb', 'indie'],
+            'Indie'         => ['pop', 'rock', 'hip hop', 'eletronic', 'brazil mpb', 'mpb'],
         ];
 
-        $max_fetch = 300; // Limite de quantos artistas buscar no total
+        $max_fetch = 1000; // Limite de quantos artistas buscar no total
         $spotify_limit = 50; // O máximo que o Spotify retorna por requisição
         $url = "https://api.spotify.com/v1/search?q=genre:{$genre}&type=artist&limit={$spotify_limit}&offset=0";
 
@@ -244,5 +244,42 @@ class SpotifyService extends ApiConfig {
             ];
         }
         return $this->_executarMultiRequest($requests);
+    }
+
+    public function searchArtistByNameSingle(string $artistName): array {
+        $token = $this->getAccessToken()['access_token'];
+        $headers = ["Authorization: Bearer $token"];
+        
+        $encodedArtistName = urlencode($artistName);
+        
+        $url = "https://api.spotify.com/v1/search?q={$encodedArtistName}&type=artist&limit=10";
+
+        $request = [
+            'url'     => $url,
+            'headers' => $headers,
+            'body'    => '',
+            'method'  => 'GET'
+        ];
+
+        $response = $this->_executarMultiRequest([$request]); 
+        
+        $rawArtistsList = $response[0]['artists']['items'] ?? [];
+        
+        $filteredList = [];
+        foreach ($rawArtistsList as $artist) {
+            
+            $filteredList[] = [
+                'id'              => $artist['id'],
+                'name'            => $artist['name'],
+                'popularity'      => $artist['popularity'] ?? 0,
+                'genres'          => $artist['genres'],
+                'href'            => $artist['href'],
+                'followers_total' => $artist['followers']['total'] ?? 0,
+                'profile_url'     => $artist['external_urls']['spotify'] ?? '#',
+                'image_url'       => isset($artist['images'][0]['url']) ? $artist['images'][0]['url'] : null,
+            ];
+        }
+
+        return ['items' => $filteredList];
     }
 }

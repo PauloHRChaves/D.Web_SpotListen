@@ -9,10 +9,8 @@ class SpotifyController {
         $this->sptService= new SpotifyService();
     }
 
-    public function searchArtistById(): array {
-        $artistId = '2UMj7NCbuqy1yUZmiSYGjJ';
-
-        $results = $this->sptService->searchById($artistId);
+    public function searchArtistByName(string $artistName): array {
+        $results = $this->sptService->searchArtistByNameSingle($artistName);
         
         return $results;
     }

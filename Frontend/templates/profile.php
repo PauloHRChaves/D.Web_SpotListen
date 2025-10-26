@@ -14,6 +14,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!--Favicon-->
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon_io//favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon_io//favicon-16x16.png">
+    <link rel="manifest" href="/static/favicon_io//site.webmanifest">
     
     <!--Inserir e estilizar cabeçalho na página-->
     <script src="../static/js/header.js"></script>
@@ -37,6 +41,7 @@
             overflow-y: auto;
             padding: 0 0.5rem;
         }
+        
         /* Scrollbar*/
         main::-webkit-scrollbar {
             width: clamp(0.1rem, 0.7vw, 0.5rem);
