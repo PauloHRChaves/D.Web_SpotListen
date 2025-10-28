@@ -8,47 +8,52 @@ function setupLogout() {
             try {
                 const response = await fetch('http://localhost:8131/logout', { 
                     method: 'POST',
-                    credentials: 'include'
                 });
 
                 if (response.ok) {
-                    window.location.href = '/templates/index.php';
+                    localStorage.removeItem('manualSessionId');
+                    window.location.href = '/';
                 } else {
                     console.error('Falha no logout do servidor:', response.status);
-                    window.location.href = '/templates/index.php';
+                    window.location.href = '/';
                 }
             } catch (error) {
                 console.error('Erro de rede ao fazer logout:', error);
-                window.location.href = '/templates/index.php';
+                window.location.href = '/';
             }
         });
     }
 }
 
 async function checkLoginStatus() {
+    const manualSessionId = localStorage.getItem('manualSessionId');
+    if (!manualSessionId) {
+        document.body.classList.add('is-logged-out');
+        return false;
+    }
+    
+    const url = `http://localhost:8131/logged-in?PHPSESSID=${manualSessionId}`;
     try {
-        const response = await fetch('http://localhost:8131/logged-in', {
+        const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
-            credentials: 'include'
         });
 
         if (response.ok) {
-            // Logado
             document.body.classList.add('is-logged-in');
             document.body.classList.remove('is-logged-out');
             return true;
-        } 
-        
-        // Não Logado
-        document.body.classList.add('is-logged-out');
-        document.body.classList.remove('is-logged-in');
-        return false;
+        } else {
+            localStorage.removeItem('manualSessionId');
+            document.body.classList.add('is-logged-out');
+            document.body.classList.remove('is-logged-in');
+            return false;
+        }
         
     } catch (error) {
-        console.error('Erro ao verificar status de login:', error);
+        localStorage.removeItem('manualSessionId');
         document.body.classList.add('is-logged-out');
         document.body.classList.remove('is-logged-in');
         return false;
@@ -59,6 +64,7 @@ async function checkLoginStatus() {
 function activateNavLink() {
     const links = document.querySelectorAll(".nav-link");
     const currentPath = window.location.pathname; 
+    console.log('Path atual do navegador:', currentPath);
 
     links.forEach(link => {
         link.classList.remove("active");

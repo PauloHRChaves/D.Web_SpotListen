@@ -23,21 +23,19 @@ class AuthController {
         $result = $this->authService->loginUser($email, $password); 
 
         $_SESSION['user_id'] = $result['id'];
+        $sessionId = session_id();
 
         http_response_code(200);
         return [
             "status" => "success",
             "message" => "Login realizado com sucesso!",
-            "user" => ["username" => $result['username']]
+            "user" => ["username" => $result['username']],
+            "sessionId" => $sessionId
         ];
     }
     
     public function logged(): array {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
         if (isset($_SESSION['user_id'])) {
-            error_log("DEBUG: Login BEM-SUCEDIDO. User ID: " . $_SESSION['user_id']);
             try {
                 $userData = $this->authService->getUserDataById($_SESSION['user_id']);
                 
@@ -56,7 +54,6 @@ class AuthController {
             }
 
         } else {
-            error_log("DEBUG: Login FALHOU. Sessão ID não encontrada.");
             throw new ApiException("Não autorizado.", 401); 
         }
     }

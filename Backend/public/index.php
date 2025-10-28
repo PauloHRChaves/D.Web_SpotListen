@@ -1,12 +1,7 @@
 <?php
-session_set_cookie_params([
-    'lifetime' => 0,
-    'path' => '/',
-    'domain' => '',
-    'secure' => false,
-    'httponly' => true,
-    'samesite' => 'Lax'
-]);
+ini_set('session.use_cookies', 0); 
+ini_set('session.use_only_cookies', 0);
+
 session_start();
 
 define('ROOT_PATH', __DIR__ . '/../');
