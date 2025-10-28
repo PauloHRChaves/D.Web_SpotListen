@@ -76,7 +76,6 @@
                     <div class="message">
                         <div id="login-message-container"></div>
                     </div>
-
                     <button class="sign">Entrar</button>
                 </form>
 
@@ -123,52 +122,71 @@
         
         const logmessageContainer = document.getElementById('login-message-container');
         function showMessagelog(message, type) {
-            logmessageContainer.textContent = message;
-            logmessageContainer.className = `message-box ${type}`;
-            logmessageContainer.style.display = 'block';
+            if (logmessageContainer) {
+                logmessageContainer.textContent = message;
+                logmessageContainer.className = `message-box ${type}`;
+                logmessageContainer.style.display = 'block';
+            } else {
+                console.error('Elemento #login-message-container não encontrado.');
+            }
         }
 
         const loginform = document.querySelector('#login-section .form');
-        loginform.addEventListener('submit', async (e) => {e.preventDefault();
-            logmessageContainer.style.display = 'none';
 
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
+        if (loginform) {
+            loginform.addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-            /* Validação
-            if (!email || !password) {
-                showMessage(logmessageContainer, 'Por favor, preencha todos os campos.', 'error');
-                return;
-            }*/
-            
-            const formData = new URLSearchParams();
-            formData.append('email', email);
-            formData.append('password', password);
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value.trim();
 
-            try {
-                const response = await fetch('http://localhost:8000/login', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    const username = result.user.username;
-                    
-                    localStorage.setItem('authToken', result.token); 
-
-                    const successMessage = `Login bem-sucedido, Olá ${username}`;
-                    showToast(successMessage);
-                    setTimeout(() => { window.location.href = '../../index.php';}, 1500);
-                } else{
-                    const errorData = await response.json();
-                    showMessagelog(errorData.message, 'error');
+                if (!email || !password) {
+                    showMessagelog('Por favor, preencha todos os campos.', 'error');
+                    return;
                 }
-            } catch (error) {
-                console.error('Erro na requisição:', error);
-                showMessagelog(logmessageContainer, 'Erro ao tentar conectar com o servidor. Tente novamente.', 'error');
-            }
-        });
+                
+                const data = {
+                    email: email,
+                    password: password
+                };
+
+                try {
+
+                    const response = await fetch('http://localhost:8131/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json' 
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        
+                        const username = result.user.username;
+                        const successMessage = `Login bem-sucedido, Olá ${username}`;
+                        showToast(successMessage);
+                        
+                        setTimeout(() => { window.location.href = '../../index.php';}, 1500);
+                    } else {
+                        let errorMessage = 'Falha no login.';
+                        try {
+                            const errorData = await response.json();
+                            errorMessage = errorData.message || errorMessage;
+                        } catch (e) {
+                            errorMessage = `Erro do Servidor: Status ${response.status}`;
+                        }
+                        showMessagelog(errorMessage, 'error');
+                    }
+                } catch (error) {
+                    // Este bloco é para falhas de rede/servidor (como o que você viu antes de remover o erro do botão)
+                    console.error('Erro na requisição:', error);
+                    showMessagelog('Erro de rede. Verifique a conexão com o servidor.', 'error');
+                }
+            });
+        } else {
+            console.error('Elemento #login-section .form não encontrado. Listener não anexado.');
+        }
     </script>
 
 </body>

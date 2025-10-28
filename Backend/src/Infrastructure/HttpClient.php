@@ -1,10 +1,10 @@
 <?php
-namespace src\Utils;
+namespace src\Infrastructure;
 
 use src\Exceptions\ApiException;
 use Exception;
 
-class ApiConfig {
+class HttpClient {
     protected int $timeout;
 
     public function __construct(int $timeout = 10) {

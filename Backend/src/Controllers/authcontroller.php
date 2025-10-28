@@ -1,33 +1,81 @@
 <?php
 namespace src\Controllers;
 
-use src\Models\User;
 use src\Services\SpotifyService;
+use src\Services\AuthService;
 
-class AuthController{
+use src\Exceptions\ApiException;
+
+class AuthController {
+
     public function __construct() {
-        $this->userModel = new User();
+        $this->authService = new AuthService();
     }
 
-    public function register() {
-        $email = trim($_POST['register-Email']);
-        $username = trim($_POST['username']);
-        $password = trim($_POST['register-password']);
+    public function register(string $registerEmail, string $username, string $registerPassword): array {
+        $this->authService->registerUser($registerEmail, $username, $registerPassword);
+        
+        http_response_code(201);
+        return ['status' => 'success', 'message' => 'Usuário registrado com sucesso.'];
+    }
 
-        $createResult = $this->userModel->createuser($email, $username, $password);
+    public function login(string $email, string $password): array {
+        $result = $this->authService->loginUser($email, $password); 
 
-        if ($createResult === true) {
-            http_response_code(201);
-            echo json_encode(["message" => "Usuário cadastrado com sucesso!"], JSON_UNESCAPED_UNICODE);
-        } 
-        elseif ($createResult === "email_or_username_exists") {
-            http_response_code(409);
-            echo json_encode(['message' => 'Este E-mail ou Nome já está em uso.'], JSON_UNESCAPED_UNICODE);
-        } 
-        else {
-            http_response_code(500);
-            echo json_encode(['message' => 'Erro interno do servidor. Por favor, tente novamente mais tarde.'], JSON_UNESCAPED_UNICODE);
+        $_SESSION['user_id'] = $result['id'];
+
+        http_response_code(200);
+        return [
+            "status" => "success",
+            "message" => "Login realizado com sucesso!",
+            "user" => ["username" => $result['username']]
+        ];
+    }
+    
+    public function logged(): array {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
+        if (isset($_SESSION['user_id'])) {
+            error_log("DEBUG: Login BEM-SUCEDIDO. User ID: " . $_SESSION['user_id']);
+            try {
+                $userData = $this->authService->getUserDataById($_SESSION['user_id']);
+                
+                http_response_code(200);
+                return [
+                    'isLoggedIn' => true,
+                    'user' => [
+                        'id' => $_SESSION['user_id'],
+                        'username' => $userData['username'],
+                    ]
+                ];
+
+            } catch (ApiException $e) {
+                unset($_SESSION['user_id']);
+                throw new ApiException("Sessão inválida, por favor, faça login novamente.", 401);
+            }
+
+        } else {
+            error_log("DEBUG: Login FALHOU. Sessão ID não encontrada.");
+            throw new ApiException("Não autorizado.", 401); 
+        }
+    }
+
+    public function logout(): array {
+        $_SESSION = array();
+
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+
+        session_destroy();
+
+        http_response_code(200);
+        return ["message" => "Logout realizado com sucesso."];
     }
 
     public function spotifyLoginRedirect() {

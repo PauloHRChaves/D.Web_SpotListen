@@ -115,7 +115,6 @@
         }
     </script>
 
-    <!--Validação de Cadastro-->
     <script>
         function showToast(mensage) {
             Toastify({
@@ -126,7 +125,7 @@
                 backgroundColor: "#013504",
             }).showToast();
         }
-        //Função para mostrar mensagens no Cadastro
+        
         const regmessageContainer = document.getElementById('register-message-container');
         function showMessagereg(message, type) {
             regmessageContainer.textContent = message;
@@ -135,56 +134,64 @@
         }
 
         const registerForm = document.querySelector("#register-section .form");
-        registerForm.addEventListener('submit', async (e) => { e.preventDefault();
-            regmessageContainer.style.display = 'block';
+        registerForm.addEventListener('submit', async (e) => { 
+            e.preventDefault();
 
-            const email = document.getElementById('register-Email').value;
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('register-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
+            const email = document.getElementById('register-Email').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('register-password').value.trim();
+            const confirmPassword = document.getElementById('confirm-password').value.trim();
 
-           /* if(!password || !email || !username || !confirmPassword){
-                showMessagereg('Por favor, preencha todos os campos.','error');
-                return;
-            }
-            if (username.length < 4){
-                showMessagereg('O nome de usuário deve ter no mínimo 4 caracteres.','error');
-                return;
-            }
-            if (password.length < 8){
-                showMessagereg('A senha deve ter no mínimo 8 caracteres.', 'error');
-                return;
-            }
-            if (password !== confirmPassword) {
-                showMessagereg('As senhas não coincidem!', 'error');
-                return;
-            }
-            */
-            const formData = new URLSearchParams();
-            formData.append('register-Email', email);
-            formData.append('username', username);
-            formData.append('register-password', password);
-            formData.append('confirm-password', confirmPassword);
+            // if (!password || !email || !username || !confirmPassword) {
+            //     showMessagereg('Por favor, preencha todos os campos.', 'error');
+            //     return;
+            // }
+            // if (username.length < 4) {
+            //     showMessagereg('O nome de usuário deve ter no mínimo 4 caracteres.', 'error');
+            //     return;
+            // }
+            // if (password.length < 8) {
+            //     showMessagereg('A senha deve ter no mínimo 8 caracteres.', 'error');
+            //     return;
+            // }
+            // if (password !== confirmPassword) {
+            //     showMessagereg('As senhas não coincidem!', 'error');
+            //     return;
+            // }
+            
+            const data = {
+                email: email, 
+                username: username,
+                password: password,
+            };
 
             try {
                 const response = await fetch('http://localhost:8131/register', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify(data) 
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    showMessagereg(errorData.message, 'error');
+                    let errorMessage = 'Erro ao registrar usuário.';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorMessage; 
+                    } catch (e) {
+                        errorMessage = `Erro do Servidor: Status ${response.status}`;
+                    }
+                    showMessagereg(errorMessage, 'error');
                     return;
                 }
 
-                const result = await response.json();
                 showToast('CADASTRO REALIZADO!');
                 setTimeout(() => { window.location.href = 'login.html'; }, 1500);
 
             } catch (error) {
                 console.error('Erro na requisição:', error);
-                showMessagereg('Erro ao tentar conectar com o servidor. Tente novamente.', 'error');
+                showMessagereg('Erro de rede. Verifique a conexão com o servidor.', 'error');
             }
         });
     </script>

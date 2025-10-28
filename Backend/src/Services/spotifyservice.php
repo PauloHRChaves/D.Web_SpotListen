@@ -1,10 +1,10 @@
 <?php
 namespace src\Services;
 
-use src\Utils\ApiConfig;
+use src\Infrastructure\HttpClient;
 use src\Exceptions\ApiException;
 
-class SpotifyService extends ApiConfig {
+class SpotifyService extends HttpClient {
     public function getAccessToken(): array {
         $client_id = $_ENV['SPOTIFY_CLIENT_ID'];
         $client_secret = $_ENV['SPOTIFY_CLIENT_SECRET'];
@@ -113,20 +113,6 @@ class SpotifyService extends ApiConfig {
         $errorMessage = $result['error_description'] ?? 'TOKEN_USER_ERROR';
         throw new ApiException("Erro ao obter token do usuário: $errorMessage", 500);
     }
-
-    // public function searchById(string $artistId) {
-    //     $token = $this-> getAccessToken();
-    //     $accessToken = $token['access_token'];
-
-    //     $safeQuery = urlencode($artistId);
-    //     $url = "https://api.spotify.com/v1/artists/{$safeQuery}";
-        
-    //     $headers = [
-    //         'Authorization' => 'Bearer ' . $accessToken,
-    //     ];
-
-    //     return $this->_executarRequest($url, $headers);
-    // }
 
     private function buildPaginationResponse(array $filteredItems, array $rawPaginationData, int $limit, int $offset): array {
         return [

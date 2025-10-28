@@ -1,9 +1,9 @@
 <?php
 namespace src\Services;
 
-use src\Utils\ApiConfig;
+use src\Infrastructure\HttpClient;
 
-class LastfmService extends ApiConfig {
+class LastfmService extends HttpClient {
     public function getTopArtists(string $apikey): array {
         $url = "http://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&api_key={$apikey}&format=json&limit=15";
         

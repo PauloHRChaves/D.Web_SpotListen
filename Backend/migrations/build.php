@@ -19,7 +19,7 @@ if (file_exists($envFile)) {
 require_once __DIR__ . '/2025_10_24_create_database.php';
 echo "   [SUCESSO] Banco de Dados e conexão estabelecidos.\n";
 
-require __DIR__ . '/../src/Config/DatabaseConnect.php';
+require __DIR__ . '/../src/Config/Database.php';
 
 require_once __DIR__ . '/2025_10_24_create_table_users.php';
 echo "   [SUCESSO] Tabela USERS criada ou já existente.\n";

@@ -1,49 +1,52 @@
-// ⚠️*************** REUTILIZANDO FUNÇÃO (MOCK) **********************⚠️
 function setupLogout() {
     const logoutButton = document.getElementById('logout-button');
 
     if (logoutButton) {
-        logoutButton.addEventListener('click', (event) => {
+        logoutButton.addEventListener('click', async (event) => {
             event.preventDefault();
 
-            localStorage.removeItem('authToken');
-            window.location.href = '/templates/index.php';
+            try {
+                const response = await fetch('http://localhost:8131/logout', { 
+                    method: 'POST',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    window.location.href = '/templates/index.php';
+                } else {
+                    console.error('Falha no logout do servidor:', response.status);
+                    window.location.href = '/templates/index.php';
+                }
+            } catch (error) {
+                console.error('Erro de rede ao fazer logout:', error);
+                window.location.href = '/templates/index.php';
+            }
         });
     }
 }
-// Função para verificar o status de login do usuário
+
 async function checkLoginStatus() {
-    const token = localStorage.getItem('authToken');
-
-    if (!token) {
-        document.body.classList.add('is-logged-out');
-        document.body.classList.remove('is-logged-in');
-        return false;
-    }
-
     try {
-        const response = await fetch('http://localhost:8000/logged-in', {
+        const response = await fetch('http://localhost:8131/logged-in', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
+            },
+            credentials: 'include'
         });
 
         if (response.ok) {
+            // Logado
             document.body.classList.add('is-logged-in');
             document.body.classList.remove('is-logged-out');
             return true;
-        } else if (response.status === 401) {
-            localStorage.removeItem('authToken');
-            document.body.classList.add('is-logged-out');
-            document.body.classList.remove('is-logged-in');
-            return false;
-        } else {
-            document.body.classList.add('is-logged-out');
-            document.body.classList.remove('is-logged-in');
-            return false;
-        }
+        } 
+        
+        // Não Logado
+        document.body.classList.add('is-logged-out');
+        document.body.classList.remove('is-logged-in');
+        return false;
+        
     } catch (error) {
         console.error('Erro ao verificar status de login:', error);
         document.body.classList.add('is-logged-out');
@@ -51,10 +54,8 @@ async function checkLoginStatus() {
         return false;
     }
 }
-
 // ********************************************************************
 
-// Função para ativar o link de navegação da página atual
 function activateNavLink() {
     const links = document.querySelectorAll(".nav-link");
     const currentPath = window.location.pathname; 
@@ -72,17 +73,11 @@ function activateNavLink() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     try {
-        await Promise.all([checkLoginStatus()]);
+        await checkLoginStatus();
 
         const profileLink = document.getElementById('auth-link');
         if (profileLink) {
             profileLink.addEventListener('click', (event) => {
-                const token = localStorage.getItem('authToken');
-                if (token) {
-                } else {
-                    event.preventDefault();
-                    showToast();
-                }
             });
         }
         

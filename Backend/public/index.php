@@ -1,4 +1,12 @@
 <?php
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => '',
+    'secure' => false,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 session_start();
 
 define('ROOT_PATH', __DIR__ . '/../');
@@ -13,7 +21,8 @@ spl_autoload_register(function ($class) {
 
 require ROOT_PATH . 'bootstrap.php';
 
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:8132");
+header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
@@ -23,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit;
 }
 
-use web\Exceptions\ApiException;
+use src\Exceptions\ApiException;
 
 $uri = $_SERVER['REQUEST_URI'];
 $request_uri = parse_url($uri, PHP_URL_PATH);
@@ -33,17 +42,25 @@ $request_method = $_SERVER['REQUEST_METHOD'];
 $routes = require ROOT_PATH . 'routes.php';
 
 
-function requestType(string $method) {
-    switch ($method) {
-        case 'GET':
-            return $_GET;
-
-        case 'POST':
-            return $_POST;
-
-        default:
-            return [];
+function requestType(string $method): array {
+    if ($method === 'GET') {
+        return $_GET;
     }
+
+    $inputData = [];
+    
+    if (in_array($method, ['POST', 'PUT', 'DELETE'])) {
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+        
+        if (str_contains($contentType, 'application/json')) {
+            $jsonBody = file_get_contents('php://input');
+            $inputData = json_decode($jsonBody, true) ?? [];
+        } else {
+            $inputData = $_POST;
+        }
+    }
+
+    return array_merge($_GET, $inputData);
 }
 
 function castType($value) {
@@ -68,16 +85,18 @@ try {
 
 } catch (ApiException $e){
     error_log("API Logic Error: ".$e->getMessage());
+
     http_response_code($e->getCode());
     $responseData = [
         'code' => $e->getCode(),
-        'message' => 'Erro de acesso à API.'
+        'message' => $e->getMessage()
     ];
     header('Content-Type: application/json');
     echo json_encode($responseData, JSON_UNESCAPED_UNICODE);
 
 } catch (Exception $e) {
     error_log("System Exception: " . $e->getMessage()); 
+    
     http_response_code(500);
     $responseData = [
         'code' => 500,

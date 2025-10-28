@@ -1,11 +1,13 @@
 <?php
-use src\Config\AuthController;
+use src\Controllers\AuthController;
 use src\Controllers\SpotifyController;
 use src\Controllers\LastfmController;
 use src\Controllers\MusicBrainzController;
 
 return [
     'GET' => [
+        '/logged-in' => [AuthController::class, 'logged'],
+        
         '/spotify/search/artistId' => [SpotifyController::class, 'searchArtistById'],
         '/spotify/search/genre' => [SpotifyController::class, 'searchSpotifyGenre'],
         '/spotify/search/artist' => [SpotifyController::class, 'searchArtistByName'],
@@ -19,6 +21,8 @@ return [
     'POST' => [
         // REMOVER
         // '/spotify/token' => [SpotifyController::class, 'spotifyToken'],
-        // '/register' => [AuthController::class, 'register'],
+        '/login' => [AuthController::class, 'login'],
+        '/register' => [AuthController::class, 'register'],
+        '/logout' => [AuthController::class, 'logout'],
     ]
 ];
