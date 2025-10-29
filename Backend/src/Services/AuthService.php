@@ -50,16 +50,38 @@ class AuthService {
     }
 
     // Logged
-    public function loggedUser(int $userId): array {
-        $user = $this->search->findById($userId);
+    public function logged(){
+        if (isset($_SESSION['user_id'])) {
+            try {
+                $userId = $_SESSION['user_id'];
+                
+                $user = $this->search->findById($userId);
 
-        if (!$user) {
-            throw new ApiException("Usuário não encontrado.", 404);
+                if (!$user) {
+                    throw new ApiException("Usuário não encontrado.", 404);
+                }
+
+                $spotifyInfo = $this->search->getSpotifyProfileData($userId); 
+                
+                http_response_code(200);
+
+                return [
+                    'isLoggedIn' => true,
+                    'user' => [
+                        'id' => $userId,
+                        'username' => $user['USERNAME'],
+                        'spotify_info' => $spotifyInfo, 
+                    ]
+                ];
+
+            } catch (ApiException $e) {
+                unset($_SESSION['user_id']);
+                throw $e; 
+            }
+
+        } else {
+            throw new ApiException("Não autorizado.", 401); 
         }
-
-        return [
-            'username' => $user['USERNAME'],
-        ];
     }
 
     // Redirect para o Login no Spotify

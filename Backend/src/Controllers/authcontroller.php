@@ -16,10 +16,12 @@ class AuthController {
         $this->authService = new AuthService();
     }
 
-    public function register(string $registerEmail, string $username, string $registerPassword): array {
+    //
+    public function register(string $registerEmail, string $username, string $registerPassword): void {
         $this->authService->registerUser($registerEmail, $username, $registerPassword);
     }
 
+    //
     public function login(string $email, string $password): array {
         $result = $this->authService->loginUser($email, $password);
         
@@ -28,41 +30,19 @@ class AuthController {
 
         http_response_code(200);
         return [
-            "status" => "success",
-            "message" => "Login realizado com sucesso!",
             "user" => ["username" => $result['username']],
             "sessionId" => $sessionId
         ];
     }
     
+    //
     public function logged(): array {
-        if (isset($_SESSION['user_id'])) {
-            try {
-                $userId = $_SESSION['user_id'];
-                
-                $userData = $this->authService->loggedUser($userId);
-                $spotifyInfo = $this->search->getSpotifyProfileData($userId); 
-                
-                http_response_code(200);
-                return [
-                    'isLoggedIn' => true,
-                    'user' => [
-                        'id' => $userId,
-                        'username' => $userData['username'],
-                        'spotify_info' => $spotifyInfo, 
-                    ]
-                ];
+        $userData = $this->authService->logged();
 
-            } catch (ApiException $e) {
-                unset($_SESSION['user_id']);
-                throw new ApiException("Sessão inválida.", 401);
-            }
-
-        } else {
-            throw new ApiException("Não autorizado.", 401); 
-        }
+        return $userData;
     }
 
+    //
     public function logout(): array {
         $_SESSION = array();
 
@@ -81,11 +61,13 @@ class AuthController {
 
     }
 
-    public function spotifyLoginRedirect() {
+    //
+    public function spotifyLoginRedirect(): void {
         $this->authService->spotifyLogin(); 
     }
 
-    public function spotifyCallback() {
+    //
+    public function spotifyCallback(): void {
         $code = $_GET['code'] ?? null;
         $state = $_GET['state'] ?? null;
         $error = $_GET['error'] ?? null;

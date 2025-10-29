@@ -1,24 +1,32 @@
 <?php
-ini_set('session.use_cookies', 0); 
+// Desabilita o uso do Cookie de Sessão
+ini_set('session.use_cookies', 0);
+// Permiti IDs de Sessão que não sejam via Cookies
 ini_set('session.use_only_cookies', 0);
 
+// Verifica se o ID de Sessão foi passado na URL e força o PHP a usar o ID encontrado na URL
 if (isset($_GET['PHPSESSID'])) {
     session_id($_GET['PHPSESSID']);
 }
 
+// Verifica o estado da Sessão e inicia ou retoma a sessão (usando o ID definido acima ou um novo)
 if (session_status() === PHP_SESSION_NONE) {
     session_start(); 
 }
 
+//-------------- AUTOLOAD --------------// PSR-4
+// constante global (ROOT_PATH) que aponta para a raiz do diretorio (Backend)
 define('ROOT_PATH', __DIR__ . '/../');
 
 spl_autoload_register(function ($class) { 
     $file_path = str_replace('\\', '/', $class) . '.php'; 
-    $file = ROOT_PATH . $file_path; 
+    $file = ROOT_PATH . $file_path;
+    
     if (file_exists($file)) { 
         require $file; 
     } 
 });
+//--------------------------------------//
 
 require ROOT_PATH . 'bootstrap.php';
 

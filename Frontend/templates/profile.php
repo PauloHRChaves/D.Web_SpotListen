@@ -191,17 +191,6 @@
         .bar-3 { height: 50%; background-color: #3357ff; }
         .bar-4 { height: 80%; background-color: #ff33a1; }
 
-        .playlist-actions button {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            border: 1px solid var(--text-subtle);
-            padding: 8px 15px;
-            border-radius: 20px;
-            margin-right: 10px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
         .favorite-section {
             display: flex;
             flex-direction: column;
@@ -346,16 +335,7 @@
 
                 <section class="created-playlists section-card collapsible">
                     <h2>Playlists Criadas</h2>
-                    <div class="playlist-item">
-                        <img src="../static/imgs/profile-icon.png" alt="Capa da Playlist">
-                        <div class="playlist-info">
-                            <h3>Nome da Playlist</h3>
-                            <p>Detalhes</p>
-                        </div>
-                    </div>
-                    <div class="playlist-actions">
-                        <button>Gêneros</button>
-                        <button>Retornar</button>
+                    <div id="playlists-container" class="playlists-grid">
                     </div>
                 </section>
 
@@ -436,7 +416,26 @@
     
     </script>
     <!--Scroll para favorite-section-->
+
+
     <script>
+        document.getElementById('vincular-spotify').addEventListener('click', () => {
+            const manualSessionId = localStorage.getItem('manualSessionId');
+            
+            if (manualSessionId) {
+                window.location.href = `http://127.0.0.1:8131/spotify/auth?PHPSESSID=${manualSessionId}`;
+            } else {
+                window.location.href = 'http://127.0.0.1:8132/templates/auth/login.html'; 
+            }
+        });
+    </script>
+
+    <script>
+        const manualSessionId = localStorage.getItem('manualSessionId'); 
+        
+        const PLAYLISTS_URL = 'http://127.0.0.1:8131/spotify/my/playlists';
+        const RECENT_TRACKS_URL_BASE = 'http://127.0.0.1:8131/spotify/my/recent-tracks';
+
         function scrollBooks(direction) {
             const scroller = document.querySelector('.scroller-container');
             const scrollAmount = 166;
@@ -446,15 +445,78 @@
             });
         }
 
-            const manualSessionId = localStorage.getItem('manualSessionId');
-        const RECENT_TRACKS_URL = `http://127.0.0.1:8131/spotify/my/recent-tracks?PHPSESSID=${manualSessionId}`;
+        async function loadMyPlaylists() {
+            const container = document.getElementById('playlists-container');
+            container.innerHTML = ''; 
+
+            if (!manualSessionId) {
+                container.innerHTML = '<p>Erro: Sessão de usuário não encontrada. Por favor, faça login.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${PLAYLISTS_URL}?PHPSESSID=${manualSessionId}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({})); 
+                    console.error('Erro ao buscar playlists:', errorData);
+                    container.innerHTML = '<p>Não foi possível carregar as playlists.</p>';
+                    return;
+                }
+
+                const data = await response.json();
+                const playlists = data.items || [];
+
+                if (playlists.length === 0) {
+                    container.innerHTML = '<p>Nenhuma playlist encontrada.</p>';
+                    return;
+                }
+
+                playlists.forEach(pl => {
+                    const div = document.createElement('div');
+                    div.className = 'playlist-item';
+                    div.id = 'my-playlist';
+
+                    const imageUrl = pl.images && pl.images.length > 0 
+                        ? pl.images[0].url 
+                        : '../static/imgs/profile-icon.png';
+
+                    div.innerHTML = `
+                        <img src="${imageUrl}" alt="Capa da Playlist">
+                        <div class="playlist-info">
+                            <h3>${pl.name}</h3>
+                            <p>${pl.tracks.total} faixas</p>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error('Erro de conexão:', error);
+                container.innerHTML = '<p>Ocorreu um erro de conexão.</p>';
+            }
+        }
 
         async function loadRecentTracks() {
             const container = document.getElementById('recent-tracks-container');
             container.innerHTML = '';
 
+            if (!manualSessionId) {
+                container.innerHTML = '<p>Erro: Sessão de usuário não encontrada. Por favor, faça login.</p>';
+                return;
+            }
+
             try {
-                const response = await fetch(RECENT_TRACKS_URL, { method: 'GET' });
+                const fullUrl = `${RECENT_TRACKS_URL_BASE}?PHPSESSID=${manualSessionId}`;
+
+                const response = await fetch(fullUrl, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
                 if (!response.ok) {
                     const errorData = await response.text();
                     console.error('Erro ao buscar faixas:', errorData);
@@ -493,20 +555,9 @@
             }
         }
 
-        window.onload = loadRecentTracks;
+        window.addEventListener('load', loadMyPlaylists);
+        window.addEventListener('load', loadRecentTracks);
 
-    </script>
-
-    <script>
-        document.getElementById('vincular-spotify').addEventListener('click', () => {
-            const manualSessionId = localStorage.getItem('manualSessionId');
-            
-            if (manualSessionId) {
-                window.location.href = `http://127.0.0.1:8131/spotify/auth?PHPSESSID=${manualSessionId}`;
-            } else {
-                window.location.href = 'http://127.0.0.1:8132/templates/auth/login.html'; 
-            }
-        });
     </script>
 </body>
 </html>

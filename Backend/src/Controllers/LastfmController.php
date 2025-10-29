@@ -13,6 +13,7 @@ class LastfmController {
         $this->lfmService= new LastfmService();
     }
 
+    // Usado no Carousel
     public function getLastfm(): array {
         $apikey = $_ENV['LASTFM_KEY'];
 
@@ -37,9 +38,9 @@ class LastfmController {
             $artistItem = $spotifyData['artists']['items'][0] ?? [];
 
             $finalData[] = [
-                'name'      => $artist['name'],
-                'playcount' => $artist['playcount'],
-                'listeners' => $artist['listeners'],
+                'name'      => $artist['name'] ?? null,
+                'playcount' => $artist['playcount'] ?? null,
+                'listeners' => $artist['listeners'] ?? null,
                 'url'       => $artistItem['external_urls']['spotify'] ?? null,
                 'spotify_id'=> $artistItem['id'] ?? null,
                 'images'    => $artistItem['images'][0]['url'] ?? null,
@@ -47,13 +48,5 @@ class LastfmController {
         }
 
         return $finalData;
-    }
-
-    public function searchLastfm(string $artistName): array {
-        $apikey = $_ENV['LASTFM_KEY'];
-
-        $results = $this->lfmService->getByName($apikey, $artistName); 
-        
-        return $results;
     }
 }

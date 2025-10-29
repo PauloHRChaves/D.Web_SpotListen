@@ -77,7 +77,7 @@ class SpotifyService extends HttpClient {
                 'refresh_token' => $credentials['refresh_token'],
             ]);
             
-        } catch (Exception $e) {
+        } catch (ApiException $e) {
             $this->insert->clearSpotifyCredentials($userId);
             throw new ApiException("Sessão Spotify expirada ou inválida. Por favor, vincule novamente.", 401);
         }
@@ -200,7 +200,7 @@ class SpotifyService extends HttpClient {
         return $this->buildPaginationResponse($paginatedItems, $finalPaginationData, $limit, $offset);
     }
 
-    // Chamado no LastfmController
+    // Chamado no LastfmController - noAuth
     public function searchArtist(array $artistNames): array {
         $token = $this->getAccessToken()['access_token'];
         $headers = ["Authorization: Bearer $token"];
@@ -289,11 +289,21 @@ class SpotifyService extends HttpClient {
         
         $response = $this->_executarRequest($url, $headers, '', 'GET');
 
-        if (is_array($response) && isset($response['body'])) {
-            return json_decode($response['body'], true);
-        }
+        return $response; 
+    }
 
-        return ['error' => 'Resposta inválida da requisição Spotify'];
+    public function getMyPlaylists(int $userId): array {
+        $accessToken = $this->getUserToken($userId); 
+
+        $url = "https://api.spotify.com/v1/me/playlists?limit=50";
+
+        $headers = [
+            "Authorization: Bearer $accessToken",
+        ];
+
+        $response = $this->_executarRequest($url, $headers, '', 'GET');
+
+        return $response;
     }
 
 }
