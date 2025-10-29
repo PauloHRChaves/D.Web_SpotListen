@@ -7,6 +7,8 @@ use src\Exceptions\ApiException;
 use src\Infrastructure\Database\Search;
 use src\Infrastructure\Database\Insert;
 
+use Datetime;
+
 class SpotifyService extends HttpClient {
     public function __construct() {
         $this->search = new Search();
