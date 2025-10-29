@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentIndex = 0;
     let isAnimating = false;
 
-    const response = await fetch('http://localhost:8131/lasfm/top15artists');
+    const response = await fetch('http://127.0.0.1:8131/lasfm/top15artists');
     const data = await response.json();
 
     shw.classList.remove('no');

@@ -27,294 +27,486 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
 
     <style>
-        :root{
-            --clamp: clamp(5rem, 4vw, 8rem );
-        } 
-        
-        body {
-            background: linear-gradient(0deg, var(--black) 0%, var(--second-background) 150%);
+        :root {
+            --bg-dark: #1e1e1e;
+            --bg-card: #2c2c2c;
+            --text-light: #ffffff;
+            --text-subtle: #aaaaaa;
+            --accent-color: #ff00ff; /* Cor fictícia, ajuste se quiser */
+            --border-radius: 12px;
+            --spacing: 20px;
         }
 
-        main {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+        }
+        main{
             margin-top: 80px;
             flex-grow: 1;
             overflow-y: auto;
-            padding: 0 0.5rem;
         }
-        
-        /* Scrollbar*/
         main::-webkit-scrollbar {
             width: clamp(0.1rem, 0.7vw, 0.5rem);
         }
         main::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--white) 0%, var(--black) 120%);
+            background: linear-gradient(to bottom, #c0c0c0 20%, white 50%);
             border-radius: var(--radius);
         }
-    </style>
 
-    <style>
-        .dashboard-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 2rem 4rem 0 4rem;
+        .profile-container {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
         }
 
-        .dashboard-wrapper {
-            width: 80%;
+        .profile-header {
+            position: relative;
+            padding: 3rem 4rem;
+        }
+
+        .header-content {
+            text-align: center;
+            display: flex;
+            align-content: center;
+            gap: 1rem;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid var(--bg-dark);
+            margin-bottom: 10px;
+        }
+
+        .username {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+            align-self: center;
+        }
+
+        .profile-main {
+            display: flex;
+            gap: var(--spacing);
+            padding: 0 var(--spacing) var(--spacing);
+        }
+
+        .left-section {
+            flex: 2;
+            min-width: 60%;
+        }
+
+        .right-section {
+            flex: 1;
+            min-width: 30%;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing);
+        }
+
+        .section-card {
+            background-color: var(--bg-card);
+            padding: var(--spacing);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--spacing);
+        }
+
+        .section-card h2 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .track-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .track-item {
+            text-align: center;
+        }
+
+        .track-item img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .view-more {
+            background-color: var(--text-subtle);
+            color: var(--bg-dark);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            display: block;
+            width: 100%;
+            opacity: 0.7;
+        }
+
+        .artist-item, .artist-item-side, .playlist-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .artist-item img, .artist-item-side img, .playlist-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+
+        .genre-chart-container {
+            padding: 10px 0;
+        }
+
+        .genre-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 100px;
+            gap: 10px;
+        }
+
+        .chart-bar {
+            width: 15px;
+            background-color: var(--accent-color);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .bar-1 { height: 70%; background-color: #ff5733; }
+        .bar-2 { height: 90%; background-color: #33ff57; }
+        .bar-3 { height: 50%; background-color: #3357ff; }
+        .bar-4 { height: 80%; background-color: #ff33a1; }
+
+        .playlist-actions button {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            border: 1px solid var(--text-subtle);
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .favorite-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            /* padding: 1rem 1.5rem; */
             border-radius: 1rem;
-            min-width: 550px;
-            color: #ffffff;
-            background-color: #02172071;
-            padding: 2rem 3rem;
-            border: 2px solid #04455f5a;
-            min-width: 1000px;
+            /* border: 2px solid #04455f5a; */
+            /* background-color: rgba(25, 73, 101, 0.34); */
+            margin-bottom: var(--spacing);
+            background-color: var(--bg-card);
+            padding: var(--spacing);
+
+            .arrow-short {
+                font-size: 2rem;
+                cursor: pointer;
+                flex-shrink: 0;
+                user-select: none;
+            }
+
+            .songcontent {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
             
-            .dashboard-grid{
-                display: grid;
-                grid-template-columns: 2fr 1fr;
-                grid-template-areas:
-                    "profile profile"
-                    "favorite aside"
-                    "favorite aside";
-                gap: 2rem;
-
-                .user-profile-section {
-                    grid-area: profile;
-                    display: flex;
-                    gap: 1.5rem;
-                    border-radius: 4rem;
-                    margin-bottom: 2rem;
-                
-
-                    img {
-                        border-radius: 50%;
-                        border: 2px solid #021720;
-                        object-fit: cover;
-                    }
+            
+                .scroller-container {
+                    width: calc(6 * 150px + 5 * 1rem);
+                    overflow-x: scroll;
+                    overflow-y: hidden;
                 }
                 
-
-                .favorite-section {
-                    grid-area: favorite;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1rem;
-                    padding: 1rem 1.5rem;
-                    border-radius: 1rem;
-                    border: 2px solid #04455f5a;
-                    background-color: rgba(25, 73, 101, 0.34);
-
-                    .arrow-short {
-                        font-size: 2rem;
-                        cursor: pointer;
-                        flex-shrink: 0;
-                        user-select: none;
-                    }
-
-                    .songcontent {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        gap: 1rem;
-                    
-                    
-                        .scroller-container {
-                            width: calc(4 * 150px + 3 * 1rem); /* Largura para 4 livros e 3 espaços de 1rem */
-                            overflow-x: scroll;
-                            overflow-y: hidden;
-                        }
-                        
-                        .scroller-container::-webkit-scrollbar {
-                            display: none;
-                        }
-                        
-                        .scroller-wrapper {
-                            display: flex;
-                            gap: 1rem;
-                            flex-wrap: nowrap;
-                        }
-                        
-                        .bookstar {
-                            display: flex;
-                            flex-direction: column;
-                            width: 150px;
-                            height: fit-content;
-                            flex-shrink: 0;
-                            
-                            .songsliked {
-                                height: 150px;
-                                border-radius: var(--radius);
-                                background-color: rgba(109, 146, 168, 0.34);
-                            }
-
-                            .songname {
-                                font-size: clamp(15px, 1vh, 20px);
-                                word-wrap: break-word;
-                                margin-top: 5px;
-                            }
-                        }
-                    }
+                .scroller-container::-webkit-scrollbar {
+                    display: none;
                 }
                 
-                .sidebar {
-                    grid-area: aside;
+                .scroller-wrapper {
+                    display: flex;
+                    gap: 1rem;
+                    flex-wrap: nowrap;
+                }
+                
+                .box {
                     display: flex;
                     flex-direction: column;
-                    gap: 1rem;
-
-                    .currently-reading{
-                        display: flex;
-                        flex-direction: column;
-                        gap: var(--radius);
-                        align-items: center;
-                        background-color: rgba(25, 73, 101, 0.34);
-                        padding: 1rem 1.5rem;
-                        border-radius: 1rem;
-                        border: 2px solid #04455f5a;
-
-                    }
-                    .wish-list{
-                        display: flex;
-                        flex-direction: column;
-                        gap: var(--radius);
-                        align-items: center;
-                        background-color: rgba(25, 73, 101, 0.34);
-                        padding: 1rem 1.5rem;
-                        border-radius: 1rem;
-                        border: 2px solid #04455f5a;
-                    }
+                    width: 150px;
+                    height: fit-content;
+                    flex-shrink: 0;
                     
+                    .songsliked {
+                        height: 150px;
+                        border-radius: var(--radius);
+                        background-color: rgba(109, 146, 168, 0.34);
+                    }
+
+                    .songname {
+                        font-size: clamp(15px, 1vh, 20px);
+                        word-wrap: break-word;
+                        margin-top: 5px;
+                    }
                 }
             }
         }
-
     </style>
-    
+    <style>
+        body {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s;
+        }
+        body.is-authenticated {
+            opacity: 1;
+            visibility: visible;
+        }
+        #vincular-spotify{
+                background: None;
+                border: none;
+            .bi-link-45deg{
+                font-size: 4rem;
+                color: white;
+                cursor: pointer;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
     <header id="header-placeholder"><?php include 'header.php'; ?></header>
 
-    <!--Todo conteúdo da pagina-->
-    <main>
-        <div class="dashboard-page">
-            <div class="dashboard-wrapper">
-                <div class="dashboard-grid">
-                    <section class="user-profile-section">
-                        <img src="../static/imgs/profile-icon.png" alt="profile_pic" style="width: 8rem;height: 8rem;">
-                        <div>
-                            <h1><span id="username-display"></span></h1>
+    <main class="profile-container">
+        <div class="profile-header">
+            <div class="header-content">
+                <img class="profile-picture" id="profile-pic" src="../static/imgs/profile-icon.png" alt="Foto de Perfil">
+                <h1 class="username" id="username-display"></h1>
+                <button id="vincular-spotify">
+                    <i class="bi bi-link-45deg"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="profile-main">
+            <div class="left-section">
+                <section class="favorite-section">
+                    <h2>Ouvidas Recentes</h2>
+                    <div class="songcontent">
+                        <i class="bi bi-arrow-left-short arrow-short" onclick="scrollBooks(-1)"></i>
+                        <div class="scroller-container">
+                            <div class="scroller-wrapper" id="recent-tracks-container">
+                                </div>
                         </div>
+                        <i class="bi bi-arrow-right-short arrow-short" onclick="scrollBooks(1)"></i>
+                    </div>
+                </section>
+
+                <section class="favorite-artists-list section-card collapsible">
+                    <h2>Artistas Favoritos</h2>
+                    <div class="artist-item">
+                        <img src="../static/imgs/profile-icon.png" alt="Foto do Artista">
+                        <div class="artist-info">
+                            <h3>Florence + The Machine</h3>
+                            <p>Descrição/Status</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="saved-albums section-card collapsible">
+                    <h2>Álbuns Salvos</h2>
+                </section>
+            </div>
+
+            <div class="right-section">
+                <section class="favorite-artists-side section-card">
+                    <h2>Artistas Favoritos</h2>
+                    <div class="artist-item-side">
+                        <img src="../static/imgs/profile-icon.png" alt="Capa">
+                        <div class="artist-info-side">
+                            <h3>Artista em Destaque</h3>
+                            <p>Detalhe</p>
+                        </div>
+                    </div>
                     </section>
 
-                    <section class="favorite-section">
-                        <h2>Ouvidas Recentes</h2>
-                        <div class="songcontent">
-                            <i class="bi bi-arrow-left-short arrow-short" onclick="scrollBooks(-1)"></i>
-                            <div class="scroller-container">
-                                <div class="scroller-wrapper">
-                                    <div class="bookstar">
-                                        <div class="songsliked"></div>
-                                        <h3 class="songname">songname 1</h3>
-                                        <p class="songowner">Author 1</p>
-                                    </div>
-                                    <div class="bookstar">
-                                        <div class="songsliked"></div>
-                                        <h3 class="songname">songname 2</h3>
-                                        <p class="songowner">Author 2</p>
-                                    </div>
-                                    <div class="bookstar">
-                                        <div class="songsliked"></div>
-                                        <h3 class="songname">songname 3</h3>
-                                        <p class="songowner">Author 3</p>
-                                    </div>
-                                    <div class="bookstar">
-                                        <div class="songsliked"></div>
-                                        <h3 class="songname">songname 4</h3>
-                                        <p class="songowner">Author 4</p>
-                                    </div>
-                                    <div class="bookstar">
-                                        <div class="songsliked"></div>
-                                        <h3 class="songname">songname 5</h3>
-                                        <p class="songowner">Author 5</p>
-                                    </div>
-                                    <div class="bookstar">
-                                        <div class="songsliked"></div>
-                                        <h3 class="songname">songname 6</h3>
-                                        <p class="songowner">Author 6</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <i class="bi bi-arrow-right-short arrow-short" onclick="scrollBooks(1)"></i>
+                <section class="created-playlists section-card collapsible">
+                    <h2>Playlists Criadas</h2>
+                    <div class="playlist-item">
+                        <img src="../static/imgs/profile-icon.png" alt="Capa da Playlist">
+                        <div class="playlist-info">
+                            <h3>Nome da Playlist</h3>
+                            <p>Detalhes</p>
                         </div>
-                    </section>
-                
-                    <aside class="sidebar">
-                        <section class="currently-reading">
-                            <h2>NONE</h2>
-                            <div id="reading">
-                                <!--conteudo-->
-                            </div>
-                        </section>
-                        <section class="wish-list">
-                            <h2>NONE</h2>
-                            <div id="wishbook">
-                                <!--conteudo-->
-                            </div>
-                        </section>
-                    </aside>
-                </div>
+                    </div>
+                    <div class="playlist-actions">
+                        <button>Gêneros</button>
+                        <button>Retornar</button>
+                    </div>
+                </section>
+
+                <section class="top-genres section-card collapsible">
+                    <h2>Top Gêneros</h2>
+                    <div class="genre-chart-container">
+                        <div class="genre-chart">
+                            <div class="chart-bar bar-1"></div>
+                            <div class="chart-bar bar-2"></div>
+                            <div class="chart-bar bar-3"></div>
+                            <div class="chart-bar bar-4"></div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
     </main>
 
-    <footer></footer>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const manualSessionId = localStorage.getItem('manualSessionId'); 
+            const profilePicElement = document.getElementById('profile-pic');
+            const usernameDisplayElement = document.getElementById('username-display');
+            const defaultProfileImg = '../static/imgs/profile-icon.png';
+            
+            const redirectToLogin = () => {
+                localStorage.removeItem('manualSessionId');
+                window.location.href = 'http://127.0.0.1:8132/templates/auth/login.html'; 
+            };
+
+            if (!manualSessionId) {
+                redirectToLogin();
+                return;
+            }
+
+            const url = `http://127.0.0.1:8131/logged-in?PHPSESSID=${manualSessionId}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const result = await response.json();
+                const userData = result.user; 
+
+                if (response.ok && userData && result.isLoggedIn) {
+                    
+                    let displayName = userData.username;
+                    let profileImgSrc = defaultProfileImg;
+                    
+                    const spotifyData = userData.spotify_info;
+                    
+                    if (spotifyData && spotifyData.SPFY_USERNAME) {
+                        displayName = spotifyData.SPFY_USERNAME;
+                        
+                        if (spotifyData.PROFILE_IMG) {
+                            profileImgSrc = spotifyData.PROFILE_IMG;
+                        }
+                    }
+
+                    usernameDisplayElement.textContent = displayName; 
+                    profilePicElement.src = profileImgSrc;
+                    
+                    document.body.classList.add('is-authenticated');
+
+                } else {
+                    redirectToLogin();
+                }
+            } catch (error) {
+                console.error('Erro de requisição:', error);
+                redirectToLogin();
+            }
+        });
+    
+    </script>
     <!--Scroll para favorite-section-->
     <script>
         function scrollBooks(direction) {
             const scroller = document.querySelector('.scroller-container');
-            const bookWidth = 150;
-            const gap = 16;
-            const scrollAmount = (bookWidth + gap);
+            const scrollAmount = 166;
             scroller.scrollBy({
                 left: direction * scrollAmount,
                 behavior: 'smooth'
             });
         }
+
+            const manualSessionId = localStorage.getItem('manualSessionId');
+        const RECENT_TRACKS_URL = `http://127.0.0.1:8131/spotify/my/recent-tracks?PHPSESSID=${manualSessionId}`;
+
+        async function loadRecentTracks() {
+            const container = document.getElementById('recent-tracks-container');
+            container.innerHTML = '';
+
+            try {
+                const response = await fetch(RECENT_TRACKS_URL, { method: 'GET' });
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    console.error('Erro ao buscar faixas:', errorData);
+                    container.innerHTML = '<p>Erro: não foi possível carregar as músicas. Vincule sua conta Spotify.</p>';
+                    return;
+                }
+
+                const data = await response.json();
+                const tracks = data.items || [];
+
+                if (tracks.length === 0) {
+                    container.innerHTML = '<p>Nenhuma música recente encontrada.</p>';
+                    return;
+                }
+
+                tracks.forEach(item => {
+                    const track = item.track;
+                    const artists = track.artists.map(a => a.name).join(', ');
+                    const imageUrl = track.album.images[0].url;
+
+                    const box = document.createElement('div');
+                    box.className = 'box';
+                    box.innerHTML = `
+                        <div class="songsliked">
+                            <img src="${imageUrl}" alt="${track.name}" style="width:100%;height:100%;object-fit:cover;">
+                        </div>
+                        <h3 class="songname">${track.name}</h3>
+                        <p class="songowner">${artists}</p>
+                    `;
+                    container.appendChild(box);
+                });
+
+            } catch (error) {
+                console.error('Erro de conexão:', error);
+                container.innerHTML = '<p>Erro de conexão com a API.</p>';
+            }
+        }
+
+        window.onload = loadRecentTracks;
+
     </script>
 
-    <!-- USARIO LOGADO
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const token = localStorage.getItem('authToken');
-
-            if (!token) {
-                window.location.href = '/templates/auth/login.html';
-                return;
-            }
-            try {
-                const response = await fetch('http://localhost:8000/logged-in', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const user = await response.json();
-
-                if (response.ok) {
-                    document.getElementById('username-display').textContent = user.USERNAME;
-                } else {
-                    window.location.href = 'templates/auth/login.html';
-                }
-            } catch (error) {
-                console.error('Erro ao buscar dados do usuário:', error);
-                window.location.href = 'templates/auth/login.html';
+        document.getElementById('vincular-spotify').addEventListener('click', () => {
+            const manualSessionId = localStorage.getItem('manualSessionId');
+            
+            if (manualSessionId) {
+                window.location.href = `http://127.0.0.1:8131/spotify/auth?PHPSESSID=${manualSessionId}`;
+            } else {
+                window.location.href = 'http://127.0.0.1:8132/templates/auth/login.html'; 
             }
         });
-    </script>-->
-    
+    </script>
 </body>
 </html>

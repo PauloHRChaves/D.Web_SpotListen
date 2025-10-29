@@ -5,7 +5,7 @@ use src\Exceptions\ApiException;
 use Exception;
 
 class HttpClient {
-    protected int $timeout;
+    protected int $timeout = 10;
 
     public function __construct(int $timeout = 10) {
         $this->timeout = $timeout;

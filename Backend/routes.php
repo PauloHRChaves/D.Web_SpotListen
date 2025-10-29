@@ -6,16 +6,18 @@ use src\Controllers\MusicBrainzController;
 
 return [
     'GET' => [
-        '/logged-in' => [AuthController::class, 'logged'],
+        '/spotify/auth' => [AuthController::class, 'spotifyLoginRedirect'],
+        '/spotify/callback' => [AuthController::class, 'spotifyCallback'],
         
+        '/logged-in' => [AuthController::class, 'logged'],
+
+        '/spotify/my/recent-tracks' => [SpotifyController::class, 'recentTracks'],
         '/spotify/search/artistId' => [SpotifyController::class, 'searchArtistById'],
         '/spotify/search/genre' => [SpotifyController::class, 'searchSpotifyGenre'],
         '/spotify/search/artist' => [SpotifyController::class, 'searchArtistByName'],
 
         '/lasfm/top15artists' => [LastfmController::class, 'getLastfm'],
         '/lasfm/genres' => [LastfmController::class, 'searchLastfmGenre'],
-        
-        '/spotify/auth' => [SpotifyController::class, 'spotifyLoginRedirect'],
     ],
 
     'POST' => [

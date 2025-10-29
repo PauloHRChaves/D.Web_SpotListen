@@ -6,7 +6,7 @@ function setupLogout() {
             event.preventDefault();
 
             try {
-                const response = await fetch('http://localhost:8131/logout', { 
+                const response = await fetch('http://127.0.0.1:8131/logout', { 
                     method: 'POST',
                 });
 
@@ -32,7 +32,7 @@ async function checkLoginStatus() {
         return false;
     }
     
-    const url = `http://localhost:8131/logged-in?PHPSESSID=${manualSessionId}`;
+    const url = `http://127.0.0.1:8131/logged-in?PHPSESSID=${manualSessionId}`;
     try {
         const response = await fetch(url, {
             method: 'GET',
@@ -63,8 +63,7 @@ async function checkLoginStatus() {
 
 function activateNavLink() {
     const links = document.querySelectorAll(".nav-link");
-    const currentPath = window.location.pathname; 
-    console.log('Path atual do navegador:', currentPath);
+    const currentPath = window.location.pathname;
 
     links.forEach(link => {
         link.classList.remove("active");
