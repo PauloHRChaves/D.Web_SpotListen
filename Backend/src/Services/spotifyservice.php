@@ -4,115 +4,98 @@ namespace src\Services;
 use src\Infrastructure\HttpClient;
 use src\Exceptions\ApiException;
 
+use src\Infrastructure\Database\Search;
+use src\Infrastructure\Database\Insert;
+
 class SpotifyService extends HttpClient {
-    public function getAccessToken(): array {
+    public function __construct() {
+        $this->search = new Search();
+        $this->insert = new Insert();
+    }
+    public function _requestSpotifyToken(string $grantType, array $params = []): array {
         $client_id = $_ENV['SPOTIFY_CLIENT_ID'];
         $client_secret = $_ENV['SPOTIFY_CLIENT_SECRET'];
+        $url = 'https://accounts.spotify.com/api/token';
+        $auth = base64_encode("$client_id:$client_secret");
+        
+        $headers = [
+            "Authorization: Basic $auth",
+            "Content-Type: application/x-www-form-urlencoded",
+        ];
+        
+        $body = http_build_query(array_merge(['grant_type' => $grantType], $params));
 
+        $result = $this->_executarRequest($url, $headers, $body, 'POST');
+        
+        if (!isset($result['access_token'])) {
+             $errorMessage = $result['error_description'] ?? 'Erro desconhecido na API de Token.';
+             throw new ApiException("Falha ao obter token do Spotify: " . $errorMessage, 500);
+        }
+        return $result;
+    }
+
+    public function getAccessToken(): array {
         if (isset($_SESSION['spotify_token']) && time() < ($_SESSION['expires_at'] ?? 0)) {
             return [
                 'access_token' => $_SESSION['spotify_token'],
                 'expires_in'   => $_SESSION['spotify_expires_in'],
             ];
         }
-
-        $url = 'https://accounts.spotify.com/api/token';
-        $headers = [
-            'Authorization: Basic ' . base64_encode("$client_id:$client_secret"),
-            'Content-Type: application/x-www-form-urlencoded',
-        ];
-        $body = 'grant_type=client_credentials';
-
-        $result = $this->_executarRequest($url, $headers, $body, 'POST');
-
-        $access_token = $result['access_token'] ?? null;
-        $expires_in   = $result['expires_in'] ?? 0;
-
-        if (!$access_token) {
-            $errorMessage = $result['error']['message'] ?? 'TOKEN_API_ERROR';
-            throw new ApiException("Spotify API Error: $errorMessage", 500);
+        try {
+            $result = $this->_requestSpotifyToken('client_credentials');
+        } catch (ApiException $e) {
+            throw $e;
         }
+        $access_token = $result['access_token'] ?? null;
+        $expires_in = $result['expires_in'] ?? 0;
 
-        $_SESSION['spotify_token']      = $access_token;
-        $_SESSION['expires_at']         = time() + $expires_in - 120;
+        $_SESSION['spotify_token'] = $access_token;
+        $_SESSION['expires_at'] = time() + $expires_in - 120; 
         $_SESSION['spotify_expires_in'] = $expires_in;
 
         return [
             'access_token' => $access_token,
-            'expires_in'   => $expires_in,
+            'expires_in' => $expires_in,
         ];
     }
 
-    public function spotifyLogin() {
-        $client_id = $_ENV['SPOTIFY_CLIENT_ID'];
-        $redirect_uri = $_ENV['SPOTIFY_REDIRECT_URI'];
-        
-        $scopes = 'user-read-private playlist-read-private user-read-recently-played user-top-read 
-            playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-library-modify user-library-read 
-            user-read-playback-state user-modify-playback-state user-read-currently-playing';
-        
-        $state = bin2hex(random_bytes(16));
+    public function getUserToken(int $userId): string {
+        $credentials = $this->search->getSpotifyCredentials($userId);
 
-        $_SESSION['spotify_auth_state'] = $state;
+        if (!$credentials || empty($credentials['refresh_token'])) {
+            throw new ApiException("Usuário não tem credenciais válidas do Spotify.", 401);
+        }
+        
+        if ($credentials['is_valid']) {
+            return $credentials['access_token'];
+        }
 
-        $query = http_build_query([
-            'response_type' => 'code',
-            'client_id' => $client_id,
-            'scope' => $scopes,
-            'redirect_uri' => $redirect_uri,
-            'state' => $state,
+        try {
+            $tokenResult = $this->_requestSpotifyToken('refresh_token', [
+                'refresh_token' => $credentials['refresh_token'],
+            ]);
+            
+        } catch (Exception $e) {
+            $this->insert->clearSpotifyCredentials($userId);
+            throw new ApiException("Sessão Spotify expirada ou inválida. Por favor, vincule novamente.", 401);
+        }
+        
+        $newAccessToken = $tokenResult['access_token'];
+        $expiresIn = $tokenResult['expires_in'] ?? 3600;
+        $newRefreshToken = $tokenResult['refresh_token'] ?? $credentials['refresh_token'];
+
+        $expiryDatetime = (new DateTime())->modify("+ $expiresIn seconds")->format('Y-m-d H:i:s');
+        
+        $this->insert->saveSpotifyCredentials([
+            'user_id' => $userId,
+            'refresh_token' => $newRefreshToken,
+            'access_token' => $newAccessToken,
+            'expiry_datetime' => $expiryDatetime,
         ]);
-
-        $url = 'https://accounts.spotify.com/authorize?' . $query;
-
-        header("Location: $auth_url");
-        exit;
+        
+        return $newAccessToken;
     }
 
-    public function spotifyCallback() {
-        $code = $_GET['code'] ?? null;
-        $state = $_GET['state'] ?? null;
-
-        if ($state === null || $state !== ($_SESSION['spotify_auth_state'] ?? null)) {
-            throw new ApiException("State mismatch: Possível ataque CSRF.", 403);
-        }
-        unset($_SESSION['spotify_auth_state']);
-
-        if (!$code) {
-            throw new ApiException("Autorização negada pelo usuário.", 401);
-        }
-
-        $client_id = $_ENV['SPOTIFY_CLIENT_ID'];
-        $client_secret = $_ENV['SPOTIFY_CLIENT_SECRET'];
-        $redirect_uri = $_ENV['SPOTIFY_REDIRECT_URI'];
-
-        $url = 'https://accounts.spotify.com/api/token';
-        $auth = base64_encode("$client_id:$client_secret");
-
-        $headers = [
-            "Authorization: Basic $auth",
-            "Content-Type: application/x-www-form-urlencoded",
-        ];
-        $body = http_build_query([
-            'grant_type' => 'authorization_code',
-            'code' => $code,
-            'redirect_uri' => $redirect_uri,
-        ]);
-
-        $result = $this->_executarRequest($url, $headers, $body, 'POST');
-
-        if (isset($result['access_token'])) {
-            $_SESSION['user_spotify_token'] = $result['access_token'];
-            $_SESSION['user_refresh_token'] = $result['refresh_token'] ?? null;
-
-            header('Location: /');
-            exit;
-        }
-
-        // Lidar com erro de token
-        $errorMessage = $result['error_description'] ?? 'TOKEN_USER_ERROR';
-        throw new ApiException("Erro ao obter token do usuário: $errorMessage", 500);
-    }
 
     private function buildPaginationResponse(array $filteredItems, array $rawPaginationData, int $limit, int $offset): array {
         return [
@@ -125,6 +108,7 @@ class SpotifyService extends HttpClient {
             'has_previous' => $rawPaginationData['previous'] !== null,
         ];
     }
+
     public function searchTopGenres(string $genre, int $limit, int $offset): array {
         $token = $this->getAccessToken();
         $accessToken = $token['access_token'];
@@ -268,4 +252,46 @@ class SpotifyService extends HttpClient {
 
         return ['items' => $filteredList];
     }
+
+    // Chamada no CallBack do AuthService
+    public function getSpotifyUserProfile(string $accessToken): array {
+        $url = 'https://api.spotify.com/v1/me'; 
+        $headers = ["Authorization: Bearer $accessToken"];
+        $result = $this->_executarRequest($url, $headers,"", 'GET'); 
+
+        if (!isset($result['id'])) {
+            throw new ApiException("Falha ao obter perfil do Spotify.", 500);
+        }
+        return [
+            'id' => $result['id'],
+            'display_name' => $result['display_name'] ?? $result['id'],
+            'images' => $result['images'] ?? []
+        ];
+    }
+
+    public function getAuthenticatedUserId(): int {
+        if (!isset($_SESSION['user_id'])) {
+            return 0;
+        }
+        return (int) $_SESSION['user_id'];
+    }
+
+    public function getRecentlyPlayed(int $userId): array {
+        $accessToken = $this->getUserToken($userId); 
+
+        $url = "https://api.spotify.com/v1/me/player/recently-played";
+        
+        $headers = [
+            "Authorization: Bearer $accessToken",
+        ];
+        
+        $response = $this->_executarRequest($url, $headers, '', 'GET');
+
+        if (is_array($response) && isset($response['body'])) {
+            return json_decode($response['body'], true);
+        }
+
+        return ['error' => 'Resposta inválida da requisição Spotify'];
+    }
+
 }

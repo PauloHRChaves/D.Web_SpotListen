@@ -2,7 +2,13 @@
 ini_set('session.use_cookies', 0); 
 ini_set('session.use_only_cookies', 0);
 
-session_start();
+if (isset($_GET['PHPSESSID'])) {
+    session_id($_GET['PHPSESSID']);
+}
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start(); 
+}
 
 define('ROOT_PATH', __DIR__ . '/../');
 
@@ -16,7 +22,7 @@ spl_autoload_register(function ($class) {
 
 require ROOT_PATH . 'bootstrap.php';
 
-header("Access-Control-Allow-Origin: http://localhost:8132");
+header("Access-Control-Allow-Origin: http://127.0.0.1:8132");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");

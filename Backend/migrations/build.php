@@ -24,5 +24,11 @@ require __DIR__ . '/../src/Config/Database.php';
 require_once __DIR__ . '/2025_10_24_create_table_users.php';
 echo "   [SUCESSO] Tabela USERS criada ou já existente.\n";
 
+require_once __DIR__ . '/2025_10_25_create_table_user_info.php';
+echo "   [SUCESSO] Tabela USER_INFO criada ou já existente.\n";
+
+require_once __DIR__ . '/2025_10_28_create_table_spotify_credentials.php';
+echo "   [SUCESSO] Tabela SPOTIFY_CREDENTIALS criada ou já existente.\n";
+
 echo "✅ BUILD CONCLUÍDA.\n";
 ?>
