@@ -76,7 +76,7 @@ class Search {
         
         $accountLinked = $stmt->fetchColumn() > 0;
 
-        return $accountLinked ?: null;
+        return $accountLinked;
     }
     
     //

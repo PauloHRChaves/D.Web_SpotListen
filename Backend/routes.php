@@ -13,6 +13,8 @@ return [
 
         '/spotify/my/playlists' => [SpotifyController::class, 'myPlaylists'],
         '/spotify/my/recent-tracks' => [SpotifyController::class, 'recentTracks'],
+        '/spotify/my/current-track' => [SpotifyController::class, 'currentTrack'],
+        '/spotify/audio-analysis'   => [SpotifyController::class, 'audioAnalysis'],
         
         '/spotify/search/artistId' => [SpotifyController::class, 'searchArtistById'],
         '/spotify/search/genre' => [SpotifyController::class, 'searchSpotifyGenre'],

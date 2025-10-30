@@ -281,7 +281,7 @@ class SpotifyService extends HttpClient {
     public function getRecentlyPlayed(int $userId): array {
         $accessToken = $this->getUserToken($userId); 
 
-        $url = "https://api.spotify.com/v1/me/player/recently-played";
+        $url = "https://api.spotify.com/v1/me/player/recently-played?limit=20";
         
         $headers = [
             "Authorization: Bearer $accessToken",
@@ -295,7 +295,7 @@ class SpotifyService extends HttpClient {
     public function getMyPlaylists(int $userId): array {
         $accessToken = $this->getUserToken($userId); 
 
-        $url = "https://api.spotify.com/v1/me/playlists?limit=50";
+        $url = "https://api.spotify.com/v1/me/playlists?limit=10";
 
         $headers = [
             "Authorization: Bearer $accessToken",
@@ -303,6 +303,43 @@ class SpotifyService extends HttpClient {
 
         $response = $this->_executarRequest($url, $headers, '', 'GET');
 
+        return $response;
+    }
+
+    public function getCurrentTrack(int $userId): array {
+        $accessToken = $this->getUserToken($userId);
+        $url = "https://api.spotify.com/v1/me/player/currently-playing";
+
+        $headers = [
+            "Authorization: Bearer $accessToken",
+        ];
+
+        $response = $this->_executarRequest($url, $headers, '', 'GET');
+
+        if (empty($response)) {
+            throw new ApiException("Nenhuma faixa sendo reproduzida.", 404);
+        }
+
+        return $response;
+    }
+
+    public function getAudioAnalysis(int $userId): array {
+        $trackId = $_GET['track_id'] ?? null;
+        error_log('trackId: '. $trackId);
+        if (!$trackId) {
+            throw new ApiException("track_id não informado.", 400);
+        }
+
+        error_log('userId: '. $userId);
+        $accessToken = $this->getUserToken($userId);
+        error_log('accessToken: '. $accessToken);
+        $url = "https://api.spotify.com/v1/audio-analysis/$trackId";
+
+        $headers = [
+            "Authorization: Bearer $accessToken",
+        ];
+
+        $response = $this->_executarRequest($url, $headers, '', 'GET');
         return $response;
     }
 

@@ -81,13 +81,6 @@
             <section class="main-content">       
                 <div class="content-header">
                     <h1 id="current-genre-title">Pop</h1>
-                    
-                    <div class="subgenre-tags">
-                        <span class="subgenre-tag" style="background-color: #e53935;">Metal</span>
-                        <span class="subgenre-tag" style="background-color: #d81b60;">Punk</span>
-                        <span class="subgenre-tag" style="background-color: #6a1b9a;">Grunge</span>
-                        <span class="subgenre-tag" style="background-color: #ff6f00;">Hard Rock</span>
-                    </div>
                 </div>
 
                 <div class="artists-grid" id="artists-container"></div>

@@ -50,6 +50,7 @@
             justify-content: center;
         }
         main{
+            background: linear-gradient(to bottom, #000312, #000c02);
             margin-top: 80px;
             flex-grow: 1;
             overflow-y: auto;
@@ -191,69 +192,82 @@
         .bar-3 { height: 50%; background-color: #3357ff; }
         .bar-4 { height: 80%; background-color: #ff33a1; }
 
-        .favorite-section {
+        .recent-tracks-section {
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            /* padding: 1rem 1.5rem; */
-            border-radius: 1rem;
-            /* border: 2px solid #04455f5a; */
-            /* background-color: rgba(25, 73, 101, 0.34); */
             margin-bottom: var(--spacing);
-            background-color: var(--bg-card);
             padding: var(--spacing);
+        }
 
-            .arrow-short {
-                font-size: 2rem;
+        .arrow-short {
+            font-size: 2rem;
                 cursor: pointer;
                 flex-shrink: 0;
                 user-select: none;
-            }
-
-            .songcontent {
+                color: #000000;
+                background-color: #ffffff;
                 display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 1rem;
-            
-            
-                .scroller-container {
-                    width: calc(6 * 150px + 5 * 1rem);
-                    overflow-x: scroll;
-                    overflow-y: hidden;
-                }
-                
-                .scroller-container::-webkit-scrollbar {
-                    display: none;
-                }
-                
-                .scroller-wrapper {
-                    display: flex;
-                    gap: 1rem;
-                    flex-wrap: nowrap;
-                }
-                
-                .box {
-                    display: flex;
-                    flex-direction: column;
-                    width: 150px;
-                    height: fit-content;
-                    flex-shrink: 0;
-                    
-                    .songsliked {
-                        height: 150px;
-                        border-radius: var(--radius);
-                        background-color: rgba(109, 146, 168, 0.34);
-                    }
-
-                    .songname {
-                        font-size: clamp(15px, 1vh, 20px);
-                        word-wrap: break-word;
-                        margin-top: 5px;
-                    }
-                }
-            }
+                border-radius: 50%;
         }
+
+        .songcontent {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; 
+            gap: 1rem;
+            overflow: hidden; 
+        }
+
+        .scroller-container {
+            flex-grow: 1; 
+            min-width: 0;
+            
+            overflow-x: scroll;
+            overflow-y: hidden;
+        }
+
+        .scroller-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scroller-wrapper {
+            display: flex;
+            gap: 15px;
+            flex-wrap: nowrap;
+            min-width: 0;
+        }
+
+        .box {
+            display: flex;
+            flex-direction: column;
+            width: 195px;
+            height: fit-content;
+            flex-shrink: 0;
+        }
+
+        .box .songsliked {
+            height: 195px;
+        }
+
+        .box .songsliked img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.5rem;
+        }
+
+        .box .songname, 
+        .box .artist-name {
+            font-size: clamp(1rem, 1vh, 2rem); 
+            margin-top: 5px;
+            
+            white-space: nowrap; 
+            overflow: hidden;    
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
     </style>
     <style>
         body {
@@ -293,17 +307,23 @@
 
         <div class="profile-main">
             <div class="left-section">
-                <section class="favorite-section">
+                <section class="recent-tracks-section">
                     <h2>Ouvidas Recentes</h2>
                     <div class="songcontent">
                         <i class="bi bi-arrow-left-short arrow-short" onclick="scrollBooks(-1)"></i>
                         <div class="scroller-container">
                             <div class="scroller-wrapper" id="recent-tracks-container">
-                                </div>
+                            </div>
                         </div>
                         <i class="bi bi-arrow-right-short arrow-short" onclick="scrollBooks(1)"></i>
                     </div>
                 </section>
+
+                <div id="current-track-container">
+                    <h2>Agora tocando</h2>
+                    <div id="track-info"></div>
+                    <canvas id="audio-spectrum" width="600" height="200"></canvas>
+                </div>
 
                 <section class="favorite-artists-list section-card collapsible">
                     <h2>Artistas Favoritos</h2>
@@ -321,7 +341,15 @@
                 </section>
             </div>
 
+            <hr>
+
             <div class="right-section">
+                <section class="created-playlists section-card collapsible">
+                    <h2>Playlists</h2>
+                    <div id="playlists-container" class="playlists-grid">
+                    </div>
+                </section>
+
                 <section class="favorite-artists-side section-card">
                     <h2>Artistas Favoritos</h2>
                     <div class="artist-item-side">
@@ -330,12 +358,6 @@
                             <h3>Artista em Destaque</h3>
                             <p>Detalhe</p>
                         </div>
-                    </div>
-                    </section>
-
-                <section class="created-playlists section-card collapsible">
-                    <h2>Playlists Criadas</h2>
-                    <div id="playlists-container" class="playlists-grid">
                     </div>
                 </section>
 
@@ -415,8 +437,6 @@
         });
     
     </script>
-    <!--Scroll para favorite-section-->
-
 
     <script>
         document.getElementById('vincular-spotify').addEventListener('click', () => {
@@ -430,7 +450,7 @@
         });
     </script>
 
-    <script>
+<script>
         const manualSessionId = localStorage.getItem('manualSessionId'); 
         
         const PLAYLISTS_URL = 'http://127.0.0.1:8131/spotify/my/playlists';
@@ -438,7 +458,7 @@
 
         function scrollBooks(direction) {
             const scroller = document.querySelector('.scroller-container');
-            const scrollAmount = 166;
+            const scrollAmount = 210;
             scroller.scrollBy({
                 left: direction * scrollAmount,
                 behavior: 'smooth'
@@ -541,10 +561,10 @@
                     box.className = 'box';
                     box.innerHTML = `
                         <div class="songsliked">
-                            <img src="${imageUrl}" alt="${track.name}" style="width:100%;height:100%;object-fit:cover;">
+                            <img src="${imageUrl}" alt="${track.name}"">
                         </div>
                         <h3 class="songname">${track.name}</h3>
-                        <p class="songowner">${artists}</p>
+                        <p class="artist-name">${artists}</p>
                     `;
                     container.appendChild(box);
                 });
@@ -557,7 +577,8 @@
 
         window.addEventListener('load', loadMyPlaylists);
         window.addEventListener('load', loadRecentTracks);
+</script>
 
-    </script>
+
 </body>
 </html>

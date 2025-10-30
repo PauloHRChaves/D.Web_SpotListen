@@ -41,4 +41,20 @@ class SpotifyController {
 
         return $results;
     }
+
+    //
+    public function currentTrack(): array {
+        $userId = $this->sptService->getAuthenticatedUserId();
+        $result = $this->sptService->getCurrentTrack($userId);
+
+        return $result;
+    }
+
+    //
+    public function audioAnalysis(): array {
+        $userId = $this->sptService->getAuthenticatedUserId();
+        $result = $this->sptService->getAudioAnalysis($userId);
+
+        return $result;
+    }
 }

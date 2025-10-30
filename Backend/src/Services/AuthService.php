@@ -105,8 +105,8 @@ class AuthService {
         $_SESSION['spotify_auth_nonce'] = $nonce;
 
         $scopes = 'user-read-private playlist-read-private user-read-recently-played user-top-read ' .
-              'playlist-read-collaborative playlist-modify-public playlist-modify-private user-library-modify user-library-read ' .
-              'user-read-playback-state user-modify-playback-state user-read-currently-playing';
+                'playlist-read-collaborative playlist-modify-public playlist-modify-private user-library-modify user-library-read ' .
+                'user-read-playback-state user-modify-playback-state user-read-currently-playing streaming';
         
         $query = http_build_query([
             'response_type' => 'code',
