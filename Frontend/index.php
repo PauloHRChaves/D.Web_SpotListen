@@ -48,8 +48,11 @@
     </style>
     <style>
         .sixth-container{
-            height: 300px;
-            background: #ffffffff;
+            height: 200px;
+            /* background: #ffffffff; */
+            background: linear-gradient(to bottom, #c0c0c0 0%, #ffffff 100%);
+            position: relative;
+            z-index: 10;
         }
         .footer {
             background:  #010e18ae;
@@ -179,8 +182,6 @@
             </div>
         </footer>
     </main>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
 
     <script>
         function showToast() {

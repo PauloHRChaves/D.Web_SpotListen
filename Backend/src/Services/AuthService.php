@@ -157,7 +157,7 @@ class AuthService {
         $spotifyId = $spotifyUser['id'];
         
         if ($this->search->isSpotifyIdAlreadyLinked($spotifyId, $authUserId)) {
-            throw new ApiException("Esta conta do Spotify já está vinculada a outro usuário no sistema.", 409);
+            throw new ApiException("Esta conta do Spotify já está vinculada a outro usuário", 409);
         }
         
         $profileImg = empty($spotifyUser['images']) ? '' : $spotifyUser['images'][0]['url'];

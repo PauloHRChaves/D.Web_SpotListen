@@ -18,6 +18,10 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon_io//favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon_io//favicon-16x16.png">
     <link rel="manifest" href="/static/favicon_io//site.webmanifest">
+
+    <!--Toastfy-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     
     <!--Inserir e estilizar cabeçalho na página-->
     <script src="../static/js/header.js"></script>
@@ -78,6 +82,7 @@
             display: flex;
             align-content: center;
             gap: 1rem;
+            align-items: center;
         }
 
         .profile-picture {
@@ -268,16 +273,47 @@
             width: 100%;
         }
 
+        .background-playing {
+            background: url('https://www.nicepng.com/png/full/17-176915_record-png-jj-drummond-records-disco-de-vinil.png');
+            width: 150px;
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            
+        }
+        .playing{
+            width: 90px; 
+            height: 90px; 
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg); 
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
     </style>
+    
     <style>
         body {
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.5s;
+            transition: opacity 0.2s;
         }
         body.is-authenticated {
             opacity: 1;
             visibility: visible;
+
+
+
         }
         #vincular-spotify{
                 background: None;
@@ -287,6 +323,19 @@
                 color: white;
                 cursor: pointer;
             }
+        }
+    </style>
+
+    <style>
+        .toastify{
+            box-shadow: none;
+            font-size: clamp(0.5rem, 1vw, 1.2rem);
+            border-radius: var(--radius);
+            font-family: "Work Sans", sans-serif;
+            font-weight: 600;
+            min-width: 15%;
+            justify-items: center;
+            margin-top: 80px;
         }
     </style>
 </head>
@@ -302,6 +351,11 @@
                 <button id="vincular-spotify">
                     <i class="bi bi-link-45deg"></i>
                 </button>
+
+                <div id="current-track-container">
+                    <div id="track-info"></div>
+                </div>
+
             </div>
         </div>
 
@@ -318,12 +372,6 @@
                         <i class="bi bi-arrow-right-short arrow-short" onclick="scrollBooks(1)"></i>
                     </div>
                 </section>
-
-                <div id="current-track-container">
-                    <h2>Agora tocando</h2>
-                    <div id="track-info"></div>
-                    <canvas id="audio-spectrum" width="600" height="200"></canvas>
-                </div>
 
                 <section class="favorite-artists-list section-card collapsible">
                     <h2>Artistas Favoritos</h2>
@@ -375,8 +423,7 @@
             </div>
         </div>
     </main>
-
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const manualSessionId = localStorage.getItem('manualSessionId'); 
@@ -427,6 +474,12 @@
                     
                     document.body.classList.add('is-authenticated');
 
+                    const remover = document.getElementById('vincular-spotify');
+
+                    if (remover) {
+                        remover.remove();
+                    }
+
                 } else {
                     redirectToLogin();
                 }
@@ -450,19 +503,43 @@
         });
     </script>
 
-<script>
+    <script>
         const manualSessionId = localStorage.getItem('manualSessionId'); 
         
         const PLAYLISTS_URL = 'http://127.0.0.1:8131/spotify/my/playlists';
         const RECENT_TRACKS_URL_BASE = 'http://127.0.0.1:8131/spotify/my/recent-tracks';
+        // const CURRENT_TRACK_URL = 'http://127.0.0.1:8131/spotify/my/current-track'
 
         function scrollBooks(direction) {
             const scroller = document.querySelector('.scroller-container');
-            const scrollAmount = 210;
+            const scrollAmount = 840;
             scroller.scrollBy({
                 left: direction * scrollAmount,
                 behavior: 'smooth'
             });
+        }
+
+        function displayFeedback(message, type) {
+            Toastify({
+                text: message,
+                duration: 4000,
+                gravity: "top",
+                position: "center",
+                backgroundColor: "#350101ff",
+            }).showToast();
+        }
+
+        function handleUrlError() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorMessage = urlParams.get('error');
+            
+            if (errorMessage) {
+                displayFeedback(errorMessage);
+                urlParams.delete('error');
+
+                const newSearch = urlParams.toString().length > 0 ? '?' + urlParams.toString() : '';
+                window.history.replaceState({}, document.title, window.location.pathname + newSearch);
+            }
         }
 
         async function loadMyPlaylists() {
@@ -483,7 +560,7 @@
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({})); 
                     console.error('Erro ao buscar playlists:', errorData);
-                    container.innerHTML = '<p>Não foi possível carregar as playlists.</p>';
+                    container.innerHTML = '<p>Vincule a sua conta Spotify.</p>';
                     return;
                 }
 
@@ -540,7 +617,7 @@
                 if (!response.ok) {
                     const errorData = await response.text();
                     console.error('Erro ao buscar faixas:', errorData);
-                    container.innerHTML = '<p>Erro: não foi possível carregar as músicas. Vincule sua conta Spotify.</p>';
+                    container.innerHTML = '<p>Vincule a sua conta Spotify.</p>';
                     return;
                 }
 
@@ -575,9 +652,61 @@
             }
         }
 
-        window.addEventListener('load', loadMyPlaylists);
-        window.addEventListener('load', loadRecentTracks);
-</script>
+        async function loadCurrentTrack() {
+            const container = document.getElementById('track-info'); 
+            
+            if (!manualSessionId) {
+                container.innerHTML = '<p>Erro: Sessão de usuário não encontrada.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${CURRENT_TRACK_URL}?PHPSESSID=${manualSessionId}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (!response.ok || response.status === 204) {
+                    if (response.status !== 204) {
+                        const errorText = await response.text().catch(() => 'Erro desconhecido.');
+                        console.error(`Erro ao buscar faixa atual. Status: ${response.status}`, errorText);
+                    }
+                    container.innerHTML = '<p>Nada tocando agora.</p>';
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (!data?.item) { 
+                    container.innerHTML = '<p>Nada tocando agora.</p>';
+                    return;
+                }
+
+                const track = data.item;
+                const imageUrl = track.album.images[0]?.url || '../static/imgs/profile-icon.png';
+                const artists = track.artists.map(a => a.name).join(', ');
+
+                container.innerHTML = `
+                    <div class="background-playing"><img class="playing" src="${imageUrl}"></div>
+                    <h3 style="margin: 0;">${track.name}</h3>
+                    <p style="margin: 5px 0 0 0;">${artists}</p>
+                `;
+
+            } catch (error) {
+                console.error('Erro ao carregar faixa atual:', error);
+                container.innerHTML = '<p>Erro ao obter faixa atual.</p>';
+            }
+        }
+
+        window.addEventListener('load', () => {
+            handleUrlError();
+            loadMyPlaylists();
+            loadRecentTracks();
+            // loadCurrentTrack(); 
+            
+            // setInterval(loadCurrentTrack, 60000); 
+        });
+    </script>
 
 
 </body>

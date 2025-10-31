@@ -14,7 +14,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start(); 
 }
 
-//-------------- AUTOLOAD --------------// PSR-4
+//-------------- AUTOLOAD MANUALMENTE CONFIGURADO --------------//
 // constante global (ROOT_PATH) que aponta para a raiz do diretorio (Backend)
 define('ROOT_PATH', __DIR__ . '/../');
 
@@ -26,7 +26,7 @@ spl_autoload_register(function ($class) {
         require $file; 
     } 
 });
-//--------------------------------------//
+//--------------------------------------------------------------//
 
 require ROOT_PATH . 'bootstrap.php';
 
@@ -43,13 +43,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 use src\Exceptions\ApiException;
 
+// Filtragem da URI
 $uri = $_SERVER['REQUEST_URI'];
 $request_uri = parse_url($uri, PHP_URL_PATH);
 
 $request_method = $_SERVER['REQUEST_METHOD'];
 
 $routes = require ROOT_PATH . 'routes.php';
-
 
 function requestType(string $method): array {
     if ($method === 'GET') {
@@ -58,7 +58,7 @@ function requestType(string $method): array {
 
     $inputData = [];
     
-    if (in_array($method, ['POST', 'PUT', 'DELETE'])) {
+    if (in_array($method, ['POST'])) {
         $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
         
         if (str_contains($contentType, 'application/json')) {

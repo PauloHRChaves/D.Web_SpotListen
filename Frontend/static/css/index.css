@@ -293,6 +293,7 @@ main::-webkit-scrollbar-thumb {
     background: linear-gradient(to bottom, #000000 0%, #c0c0c0 100%);
     position: relative;
     z-index: 10;
+    
     .content{   
         display: flex;
         /* background: linear-gradient(to bottom, #c0c0c0 10%, white 70%); */
