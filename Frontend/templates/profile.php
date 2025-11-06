@@ -221,7 +221,7 @@
             align-items: center;
             justify-content: space-between; 
             gap: 1rem;
-            overflow: hidden; 
+            overflow: hidden;
         }
 
         .scroller-container {
@@ -389,8 +389,6 @@
                 </section>
             </div>
 
-            <hr>
-
             <div class="right-section">
                 <section class="created-playlists section-card collapsible">
                     <h2>Playlists</h2>
@@ -474,11 +472,11 @@
                     
                     document.body.classList.add('is-authenticated');
 
-                    const remover = document.getElementById('vincular-spotify');
+                    // const remover = document.getElementById('vincular-spotify');
 
-                    if (remover) {
-                        remover.remove();
-                    }
+                    // if (remover) {
+                    //     remover.remove();
+                    // }
 
                 } else {
                     redirectToLogin();
@@ -512,7 +510,7 @@
 
         function scrollBooks(direction) {
             const scroller = document.querySelector('.scroller-container');
-            const scrollAmount = 840;
+            const scrollAmount = 209;
             scroller.scrollBy({
                 left: direction * scrollAmount,
                 behavior: 'smooth'
@@ -707,7 +705,6 @@
             // setInterval(loadCurrentTrack, 60000); 
         });
     </script>
-
 
 </body>
 </html>

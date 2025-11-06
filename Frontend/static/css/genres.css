@@ -39,17 +39,12 @@ main::-webkit-scrollbar-thumb {
     border-radius: var(--radius);
 }
 .main-content-wrapper{
-
     display: flex;
     min-width: 1400px;
     padding: 3% 15%;
     background: linear-gradient(rgba(0, 0, 0, 0.5)), url('https://images.alphacoders.com/134/thumb-1920-1343899.png');
-
-
-
-
-    background-size: cover;
-    background-position: center;
+    /* background-size: cover;
+    background-position: center; */
     box-shadow: inset 0px 20px 30px var(--color-background);
 }
 
@@ -294,6 +289,7 @@ main::-webkit-scrollbar-thumb {
     justify-content: center;
     align-items: center;
     gap: 20px;
+    color: white;
     margin-top: 40px;
 }
 

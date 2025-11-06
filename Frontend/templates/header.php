@@ -1,6 +1,6 @@
 <div class="header-container" id="header">
     <nav class="nav-container">
-        <a class="logo" style="text-decoration: none; color: inherit;">
+        <a href="/index.php" class="logo" style="text-decoration: none; color: inherit;">
             <img src="/static/imgs/logo.png" alt="SpotListen" >
         </a>
 
