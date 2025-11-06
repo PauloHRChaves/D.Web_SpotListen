@@ -14,14 +14,12 @@ return [
         '/spotify/my/playlists' => [SpotifyController::class, 'myPlaylists'],
         '/spotify/my/recent-tracks' => [SpotifyController::class, 'recentTracks'],
         '/spotify/my/current-track' => [SpotifyController::class, 'currentTrack'],
-        '/spotify/audio-analysis'   => [SpotifyController::class, 'audioAnalysis'],
         
-        '/spotify/search/artistId' => [SpotifyController::class, 'searchArtistById'],
         '/spotify/search/genre' => [SpotifyController::class, 'searchSpotifyGenre'],
         '/spotify/search/artist' => [SpotifyController::class, 'searchArtistByName'],
 
-        '/lasfm/top15artists' => [LastfmController::class, 'getLastfm'],
-        '/lasfm/genres' => [LastfmController::class, 'searchLastfmGenre'],
+        '/lasfm/top15artists' => [LastfmController::class, 'getLastfmArtists'],
+        '/lasfm/top15tracks' => [LastfmController::class, 'getLastfmTracks'],
     ],
 
     'POST' => [

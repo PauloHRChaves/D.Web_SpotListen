@@ -14,7 +14,7 @@ class LastfmController {
     }
 
     // Usado no Carousel
-    public function getLastfm(): array {
+    public function getLastfmArtists(): array {
         $apikey = $_ENV['LASTFM_KEY'];
 
         $artists = $this->lfmService->getTopArtists($apikey);
@@ -44,6 +44,43 @@ class LastfmController {
                 'url'       => $artistItem['external_urls']['spotify'] ?? null,
                 'spotify_id'=> $artistItem['id'] ?? null,
                 'images'    => $artistItem['images'][0]['url'] ?? null,
+            ];
+        }
+
+        return $finalData;
+    }
+
+    //
+    public function getLastfmTracks(): array {
+        $apikey = $_ENV['LASTFM_KEY'];
+
+        $result = $this->lfmService->getTopTracks($apikey);
+
+        if (!is_array($result) || empty($result)) {
+            error_log("Last.fm getTopTracks returned non-array data or empty array.");
+            return [];
+        }
+
+        $spotifyService = new SpotifyService;
+        
+        $trackNames = array_column($result, 'name');
+        $artistNames = array_column($result, 'artist');
+
+        $spotifyResponses = $spotifyService->searchTrack($trackNames,$artistNames);
+        
+        $finalData = [];
+
+        foreach ($result as $index => $track) {
+            $spotifyData = $spotifyResponses[$index] ?? [];
+            $finalData[] = [
+                'name' => $track['name'],
+                'artist' => $track['artist'],
+                'duration' => $track['duration'],
+                'playcount' => $track['playcount'],
+                'listeners' => $track['listeners'],
+                'url' => $spotifyData['url'],
+                'image' => $spotifyData['image'],
+                'popularity' => $spotifyData['popularity']
             ];
         }
 

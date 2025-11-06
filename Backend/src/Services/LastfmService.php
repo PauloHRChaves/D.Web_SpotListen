@@ -23,6 +23,26 @@ class LastfmService extends HttpClient {
     }
     
     //
+    public function getTopTracks(string $apikey): array {
+        $url = "http://ws.audioscrobbler.com/2.0/?method=chart.gettoptracks&api_key={$apikey}&format=json&limit=15";
+        
+        $data = $this->_executarRequest($url); 
+        $tracks = $data['tracks']['track'];
+
+        $trackMap = function(array $track): array {
+            return [
+                'name' => $track['name'],
+                'artist' => $track['artist']['name'],
+                'duration' => $track['duration'],
+                'playcount' => $track['playcount'],
+                'listeners' => $track['listeners']
+            ];
+        };
+        
+        return array_map($trackMap, $tracks);
+    }
+
+    //
     public function getTopGenres(string $apikey): array {
         $url = "http://ws.audioscrobbler.com/2.0/?method=tag.getTopTags&api_key={$apikey}&format=json";
         

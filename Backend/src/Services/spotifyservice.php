@@ -98,7 +98,6 @@ class SpotifyService extends HttpClient {
         return $newAccessToken;
     }
 
-
     private function buildPaginationResponse(array $filteredItems, array $rawPaginationData, int $limit, int $offset): array {
         return [
             'items'    => $filteredItems,
@@ -218,6 +217,44 @@ class SpotifyService extends HttpClient {
         return $this->_executarMultiRequest($requests);
     }
 
+    // Chamado no LastfmController - noAuth
+    public function searchTrack(array $trackNames, array $artistNames): array {
+        $token = $this->getAccessToken()['access_token'];
+        $headers = ["Authorization: Bearer $token"];
+        $requests = [];
+
+        $result[]=[];
+
+        foreach ($trackNames as $index => $name) {
+            $artist = $artistNames[$index];
+
+            $url = "https://api.spotify.com/v1/search?q=track:" .urlencode($name). "%20artist:" .urlencode($artist). "&type=track&limit=1";
+            $requests[] = [
+                'url'     => $url,
+                'headers' => $headers,
+                'body'    => '',
+                'method'  => 'GET'
+            ];
+        }
+        $responses = $this->_executarMultiRequest($requests);
+
+        $results = [];
+        foreach ($responses as $response) {
+            if (!empty($response['tracks']['items'][0])) {
+                $track = $response['tracks']['items'][0];
+
+                $results[] = [
+                    'url' => $track['external_urls']['spotify'] ?? null,
+                    'popularity' => $track['popularity'] ?? null,
+                    'image' => $track['album']['images'][0]['url'] ?? null,
+                ];
+            }
+        }
+
+        return $results;
+    }
+
+
     public function searchArtistByNameSingle(string $artistName): array {
         $token = $this->getAccessToken()['access_token'];
         $headers = ["Authorization: Bearer $token"];
@@ -322,25 +359,4 @@ class SpotifyService extends HttpClient {
 
         return $response;
     }
-
-    public function getAudioAnalysis(int $userId): array {
-        $trackId = $_GET['track_id'] ?? null;
-        error_log('trackId: '. $trackId);
-        if (!$trackId) {
-            throw new ApiException("track_id não informado.", 400);
-        }
-
-        error_log('userId: '. $userId);
-        $accessToken = $this->getUserToken($userId);
-        error_log('accessToken: '. $accessToken);
-        $url = "https://api.spotify.com/v1/audio-analysis/$trackId";
-
-        $headers = [
-            "Authorization: Bearer $accessToken",
-        ];
-
-        $response = $this->_executarRequest($url, $headers, '', 'GET');
-        return $response;
-    }
-
 }

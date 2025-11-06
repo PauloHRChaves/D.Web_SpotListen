@@ -49,12 +49,4 @@ class SpotifyController {
 
         return $result;
     }
-
-    //
-    public function audioAnalysis(): array {
-        $userId = $this->sptService->getAuthenticatedUserId();
-        $result = $this->sptService->getAudioAnalysis($userId);
-
-        return $result;
-    }
 }

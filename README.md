@@ -79,16 +79,17 @@ Arquitetura básica das pastas:
 
 # INICIANDO PROJETO:
 
-
-### Para "rodar" o Backend é necessario o comando:
+### Para "rodar" o Backend é necessario os comandos:
+```
+php Backend/migrations/build.php
+```
 ```
 php -S 127.0.0.1:8131 -t Backend/public
 ```
-* Build-In-Server do php
+
 ### Para "rodar" o FRONTEND é necessario o comando:
 ```
 php -S 127.0.0.1:8132 -t Frontend
 ```
-* ```Extensão Live Server``` funciona para os arquivos **.html** e não **.php**<br>
 
-#### Acesse a página: http://127.0.0.1:8001/templates/index.php
+#### Acesse a página: http://127.0.0.1:8132
