@@ -24,7 +24,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     
     <!--Inserir e estilizar cabeçalho na página-->
-    <script src="/static/js/header.js"></script>
+    <script src="/static/js/header.js" defer></script>
     <link rel="stylesheet" href="/static/css/header.css">
 
     <!--Bootstrap Icons-->
@@ -62,7 +62,6 @@
             --radius: 8px;
         }
 
-        /* --- ESTILOS GERAIS E LAYOUT --- */
         body {
             background-color: var(--color-background);
             font-family: var(--font-display);
@@ -429,7 +428,6 @@
     </style>
     
     <style>
-        /* Carrossel CSS (Ajustado) */
         :root {
             --carousel-height: 580px;
             --carousel-width: 80vw;
@@ -523,7 +521,7 @@
             z-index: 3;
         }
 
-        /* NOVO: Posição -3 e 3 */
+        /* Posição -3 e 3 */
         .carousel-item.position-left-3 {
             transform: translate(-730px, -50%) scale(0.65);
             opacity: 0.2;
@@ -536,7 +534,7 @@
             z-index: 2;
         }
 
-        /* Itens totalmente fora da vista */
+        /* Itens fora da vista */
         .carousel-item.position-far-left,
         .carousel-item.position-far-right {
             opacity: 0;
@@ -752,6 +750,62 @@
             color: #bebebeff;
         }
     </style>
+
+    <style>
+        .songsterr {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+            border-top: 1px solid #333;
+        }
+
+        .songsterr .input {
+            width: 40%;
+            padding: 12px 15px;
+            border: 1px solid #555;
+            background-color: #1a1a1a;
+            color: #eee;
+            font-size: 1rem;
+            outline: none; 
+            transition: border-color 0.3s ease;
+            border-radius: 1rem;
+        }
+
+        .songsterr .input::placeholder {
+            color: #888;
+        }
+
+        .songsterr .input:focus {
+            border-color: #00852fff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .songsterr #searchtab {
+            border-radius: 1rem;
+            padding: 12px 25px;
+            margin-left: 10px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .songsterr #searchtab:hover {
+            background-color: #00852fff;
+            transform: translateY(-2px);
+        }
+
+        .songsterr #searchtab:active {
+            background-color: #00852fff;
+            transform: translateY(0);
+        }
+    </style>
 </head>
 <body>
     <!--Cabeçalho de navegação-->
@@ -825,6 +879,47 @@
 
         <hr>
 
+        <div class="songsterr">
+            <h1 style="margin-right: 6%;">Descubra Como Tocar Qualquer Música</h1>
+            <div style="display: flex; display: flex; width: 100%; justify-content: center;">
+                <input type="text" name="tab" class="input" id="tabs" placeholder="Digite a nome da música e o nome do artista para mais precisão...">
+                <button id="searchtab">Buscar</button>
+            </div>
+        </div>
+
+        <script>
+            const inputTabs = document.getElementById('tabs');
+            const searchButton = document.getElementById('searchtab');
+
+            function redirectToSongsterr() {
+                const artistName = inputTabs.value.trim();
+
+                // aplicar toastify
+                // if (artistName === "") {
+                //     alert("Por favor, digite o nome de um artista ou música.");
+                //     return;
+                // }
+
+                const encodedArtistName = encodeURIComponent(artistName);
+
+                const baseUrl = "https://www.songsterr.com/?pattern=";
+                const redirectUrl = baseUrl + encodedArtistName;
+
+                window.open(redirectUrl, '_blank').focus()
+
+                inputTabs.value = '';
+            }
+
+            searchButton.addEventListener('click', redirectToSongsterr);
+
+            inputTabs.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    redirectToSongsterr();
+                }
+            });
+        </script>
+
+        <hr>
         <div class="top15">
             <img src="static/imgs/top15.png" alt="top15"> 
             <h1>SEMANAL</h1>
@@ -893,51 +988,6 @@
             
             if (carouselWrapper) {
                 carouselWrapper.classList.add('fade-in');
-            }
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const wrapper = document.getElementById('track-list-wrapper');
-            const section = document.getElementById('top-tracks-section');
-
-            try {
-                const response = await fetch('http://127.0.0.1:8131/lasfm/top15tracks');
-                const data = await response.json();
-
-                section.classList.remove('no');
-                
-                // Função de formatação para Playcount e Listeners (Ex: 1.6M, 783.3K)
-                const formatNumber = (num) => {
-                    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-                    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-                    return num;
-                };
-
-                data.forEach((track, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'track-item';
-                    
-                    item.innerHTML = `
-                        <div class="track-header">
-                            <img src="${track.image}" class="track-item-image" alt="Capa da faixa ${track.name}">
-                            <div class="track-info-main">
-                                <h1>#${index + 1} - ${track.name}</h1>
-                                </div>
-                        </div>
-                        <div class="track-metrics">
-                            <div class="track-metric-item">Playcount: <span class="metric-value">${formatNumber(track.playcount)}</span></div>
-                            <div class="track-metric-item">Listeners: <span class="metric-value">${formatNumber(track.listeners)}</span></div>
-                            <div class="track-metric-item">Popularidade: <span class="metric-value">${track.popularity}%</span></div>
-                        </div>
-                        <button onclick="window.open('${track.url}', '_blank')">ABRIR NO SPOTIFY</button>
-                    `;
-                    wrapper.appendChild(item);
-                });
-            } catch (error) {
-                console.error("Erro ao carregar top tracks:", error);
-                section.style.display = 'none';
             }
         });
     </script>

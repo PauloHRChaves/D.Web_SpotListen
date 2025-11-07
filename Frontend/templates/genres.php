@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
 
     <!--JS da página-->
-    <script src="/static/js/categories.js"></script>
+    <script src="/static/js/genres.js"></script>
 
     <!--CSS da página-->
     <link rel="stylesheet" href="/static/css/genres.css">
@@ -55,7 +55,7 @@
             <div class="search-container">
                 <div class="search-bar">
                     <i class="bi bi-search"></i>
-                    <input type="text" id="searchInput" placeholder="Pesquisar Artistas, Álbuns ou Músicas...">
+                    <input type="text" id="searchInput" placeholder="Pesquisar Artistas...">
                     <button class="search-btn" id="searchBtn">
                         <i class="bi bi-arrow-right"></i>
                     </button>

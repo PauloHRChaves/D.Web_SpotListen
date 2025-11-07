@@ -39,6 +39,18 @@
             min-width: 15%;
             justify-items: center;
         }
+        .passwordbar{
+            display: flex;
+            position: relative;
+        }
+        .bi{
+            align-self: center;
+            position: absolute;
+            color: black;
+            right: 0;
+            font-size: 1.5rem;
+            width: 30px;
+        }
     </style>
 
 </head>
@@ -69,11 +81,17 @@
                     </div>
                     <div class="container">
                         <label class="label" for="register-password">Senha</label>
-                        <input type="password" name="password" class="input" id="register-password">
+                        <div class="passwordbar">
+                            <input type="password" name="password" class="input" id="register-password">
+                            <i class="bi bi-eye-fill" id="togglePassword"></i>
+                        </div>
                     </div>
                     <div class="container">
                         <label class="label" for="confirm-password">Confirmar Senha</label>
-                        <input type="password" name="confirm-password" class="input" id="confirm-password">
+                        <div class="passwordbar">
+                            <input type="password" name="confirm-password" class="input" id="confirm-password">
+                            <i class="bi bi-eye-fill" id="togglePassword2"></i>
+                        </div>
                     </div>
 
                     <div class="message">
@@ -179,6 +197,48 @@
                 console.error('Erro na requisição:', error);
                 showMessagereg('Erro de rede. Verifique a conexão com o servidor.', 'error');
             }
+        });
+    </script>
+
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const passwordInput = document.getElementById('register-password');
+            const passwordInput2 = document.getElementById('confirm-password');
+            const toggleIcon = document.getElementById('togglePassword');
+            const toggleIcon2 = document.getElementById('togglePassword2');
+
+            toggleIcon.addEventListener('click', function() {
+                
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                
+                passwordInput.setAttribute('type', type);
+                
+                if (type === 'text') {
+                    toggleIcon.classList.remove('bi-eye-fill');
+                    toggleIcon.classList.add('bi-eye-slash-fill');
+                } else {
+                    toggleIcon.classList.remove('bi-eye-slash-fill');
+                    toggleIcon.classList.add('bi-eye-fill');
+                }
+            });
+            
+            toggleIcon2.addEventListener('click', function() {
+                
+                const type = passwordInput2.getAttribute('type') === 'password' ? 'text' : 'password';
+                
+                passwordInput2.setAttribute('type', type);
+                
+                if (type === 'text') {
+                    toggleIcon2.classList.remove('bi-eye-fill');
+                    toggleIcon2.classList.add('bi-eye-slash-fill');
+                } else {
+                    toggleIcon2.classList.remove('bi-eye-slash-fill');
+                    toggleIcon2.classList.add('bi-eye-fill');
+                }
+            });
+
         });
     </script>
 </body>

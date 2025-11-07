@@ -49,4 +49,12 @@ class SpotifyController {
 
         return $result;
     }
+
+    //
+    public function userTopArtists(): array {
+        $userId = $this->sptService->getAuthenticatedUserId();
+        $result = $this->sptService->getUserTopArtists($userId);
+
+        return $result;
+    }
 }

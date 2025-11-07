@@ -28,7 +28,7 @@ class SpotifyService extends HttpClient {
         $body = http_build_query(array_merge(['grant_type' => $grantType], $params));
 
         $result = $this->_executarRequest($url, $headers, $body, 'POST');
-        
+
         if (!isset($result['access_token'])) {
              $errorMessage = $result['error_description'] ?? 'Erro desconhecido na API de Token.';
              throw new ApiException("Falha ao obter token do Spotify: " . $errorMessage, 500);
@@ -359,4 +359,52 @@ class SpotifyService extends HttpClient {
 
         return $response;
     }
+
+    public function getUserTopArtists(int $userId): array {
+        $accessToken = $this->getUserToken($userId); 
+        
+        $max_fetch = 500;
+        
+        $periods = ['long_term', 'medium_term', 'short_term']; 
+
+        $allGenres = [];
+        
+        foreach ($periods as $term) {
+            $currentUrl = "https://api.spotify.com/v1/me/top/artists?limit=50&time_range={$term}";
+            $totalFetched = 0;
+            
+            while ($currentUrl && $totalFetched < $max_fetch) {
+                $headers = ["Authorization: Bearer $accessToken"];
+                $requestData = $this->_executarRequest($currentUrl, $headers); 
+                
+                if (!isset($requestData['items'])) { break; }
+                
+                $artistsFromPage = $requestData['items'];
+                
+                foreach ($artistsFromPage as $artist) {
+                    $genres = $artist['genres'] ?? [];
+                    $allGenres = array_merge($allGenres, $genres);
+                }
+
+                $totalFetched += count($artistsFromPage);
+                $currentUrl = $requestData['next'] ?? null;
+            }
+        }
+        
+        // Chama o método para Contar e Ordenar (dashboardGenres)
+        return $this->dashboardGenres($allGenres);
+        // return $allGenres;
+    }
+
+    public function dashboardGenres(array $genres): array {
+        $genreCounts = array_count_values($genres);
+
+        $genreCounts = array_filter($genreCounts, function ($count) {
+            return $count > 2;
+        });
+
+        arsort($genreCounts);
+        return $genreCounts;
+    }
+
 }

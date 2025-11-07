@@ -36,15 +36,8 @@
             --bg-card: #2c2c2c;
             --text-light: #ffffff;
             --text-subtle: #aaaaaa;
-            --accent-color: #ff00ff; /* Cor fictícia, ajuste se quiser */
             --border-radius: 12px;
             --spacing: 20px;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
@@ -126,11 +119,6 @@
             margin-bottom: var(--spacing);
         }
 
-        .section-card h2 {
-            font-size: 1.2em;
-            margin-bottom: 15px;
-        }
-
         .track-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -167,35 +155,13 @@
             margin-bottom: 10px;
         }
 
-        .artist-item img, .artist-item-side img, .playlist-item img {
+        .artist-item-side img, .playlist-item img {
             width: 60px;
             height: 60px;
             border-radius: 6px;
             margin-right: 15px;
             object-fit: cover;
         }
-
-        .genre-chart-container {
-            padding: 10px 0;
-        }
-
-        .genre-chart {
-            display: flex;
-            align-items: flex-end;
-            height: 100px;
-            gap: 10px;
-        }
-
-        .chart-bar {
-            width: 15px;
-            background-color: var(--accent-color);
-            border-radius: 3px 3px 0 0;
-        }
-
-        .bar-1 { height: 70%; background-color: #ff5733; }
-        .bar-2 { height: 90%; background-color: #33ff57; }
-        .bar-3 { height: 50%; background-color: #3357ff; }
-        .bar-4 { height: 80%; background-color: #ff33a1; }
 
         .recent-tracks-section {
             display: flex;
@@ -303,21 +269,15 @@
     </style>
     
     <style>
-        body {
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s;
-        }
         body.is-authenticated {
             opacity: 1;
             visibility: visible;
-
-
-
         }
+
         #vincular-spotify{
-                background: None;
-                border: none;
+            background: None;
+            border: none;
+            
             .bi-link-45deg{
                 font-size: 4rem;
                 color: white;
@@ -338,8 +298,101 @@
             margin-top: 80px;
         }
     </style>
+
+    <style>
+        #myTopArtists {
+            margin-top: 1rem;
+            display: block; 
+        }
+
+        .bar-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 10px;
+            height: 30px;
+        }
+
+        .genre-label {
+            width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+            padding-right: 15px;
+        }
+
+        .bar-chart-wrapper {
+            flex-grow: 1;
+            background-color: #333;
+            height: 100%;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            background-color: #1799d17d;
+            transition: width 0.5s ease-out;
+        }
+
+        .bar-value {
+            width: 30px;
+            text-align: right;
+            font-weight: bold;
+            font-size: 1em;
+            color: var(--color-primary);
+        }
+    </style>
+
+    <style>
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #333;
+            border-top: 5px solid #1799d1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loaded #loading-overlay {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+    </style>
+
 </head>
 <body>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <h3>Carregando seu perfil musical...</h3>
+    </div>
     <!-- Navigation -->
     <header id="header-placeholder"><?php include 'header.php'; ?></header>
 
@@ -374,13 +427,8 @@
                 </section>
 
                 <section class="favorite-artists-list section-card collapsible">
-                    <h2>Artistas Favoritos</h2>
-                    <div class="artist-item">
-                        <img src="../static/imgs/profile-icon.png" alt="Foto do Artista">
-                        <div class="artist-info">
-                            <h3>Florence + The Machine</h3>
-                            <p>Descrição/Status</p>
-                        </div>
+                    <h2>Gêneros Mais Ouvidos</h2>
+                    <div class="artist-item" id="myTopArtists">
                     </div>
                 </section>
 
@@ -407,36 +455,25 @@
                     </div>
                 </section>
 
-                <section class="top-genres section-card collapsible">
-                    <h2>Top Gêneros</h2>
-                    <div class="genre-chart-container">
-                        <div class="genre-chart">
-                            <div class="chart-bar bar-1"></div>
-                            <div class="chart-bar bar-2"></div>
-                            <div class="chart-bar bar-3"></div>
-                            <div class="chart-bar bar-4"></div>
-                        </div>
-                    </div>
-                </section>
             </div>
         </div>
     </main>
     
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
+        const redirectToLogin = () => {
+            localStorage.removeItem('manualSessionId');
+            window.location.replace('http://127.0.0.1:8132/templates/auth/login.html'); 
+        };
+        
+        async function checkAndLoadEssentialUserData() {
             const manualSessionId = localStorage.getItem('manualSessionId'); 
             const profilePicElement = document.getElementById('profile-pic');
             const usernameDisplayElement = document.getElementById('username-display');
             const defaultProfileImg = '../static/imgs/profile-icon.png';
-            
-            const redirectToLogin = () => {
-                localStorage.removeItem('manualSessionId');
-                window.location.href = 'http://127.0.0.1:8132/templates/auth/login.html'; 
-            };
 
             if (!manualSessionId) {
                 redirectToLogin();
-                return;
+                return false;
             }
 
             const url = `http://127.0.0.1:8131/logged-in?PHPSESSID=${manualSessionId}`;
@@ -470,23 +507,17 @@
                     usernameDisplayElement.textContent = displayName; 
                     profilePicElement.src = profileImgSrc;
                     
-                    document.body.classList.add('is-authenticated');
-
-                    // const remover = document.getElementById('vincular-spotify');
-
-                    // if (remover) {
-                    //     remover.remove();
-                    // }
-
+                    return true; 
                 } else {
                     redirectToLogin();
+                    return false;
                 }
             } catch (error) {
                 console.error('Erro de requisição:', error);
                 redirectToLogin();
+                return false;
             }
-        });
-    
+        }
     </script>
 
     <script>
@@ -507,6 +538,7 @@
         const PLAYLISTS_URL = 'http://127.0.0.1:8131/spotify/my/playlists';
         const RECENT_TRACKS_URL_BASE = 'http://127.0.0.1:8131/spotify/my/recent-tracks';
         // const CURRENT_TRACK_URL = 'http://127.0.0.1:8131/spotify/my/current-track'
+        const MY_TOP_ARTISTS = 'http://127.0.0.1:8131/spotify/my/top-artists';
 
         function scrollBooks(direction) {
             const scroller = document.querySelector('.scroller-container');
@@ -696,13 +728,71 @@
             }
         }
 
-        window.addEventListener('load', () => {
+        async function loadAndDrawDashboard() {
+            const MAX_GENRES_DISPLAY = 8;
+            try {
+                const response = await fetch(`${MY_TOP_ARTISTS}?PHPSESSID=${manualSessionId}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                const rawData = await response.json();
+                
+                const labels = Object.keys(rawData);
+                const counts = Object.values(rawData);
+                
+                const topLabels = labels.slice(0, MAX_GENRES_DISPLAY);
+                const topCounts = counts.slice(0, MAX_GENRES_DISPLAY);
+
+                const maxCount = Math.max(...topCounts);
+                
+                const container = document.getElementById('myTopArtists');
+                container.innerHTML = ''; 
+
+                topLabels.forEach((label, index) => {
+                    const count = topCounts[index];
+                    const percentage = (count / maxCount) * 100;
+                    
+                    const row = document.createElement('div');
+                    row.className = 'bar-row';
+                    
+                    row.innerHTML = `
+                        <div class="genre-label">${label}</div>
+                        <div class="bar-chart-wrapper">
+                            <div class="bar" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="bar-value">${count}</div>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error("Erro ao carregar dados do endpoint:", error);
+                document.getElementById('myTopArtists').innerHTML = 
+                    "<p>Não foi possível carregar os dados de gênero.</p>";
+            }
+        }
+
+        window.addEventListener('load', async () => {
+
+            const isAuthenticated = await checkAndLoadEssentialUserData();
+    
+            if (!isAuthenticated) {
+                return; 
+            }
+
             handleUrlError();
-            loadMyPlaylists();
-            loadRecentTracks();
-            // loadCurrentTrack(); 
-            
+
+            await Promise.all([
+                loadMyPlaylists(),
+                loadRecentTracks(),
+                // loadCurrentTrack(), // Se estiver ativa, inclua
+                loadAndDrawDashboard()
+            ]);
+
             // setInterval(loadCurrentTrack, 60000); 
+
+            document.body.classList.add('loaded');
         });
     </script>
 
