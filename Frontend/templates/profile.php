@@ -274,14 +274,32 @@
             visibility: visible;
         }
 
-        #vincular-spotify{
-            background: None;
-            border: none;
-            
-            .bi-link-45deg{
-                font-size: 4rem;
-                color: white;
+        .vinc{
+            width: 100%;
+            font-size: 1.5rem;
+            text-align: center; 
+            padding: 1rem; 
+            color: #fff;
+
+            h2{}
+
+            p{font-size: 1.3rem;}
+
+            #vincular-spotify{
+                font-size: 1.6rem;
+                background-color: #1DB954; 
+                color: white; 
+                border: none;
+                padding: 14px 24px;    
+                border-radius: 4rem; 
+                font-weight: bold; 
                 cursor: pointer;
+                transition: 0.2s ease-in-out;
+            }
+            #vincular-spotify:hover{
+                background-color: #1d9e4aff;
+                transform: scale(1.1);
+                transition: transform 0.2s ease-in-out;
             }
         }
     </style>
@@ -393,7 +411,8 @@
         <div class="spinner"></div>
         <h3>Carregando seu perfil musical...</h3>
     </div>
-    <!-- Navigation -->
+
+    <!-- Navigation Header -->
     <header id="header-placeholder"><?php include 'header.php'; ?></header>
 
     <main class="profile-container">
@@ -401,9 +420,6 @@
             <div class="header-content">
                 <img class="profile-picture" id="profile-pic" src="../static/imgs/profile-icon.png" alt="Foto de Perfil">
                 <h1 class="username" id="username-display"></h1>
-                <button id="vincular-spotify">
-                    <i class="bi bi-link-45deg"></i>
-                </button>
 
                 <div id="current-track-container">
                     <div id="track-info"></div>
@@ -412,7 +428,7 @@
             </div>
         </div>
 
-        <div class="profile-main">
+        <div class="profile-main" id="main">
             <div class="left-section">
                 <section class="recent-tracks-section">
                     <h2>Ouvidas Recentes</h2>
@@ -460,6 +476,8 @@
     </main>
     
     <script>
+        let isSpotifyLinked = false;
+        
         const redirectToLogin = () => {
             localStorage.removeItem('manualSessionId');
             window.location.replace('http://127.0.0.1:8132/templates/auth/login.html'); 
@@ -497,11 +515,14 @@
                     const spotifyData = userData.spotify_info;
                     
                     if (spotifyData && spotifyData.SPFY_USERNAME) {
+                        isSpotifyLinked = true;
                         displayName = spotifyData.SPFY_USERNAME;
                         
                         if (spotifyData.PROFILE_IMG) {
                             profileImgSrc = spotifyData.PROFILE_IMG;
                         }
+                    }else{
+                        isSpotifyLinked = false;
                     }
 
                     usernameDisplayElement.textContent = displayName; 
@@ -518,18 +539,6 @@
                 return false;
             }
         }
-    </script>
-
-    <script>
-        document.getElementById('vincular-spotify').addEventListener('click', () => {
-            const manualSessionId = localStorage.getItem('manualSessionId');
-            
-            if (manualSessionId) {
-                window.location.href = `http://127.0.0.1:8131/spotify/auth?PHPSESSID=${manualSessionId}`;
-            } else {
-                window.location.href = 'http://127.0.0.1:8132/templates/auth/login.html'; 
-            }
-        });
     </script>
 
     <script>
@@ -590,7 +599,7 @@
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({})); 
                     console.error('Erro ao buscar playlists:', errorData);
-                    container.innerHTML = '<p>Vincule a sua conta Spotify.</p>';
+                    container.innerHTML = '<p>Vincule com a sua conta Spotify.</p>';
                     return;
                 }
 
@@ -631,11 +640,6 @@
             const container = document.getElementById('recent-tracks-container');
             container.innerHTML = '';
 
-            if (!manualSessionId) {
-                container.innerHTML = '<p>Erro: Sessão de usuário não encontrada. Por favor, faça login.</p>';
-                return;
-            }
-
             try {
                 const fullUrl = `${RECENT_TRACKS_URL_BASE}?PHPSESSID=${manualSessionId}`;
 
@@ -647,7 +651,7 @@
                 if (!response.ok) {
                     const errorData = await response.text();
                     console.error('Erro ao buscar faixas:', errorData);
-                    container.innerHTML = '<p>Vincule a sua conta Spotify.</p>';
+                    container.innerHTML = '<p>Vincule com a sua conta Spotify.</p>';
                     return;
                 }
 
@@ -684,11 +688,6 @@
 
         async function loadCurrentTrack() {
             const container = document.getElementById('track-info'); 
-            
-            if (!manualSessionId) {
-                container.innerHTML = '<p>Erro: Sessão de usuário não encontrada.</p>';
-                return;
-            }
 
             try {
                 const response = await fetch(`${CURRENT_TRACK_URL}?PHPSESSID=${manualSessionId}`, {
@@ -735,6 +734,17 @@
                     method: 'GET',
                     credentials: 'include'
                 });
+
+                const container = document.getElementById('myTopArtists');
+                container.innerHTML = ''; 
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({})); 
+                    console.error('Erro ao buscar genres:', errorData);
+                    container.innerHTML = '<p>Vincule com a sua conta Spotify.</p>';
+                    return;
+                }
+
                 const rawData = await response.json();
                 
                 const labels = Object.keys(rawData);
@@ -744,9 +754,6 @@
                 const topCounts = counts.slice(0, MAX_GENRES_DISPLAY);
 
                 const maxCount = Math.max(...topCounts);
-                
-                const container = document.getElementById('myTopArtists');
-                container.innerHTML = ''; 
 
                 topLabels.forEach((label, index) => {
                     const count = topCounts[index];
@@ -773,25 +780,72 @@
             }
         }
 
-        window.addEventListener('load', async () => {
+        // window.addEventListener('load', async () => {
 
-            const isAuthenticated = await checkAndLoadEssentialUserData();
+        //     const isAuthenticated = await checkAndLoadEssentialUserData();
     
+        //     if (!isAuthenticated) {
+        //         return; 
+        //     }
+
+        //     handleUrlError();
+
+        //     await Promise.all([
+        //         loadMyPlaylists(),
+        //         loadRecentTracks(),
+        //         // loadCurrentTrack(), // Se estiver ativa, inclua
+        //         loadAndDrawDashboard()
+        //     ]);
+
+        //     // setInterval(loadCurrentTrack, 60000); 
+
+        //     document.body.classList.add('loaded');
+        // });
+
+        window.addEventListener('load', async () => {
+            const isAuthenticated = await checkAndLoadEssentialUserData();
+            
             if (!isAuthenticated) {
                 return; 
             }
 
             handleUrlError();
 
-            await Promise.all([
-                loadMyPlaylists(),
-                loadRecentTracks(),
-                // loadCurrentTrack(), // Se estiver ativa, inclua
-                loadAndDrawDashboard()
-            ]);
+            const mainContent = document.getElementById('main');
+            const linkSpotifyButtonId = 'vincular-spotify';
+            
+            if (isSpotifyLinked) {
+                await Promise.all([
+                    loadMyPlaylists(),
+                    loadRecentTracks(),
+                    // loadCurrentTrack(),
+                    loadAndDrawDashboard()
+                ]);
+                
+                // setInterval(loadCurrentTrack, 60000); 
 
-            // setInterval(loadCurrentTrack, 60000); 
-
+            } else {
+                // Se NÃO estiver vinculado
+                mainContent.innerHTML = `
+                    <div class="vinc">
+                        <h2>Você ainda não vinculou sua conta ao Spotify.</h2>
+                        <p style="margin-bottom: 30px;">Vincule agora para ver suas estatísticas!</p>
+                        <button id="${linkSpotifyButtonId}">
+                            Vincular ao Spotify
+                        </button>
+                    </div>
+                `;
+                
+                document.getElementById(linkSpotifyButtonId).addEventListener('click', () => {
+                    const manualSessionId = localStorage.getItem('manualSessionId');
+                    if (manualSessionId) {
+                        window.location.href = `http://127.0.0.1:8131/spotify/auth?PHPSESSID=${manualSessionId}`;
+                    } else {
+                        redirectToLogin();
+                    }
+                });
+            }
+            
             document.body.classList.add('loaded');
         });
     </script>

@@ -66,7 +66,7 @@ class Search {
         }
     }
 
-    // Chamada no CallBack -> conta do Spotify só pode ser vinculada a uma única conta do banco de dados
+    //
     public function isSpotifyIdAlreadyLinked(string $spotifyId, int $currentUserId): bool {
         $pdo = $this->getConnection();
 
@@ -119,4 +119,26 @@ class Search {
 
         return null;
     }
+
+    // public function getPublicUserData(int $appUserId): ?array {
+    //     $pdo = $this->getConnection();
+
+    //     $sql = "
+    //         SELECT 
+    //             SPFY_USER_ID AS spotify_id, 
+    //             SPFY_USERNAME AS display_name, 
+    //             PROFILE_IMG AS profile_img
+    //         FROM 
+    //             USER_INFO 
+    //         WHERE 
+    //             USER_ID = ?
+    //     ";
+
+    //     $stmt = $pdo->prepare($sql);
+    //     $stmt->execute([$appUserId]);
+
+    //     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    //     return $userData ?: null; 
+    // }
 }

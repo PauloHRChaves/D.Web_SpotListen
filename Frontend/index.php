@@ -836,7 +836,7 @@
         <section class="third-container">
             <div style="max-width: 700px;">
                 <h2 class="section-title">GÊNEROS EM DESTAQUE</h2>
-                <p style="text-align:justify; text-align: justify; font-size: clamp(0.5rem, 2vw, 1.2rem);">Sua referência rápida para os sons mais populares. 
+                <p style="text-align: start; font-size: clamp(0.5rem, 2vw, 1.2rem);">Sua referência rápida para os sons mais populares. 
                     Estes GÊNEROS EM DESTAQUE são as categorias musicais com maior número de ouvintes e relevância histórica. 
                     Escolha entre Pop, Rock, Hip Hop, Eletrônica, MPB, Classic, Reggae ou Indie e acesse imediatamente o que há de melhor em cada estilo!</p>
             </div>

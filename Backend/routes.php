@@ -2,9 +2,8 @@
 use src\Controllers\AuthController;
 use src\Controllers\SpotifyController;
 use src\Controllers\LastfmController;
-use src\Controllers\MusicBrainzController;
-use src\Controllers\SongsterrController;
-
+// use src\Controllers\MusicBrainzController;
+use src\Controllers\MyController;
 return [
     'GET' => [
         '/logged-in' => [AuthController::class, 'logged'],
@@ -24,6 +23,8 @@ return [
         '/lasfm/top15tracks' => [LastfmController::class, 'getLastfmTracks'],
 
         '/learning' => [SongsterrController::class, 'getTabs'],
+
+        '/user/get-spotify-info' => [MyController::class,'getSpotifyInfo'],
     ],
 
     'POST' => [

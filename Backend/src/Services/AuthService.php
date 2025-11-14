@@ -64,7 +64,6 @@ class AuthService {
                 $spotifyInfo = $this->search->getSpotifyProfileData($userId); 
                 
                 http_response_code(200);
-
                 return [
                     'isLoggedIn' => true,
                     'user' => [

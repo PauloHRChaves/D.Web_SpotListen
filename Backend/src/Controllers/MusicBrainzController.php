@@ -1,8 +1,8 @@
 <?php
-namespace web\Controllers;
+namespace src\Controllers;
 
 // Services
-use web\Services\MbrainzService;
+use src\Services\MbrainzService;
 
 
 class MusicBrainzController{

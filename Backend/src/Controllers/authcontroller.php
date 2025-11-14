@@ -4,15 +4,10 @@ namespace src\Controllers;
 use src\Services\SpotifyService;
 use src\Services\AuthService;
 
-use src\Infrastructure\Database\Insert;
-use src\Infrastructure\Database\Search;
-
 use src\Exceptions\ApiException;
 
 class AuthController {
     public function __construct() {
-        $this->search = new Search();
-        $this->insert = new Insert();
         $this->authService = new AuthService();
     }
 
@@ -28,7 +23,6 @@ class AuthController {
         $_SESSION['user_id'] = $result['id'];
         $sessionId = session_id();
 
-        http_response_code(200);
         return [
             "user" => ["username" => $result['username']],
             "sessionId" => $sessionId
@@ -37,28 +31,16 @@ class AuthController {
     
     //
     public function logged(): array {
-        $userData = $this->authService->logged();
-
-        return $userData;
+        return $this->authService->logged();
     }
 
     //
     public function logout(): array {
         $_SESSION = array();
-
-        if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params["path"], $params["domain"],
-                $params["secure"], $params["httponly"]
-            );
-        }
-
         session_destroy();
 
         http_response_code(200);
         return ["message" => "Logout realizado com sucesso."];
-
     }
 
     //
