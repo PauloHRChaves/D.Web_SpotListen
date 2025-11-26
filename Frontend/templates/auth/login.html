@@ -80,10 +80,10 @@
                         <label class="label" for="password">Senha</label>
                         <div class="passwordbar">
                             <input type="password" name="password" class="input" id="password">
-                            <i class="bi bi-eye-fill" id="togglePassword"></i>
+                            <i class="bi bi-eye-fill" style="cursor: pointer;margin-right: 0.5rem;" id="togglePassword"></i>
                         </div>
                         <div class="forgot">
-                            <a rel="noopener noreferrer" href="#">Esqueceu a senha ?</a>
+                            <a href="forgot-password.html" id="forgot-password">Esqueceu a senha ?</a>
                         </div>
                     </div>
 
@@ -120,13 +120,9 @@
         
         const logmessageContainer = document.getElementById('login-message-container');
         function showMessagelog(message, type) {
-            if (logmessageContainer) {
-                logmessageContainer.textContent = message;
-                logmessageContainer.className = `message-box ${type}`;
-                logmessageContainer.style.display = 'block';
-            } else {
-                console.error('Elemento #login-message-container não encontrado.');
-            }
+            logmessageContainer.textContent = message;
+            logmessageContainer.className = `message-box ${type}`;
+            logmessageContainer.style.display = 'block';
         }
 
         const loginform = document.querySelector('#login-section .form');
@@ -184,7 +180,7 @@
                 }
             });
         } else {
-            console.error('Elemento #login-section .form não encontrado. Listener não anexado.');
+            console.error('Elemento não encontrado.');
         }
     </script>
 

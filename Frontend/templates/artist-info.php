@@ -1,78 +1,877 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!--Configurações de exibição (caracteres especiais/design responsivo)-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!--Nome da Aba-->
-    <title>D.Web-PHP</title>
 
-    <!--Font-->
+    <title>Loading...</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!--Favicon-->
     <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon_io/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon_io//favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon_io//favicon-16x16.png">
-    <link rel="manifest" href="/static/favicon_io//site.webmanifest">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="/static/favicon_io/site.webmanifest">
 
-    <!--Toastfy-->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    
-    <!--Inserir e estilizar cabeçalho na página-->
+
     <script src="../static/js/header.js"></script>
     <link rel="stylesheet" href="../static/css/header.css">
 
-    <!--Bootstrap Icons-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
 
-    <!--JS da página-->
+    <style>
+        :root {
+            --cor-fundo: #121212;
+            --cor-texto-claro: #ffffff;
+            --cor-texto-secundario: #a7a7a7;
+            --cor-acento-verde: #1db954;
+            --cor-fundo-card: #282828;
+            --cor-borda-suave: #303030;
+            --color-background: #000000;
+            --font-display: 'Work Sans', sans-serif;
+            --color-text-secondary: #B3B3B3;
+            --color-text-black: #333;
+        }
 
-    <!--CSS da página-->
-    <link rel="stylesheet" href="../static/css/artist-info.css">
+        body {
+            background-color: var(--color-background);
+            font-family: var(--font-display);
+            display: flex;
+            flex-direction: column;
+            background-attachment: fixed;
+            background-size: cover;
+            color: var(--cor-texto-claro);
+        }
+
+        main {
+            margin-top: 80px;
+            flex-grow: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        main::-webkit-scrollbar {
+            width: 0.5rem;
+        }
+
+        main::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #c0c0c0 20%, white 50%);
+            border-radius: 8px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 8px 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: 0.2s all;
+            width: 500px;
+            position: absolute;
+            z-index: 5;
+            top: 40px;
+            right: 80px;
+        }
+
+        .search-bar:focus-within {
+            background-color: #fff;
+        }
+
+        .search-bar i {
+            font-size: 1.2rem;
+            color: var(--color-text-secondary);
+            margin-right: 10px;
+        }
+
+        #searchInput {
+            flex-grow: 1;
+            border: none;
+            background: none;
+            color: var(--color-text-black);
+            font-size: 1.1rem;
+            padding: 5px 0;
+            outline: none;
+        }
+
+        .search-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 0 5px;
+        }
+
+        /* HERO DO ARTISTA */
+        .artist-hero {
+            position: relative;
+            background-color: #000;
+            padding: 50px 50px 20px;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .artist-name {
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .artist-meta {
+            color: var(--cor-texto-secundario);
+            font-size: 16px;
+            margin-bottom: 20px;
+            /* Permite que os spans das tags fiquem lado a lado */
+            display: flex; 
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        /* NOVO ESTILO PARA CADA TAG INDIVIDUALMENTE */
+        .artist-tag {
+            display: inline-block;
+            padding: 2px 8px; 
+            margin-right: 8px; 
+            margin-bottom: 5px; /* Para melhor espaçamento em várias linhas */
+            border-radius: 12px; 
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--cor-texto-claro); 
+            font-size: 0.8em; 
+            font-weight: 500;
+            text-transform: capitalize; /* Garante que a primeira letra maiúscula do JS seja mantida */
+        }
+        /* FIM NOVO ESTILO */
+
+        .follow-button {
+            padding: 12px 30px;
+            background-color: var(--cor-acento-verde);
+            color: white;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .follow-button:hover {
+            background-color: #1ed760;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 40px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--cor-borda-suave);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--cor-texto-secundario);
+        }
+
+        /* LAYOUT PRINCIPAL */
+        .main-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            width: 100%;
+            padding: 20px 40px;
+            box-sizing: border-box;
+            align-items: stretch;
+        }
+
+        .left-column {
+            display: flex;
+            width: 900px;
+            padding: 20px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            gap: 1.5rem;
+            flex-direction: column;
+        }
+
+        .bio-section{
+            background: #0c0c0c;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        .top-tracks{
+            background: #0c0c0c;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        .events-media{
+            background: #0c0c0c;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .right-column {
+            flex: 1;
+            min-width: 0;
+            padding: 20px;
+            gap: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+        }
+
+        /* BIO */
+        .bio-text {
+            line-height: 1.6;
+        }
+
+        .bio-text.clamped {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
+        }
+
+        .bio-text.expanded {
+            -webkit-line-clamp: unset;
+            overflow: visible;
+
+            p{
+                margin: 15px 0;
+            }
+        }
+
+        .read-more-button {
+            background-color: var(--cor-acento-verde);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        /* LISTAS E DISCOS */
+        .top-tracks ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .track-item {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--cor-fundo-card);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .discography {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            padding-bottom: 10px;
+        }
+        .discography::-webkit-scrollbar {
+            height: 10px;
+        }
+
+        .discography::-webkit-scrollbar-track {
+            background: #151515ff;
+            border-radius: 10px;
+        }
+
+        .discography::-webkit-scrollbar-thumb {
+            background-color: #303030ff;
+            border-radius: 10px;
+        }
+
+        .discography::-webkit-scrollbar-thumb:hover {
+            background-color: #4a4a4a;
+        }
+
+        .album-card {
+            min-width: 180px;
+            max-width: 180px; /* Garante que todos tenham a mesma largura */
+            background-color: var(--cor-fundo-card);
+            padding: 15px;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, transform 0.1s ease; /* Adiciona transição para o hover */
+            cursor: pointer;
+            text-align: left; /* Garante que o texto comece à esquerda */
+        }
+        
+        /* Efeito Hover na Card */
+        .album-card:hover {
+            background-color: #383838; /* Cor um pouco mais clara no hover */
+            transform: translateY(-2px); /* Efeito de elevação sutil */
+        }
+
+        .album-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Sombra para destacar a capa */
+            margin-bottom: 12px;
+        }
+        
+        /* Estilos de Texto Específicos */
+        .album-card-title {
+            font-size: 1rem; /* 16px */
+            font-weight: 600; /* Medium/Semi-bold */
+            color: var(--cor-texto-claro);
+            white-space: nowrap; /* Impede quebras */
+            overflow: hidden; /* Oculta o excesso */
+            text-overflow: ellipsis; /* Adiciona "..." */
+            margin: 0 0 4px 0;
+            line-height: 1.2;
+        }
+
+        .album-card-year {
+            font-size: 0.875rem; /* 14px (um pouco maior que o 'xs' original) */
+            color: var(--cor-texto-secundario); /* Cor cinza suave */
+            margin: 0;
+        }
+        .related-artists {
+            display: block;
+            padding-bottom: 0;
+            gap: 0;
+            width: 100%;
+        }
+
+        .related-artist-item {
+            text-align: left;
+            width: 100%;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--cor-borda-suave);
+            
+            display: block; 
+        }
+
+        .related-artist-item div {
+            display: none !important; 
+        }
+
+        .related-artist-item p {
+            font-size: 1rem;
+            font-weight: 400;
+            margin: 0;
+            padding-left: 10px;
+            color: var(--cor-texto-claro);
+            text-decoration: none;
+        }
+    </style>
 
     <style>
-        .toastify{
-            box-shadow: none;
-            font-size: clamp(0.5rem, 1vw, 1.2rem);
-            border-radius: var(--radius);
-            font-family: "Work Sans", sans-serif;
-            font-weight: 600;
+        .link {
+            text-decoration: none;
+            color: #1ed760;
         }
-        main{
-            margin-top: 80px;
+
+        .link:hover {
+            color: #ffffffff;
+            text-decoration: none; 
+        }
+
+        .disco{
+            padding: 20px;
+            background: #0c0c0c;
+            border-radius: 12px;
+        }
+
+        .related{
+            padding: 20px;
+            background: #0c0c0c;
+            border-radius: 12px;
+        }
+        .text-xs{
+            color: #d5ffd1ff;
+        }
+    </style>
+
+    <style>
+        .all-content {
+            transition: background-color 0.5s ease;
+            background-color: transparent;
+        }
+        
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            /* CORREÇÃO: Usando a cor definida no seu :root */
+            color: var(--cor-texto-claro); 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #333;
+            border-top: 5px solid #1799d1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loaded #loading-overlay {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
         }
     </style>
 </head>
+
 <body>
-    <!--Cabeçalho de navegação-->
-    <header id="header-placeholder"><?php include 'header.php'; ?></header>
+    
+    <header id="header-placeholder">
+        <?php include 'header.php'; ?>
+    </header>
+
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <h3></h3>
+    </div>
 
     <main>
-        <div id="artist-details-container">
-            <h1 id="artist-name-title"></h1> 
-            <p id="loading-message">Buscando informações detalhadas...</p>
-            <div id="biography-content"></div> 
+        <div class="search-bar">
+            <i class="bi bi-search"></i>
+            <input type="text" id="searchInput" placeholder="Pesquisar Artistas...">
+            <button class="search-btn" id="searchBtn">
+                <i class="bi bi-arrow-right"></i>
+            </button>
+        </div>
+
+        <div class="all-content">
         </div>
     </main>
 
     <script>
-        function getArtistNameFromUrl() {
-            const params = new URLSearchParams(window.location.search);
+        // --- ESTRUTURA INICIAL DO CONTEÚDO ---
+        const ALL_CONTENT_STRUCTURE = `
+            <div class="artist-hero">
+                <div class="hero-content">
+                    <p class="artist-meta" id="artistTags"></p>
+                    <h1 class="artist-name" id="artistName"></h1>
+                    <p class="artist-meta" id="artistPeriod"></p>
+                    <a class="follow-button" id="spotifyLinkButton" href="#">Seguir no Spotify</a>
+
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <div class="stat-icon">🎧</div>
+                            <div>
+                                <div class="stat-value" id="statFollowers"></div>
+                                <div class="stat-label">Total de Seguidores</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">🌍</div>
+                            <div>
+                                <div class="stat-value" id="statCountry"></div>
+                                <div class="stat-label">Origem</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">🔥</div>
+                            <div>
+                                <div class="stat-value" id="statPopularity"></div>
+                                <div class="stat-label">Popularidade Spotify</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">💿</div>
+                            <div>
+                                <div class="stat-value" id="statTotalAlbums"></div>
+                                <div class="stat-label">Lançamentos Relacionados</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="left-column">
+                    <div class="bio-section">
+                        <h3 class="section-title">BIO</h3>
+                        <p class="bio-text" id="bioText"></p>
+                        <a href="#" class="read-more-button">Ler Mais</a>
+                    </div>
+
+                    <div class="top-tracks">
+                        <h3 class="section-title">Top 10 Músicas</h3>
+                        <ul id="topTracksList"></ul>
+                    </div>
+
+                    <div class="events-media">
+                        <h3 class="section-title">Humor</h3>
+                        <p class="track-item" id="moodValue">Humor Principal: </p>
+                        <p class="track-item" id="styleValue">Estilo Primário: </p>
+                    </div>
+                </div>
+
+                <div class="right-column">
+                    <div class="disco">
+                        <h3 class="section-title">Discografia Principal</h3>
+                        <div class="discography" id="discographyContainer"></div>
+                    </div>
+
+                    <div class="related">
+                        <h3 class="section-title">Artistas Relacionados</h3>
+                        <div class="related-artists" id="relatedArtistsContainer"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+
+        // Função auxiliar para formatar números grandes (ex: 23600685 -> 23.600.685)
+        function formatNumber(num) {
+            if (typeof num !== 'number' || isNaN(num)) {
+                return 'N/A';
+            }
             
-            const artistName = params.get('artist');
-            
-            const titleElement = document.getElementById('artist-name-title');
-            
-            titleElement.textContent = artistName;
-            
+            return new Intl.NumberFormat('pt-BR').format(num);
+        }
+        
+        // --- FUNÇÃO DE FEEDBACK SIMPLIFICADA (REDUNDÂNCIA REMOVIDA) ---
+        function displayFeedback(message, type) {
+            Toastify({
+                text: message,
+                duration: 4000,
+                gravity: "top",
+                position: "center",
+                backgroundColor: type === 'error' ? "#350101ff" : "#1DB954", 
+            }).showToast();
+        }
+        // ----------------------------------------------------------------
+
+        // Função para tratar o botão "Ler Mais" da biografia
+        function setupBioExpansion() {
+            const bioText = document.getElementById('bioText');
+            const readMoreButton = document.querySelector('.read-more-button');
+
+            // Limpa classes e remove o listener antigo clonando o botão
+            bioText.classList.remove('clamped', 'expanded');
+            readMoreButton.style.display = 'none';
+            const newReadMoreButton = readMoreButton.cloneNode(true);
+            readMoreButton.parentNode.replaceChild(newReadMoreButton, readMoreButton);
+            const buttonElement = newReadMoreButton;
+
+            // Pega a altura total após a inserção do HTML formatado
+            const fullHeight = bioText.scrollHeight;
+
+            // Aplica a classe de limitação e mede a altura limitada
+            bioText.classList.add('clamped');
+            const clampedHeight = bioText.clientHeight;
+
+            // Verifica se o texto excedeu a altura limitada
+            if (fullHeight > clampedHeight && fullHeight > 0) {
+                buttonElement.style.display = 'inline-block';
+                buttonElement.textContent = 'Ler Mais';
+
+                buttonElement.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (bioText.classList.contains('expanded')) {
+                        // Retrair
+                        bioText.classList.remove('expanded');
+                        bioText.classList.add('clamped');
+                        buttonElement.textContent = 'Ler Mais';
+                    } else {
+                        // Expandir
+                        bioText.classList.add('expanded');
+                        bioText.classList.remove('clamped');
+                        buttonElement.textContent = 'Ver Menos';
+                    }
+                });
+            } else {
+                // Não precisa de botão "Ler Mais"
+                bioText.classList.remove('clamped');
+                buttonElement.style.display = 'none';
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', getArtistNameFromUrl);
+        // FUNÇÕES DE CONTROLE DO LOADING OVERLAY
+        function showLoading(artistName) {
+            document.getElementById('loading-overlay').style.opacity = '1';
+            document.getElementById('loading-overlay').style.visibility = 'visible';
+            document.querySelector('#loading-overlay h3').textContent = `Carregando perfil de ${artistName || 'Artista'}...`;
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.opacity = '0';
+            document.getElementById('loading-overlay').style.visibility = 'hidden';
+        }
+
+
+        // FUNÇÃO PARA PREPARAR O CONTEÚDO (FUNDO PRETO)
+        function setupContentForLoading() {
+            const allContent = document.querySelector('.all-content');
+            
+            // Limpa o conteúdo (deixa vazio) e define o fundo para preto sólido
+            allContent.innerHTML = ''; 
+            allContent.style.backgroundColor = 'black'; 
+            allContent.style.minHeight = '500px'; 
+        }
+
+        // FUNÇÃO PARA RESTAURAR A ESTRUTURA DO CONTEÚDO
+        function restoreContentStructure() {
+            const allContent = document.querySelector('.all-content');
+            // Restaura o HTML completo
+            allContent.innerHTML = ALL_CONTENT_STRUCTURE;
+            // Remove o estilo de fundo temporário (deixando o fundo vir do CSS do body)
+            allContent.style.backgroundColor = 'transparent'; 
+            allContent.style.minHeight = '0';
+        }
+
+
+        // Função principal para carregar e exibir os dados do artista
+        async function loadArtistData(artistName) {
+            if (!artistName) {
+                // Limpa o all-content caso a pesquisa esteja vazia
+                const allContent = document.querySelector('.all-content');
+                allContent.innerHTML = '';
+                allContent.style.backgroundColor = 'transparent';
+                return; 
+            }
+            
+            //  Mostrar loading e limpar o conteúdo (fundo preto)
+            showLoading(artistName);
+            setupContentForLoading(); 
+
+            const endpoint = `http://127.0.0.1:8131/info/artists?artist=${encodeURIComponent(artistName)}`;
+
+            try {
+                const response = await fetch(endpoint);
+
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (!data || !data.sptfy_base || !data.audiodb) {
+                    // Mensagem de erro caso o artista não seja encontrado (AGORA USANDO displayFeedback)
+                    displayFeedback(`Artista "${artistName}" não encontrado ou dados incompletos.`, 'error');
+                    return;
+                }
+
+                // Restaurar a estrutura do HTML (remover fundo preto)
+                restoreContentStructure();
+                renderArtistDetails(data);
+                
+            } catch (error) {
+                console.error("Erro ao buscar os dados do artista:", error);
+                // Mensagem de erro para problemas de conexão (AGORA USANDO displayFeedback)
+                displayFeedback("OOPS ! Ocorreu um erro de conexão. Atualize a página.", 'error');
+
+            } finally {
+                hideLoading();
+            }
+        }
+
+
+        // Função para renderizar as informações na página
+        function renderArtistDetails(data) {
+            const { sptfy_base, sptfy_albuns, sptfy_tracks, audiodb, mbrainz, lastFm, lastFms_similars } = data;
+
+            // Dados Básicos e Hero
+            document.title = `${sptfy_base.name} - Info`;
+            document.getElementById('artistName').textContent = sptfy_base.name ? sptfy_base.name.toUpperCase() : 'N/A';
+
+            const rawTags = lastFm?.tags ?? [];
+            
+            // Cria o HTML das tags: mapeia, capitaliza e envolve em <span>
+            const tagsHTML = rawTags
+                .map(item => {
+                    const tagText = (typeof item === 'string' ? item : item.name) || ''; 
+                    const formattedTag = tagText.charAt(0).toUpperCase() + tagText.slice(1);
+                    return `<span class="artist-tag">${formattedTag}</span>`;
+                })
+                .join('');
+
+            const tagsContainer = document.getElementById('artistTags');
+            if (tagsHTML) {
+                tagsContainer.innerHTML = tagsHTML;
+            } else {
+                tagsContainer.textContent = 'Tags não disponíveis';
+            }
+            // ---------------------------------
+
+            const beginYear = mbrainz.begin || 'Início Desconhecido';
+            const endYear = mbrainz.end ? mbrainz.end.substring(0, 4) : 'Presente';
+            document.getElementById('artistPeriod').textContent = `Período Ativo: ${beginYear} - ${endYear}`;
+
+            document.getElementById('spotifyLinkButton').href = sptfy_base.linkSpt || '#';
+
+            // Configuração da imagem de fundo do Hero
+            const artistHero = document.querySelector('.artist-hero');
+            if (sptfy_base.image_url) {
+                artistHero.style.backgroundImage = `url('${sptfy_base.image_url}')`;
+                artistHero.style.backgroundSize = 'cover';
+                artistHero.style.backgroundPosition = 'center -190px';
+                artistHero.style.boxShadow = 'inset 0 0 0 1000px rgba(0,0,0,.6)'; 
+            } else {
+                artistHero.style.backgroundImage = 'none';
+                artistHero.style.boxShadow = 'none';
+            }
+
+            // Estatísticas
+            document.getElementById('statFollowers').textContent = formatNumber(sptfy_base.followers_total);
+            document.getElementById('statCountry').textContent = audiodb.country || 'N/A';
+            document.getElementById('statPopularity').textContent = sptfy_base.popularity || 'N/A';
+            
+            const statTotalAlbumsElement = document.getElementById('statTotalAlbums');
+            if (statTotalAlbumsElement) {
+                statTotalAlbumsElement.textContent = sptfy_albuns.total || 'N/A';
+            }
+
+            // Biografia e Atributos
+            const bioElement = document.getElementById('bioText');
+            if (audiodb.biography) {
+                let rawBio = audiodb.biography;
+                
+                // Formata quebras de linha em parágrafos HTML
+                let formattedBio = rawBio.replace(/\n\n/g, '</p><p>');
+                formattedBio = formattedBio.replace(/\n/g, '</p><p>');
+                formattedBio = `<p>${formattedBio}</p>`;
+
+                bioElement.innerHTML = formattedBio;
+            } else {
+                bioElement.textContent = 'Biografia não disponível.';
+            }
+
+            setupBioExpansion(); // Chama a função de expansão da bio APÓS definir o innerHTML
+
+            document.getElementById('moodValue').innerHTML = `Humor Principal: <span>${audiodb.mood || 'N/A'}</span>`;
+            document.getElementById('styleValue').innerHTML = `Estilo Primário: <span>${audiodb.style || 'N/A'}</span>`;
+
+
+            // Faixas Populares
+            const topTracksList = document.getElementById('topTracksList');
+            topTracksList.innerHTML = '';
+            if (sptfy_tracks && sptfy_tracks.length > 0) {
+                sptfy_tracks.slice(0, 10).forEach((track, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'track-item';
+                    listItem.innerHTML = `
+                        <span>${index + 1}. ${track.name}</span>
+                        <a href="${track.spotify_link || '#'}" target="_blank" class="link">
+                            <i class="bi bi-play-circle-fill" style="margin-right: 5px;"></i> Ouvir
+                        </a>
+                    `;
+                    topTracksList.appendChild(listItem);
+                });
+            } else {
+                topTracksList.innerHTML = `<li class="track-item text-gray-400">Nenhuma faixa popular encontrada.</li>`;
+            }
+
+            const discographyContainer = document.getElementById('discographyContainer');
+            discographyContainer.innerHTML = '';
+            if (sptfy_albuns.item && sptfy_albuns.item.length > 0) {
+                const albumsToShow = sptfy_albuns.item.slice(0, 50);
+                albumsToShow.forEach(album => {
+                    const albumCard = document.createElement('div');
+                    albumCard.className = 'album-card';
+                    albumCard.innerHTML = `
+                        <a href="${album.spotify_link || '#'}" target="_blank">
+                            <img src="${album.image_url || 'https://placehold.co/150x150/1f2937/ffffff?text=Capa'}" alt="Capa do Álbum ${album.name}" onerror="this.onerror=null;this.src='https://placehold.co/150x150/1f2937/ffffff?text=Capa';">
+                        </a>
+                        <p class="album-card-title">${album.name}</p>
+                        <p class="album-card-year">${album.release_date.substring(0, 4)}</p>
+                    `;
+                    discographyContainer.appendChild(albumCard);
+                });
+            } else {
+                discographyContainer.innerHTML = `<p class="text-gray-400">Nenhum álbum principal encontrado.</p>`;
+            }
+
+            // Artistas Relacionados
+            const relatedArtistsContainer = document.getElementById('relatedArtistsContainer');
+            relatedArtistsContainer.innerHTML = '';
+            if (lastFms_similars.name && lastFms_similars.name.length > 0) {
+                lastFms_similars.name.slice(0, 10).forEach(artist => {
+                    const relatedArtistItem = document.createElement('div');
+                    relatedArtistItem.className = 'related-artist-item';
+                    
+                    relatedArtistItem.innerHTML = `
+                        <p class="text-sm font-semibold truncate">${artist}</p>
+                    `;
+                    relatedArtistsContainer.appendChild(relatedArtistItem);
+                });
+            } else {
+                relatedArtistsContainer.innerHTML = `<p class="col-span-3 text-gray-400">Nenhum artista relacionado encontrado.</p>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+
+            const performSearch = () => {
+                const artistName = searchInput.value.trim();
+                loadArtistData(artistName);
+            };
+
+            searchBtn.addEventListener('click', performSearch);
+
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            // Carrega o artista inicial (Nirvana) ao iniciar
+            loadArtistData("Nirvana"); 
+        });
+
     </script>
+
 </body>
 </html>

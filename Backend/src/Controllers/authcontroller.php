@@ -69,4 +69,20 @@ class AuthController {
             exit;
         }
     }
+
+    //
+    public function unlinkspt(): void {
+        $userId = $_SESSION['user_id'] ?? null; 
+
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Acesso negado. Usuário não autenticado.']);
+            return;
+        }
+
+        $this->authService->processSpotifyUnlink($userId);
+
+        http_response_code(200);
+        echo json_encode(['success' => true, 'message' => 'Conta do Spotify desvinculada com sucesso.']);
+    }
 }

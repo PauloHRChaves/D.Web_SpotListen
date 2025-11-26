@@ -33,7 +33,7 @@ require ROOT_PATH . 'bootstrap.php';
 header("Access-Control-Allow-Origin: http://127.0.0.1:8132");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
@@ -58,13 +58,13 @@ function requestType(string $method): array {
 
     $inputData = [];
     
-    if (in_array($method, ['POST'])) {
+    if (in_array($method, ['POST', 'DELETE'])) { 
         $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
         
         if (str_contains($contentType, 'application/json')) {
             $jsonBody = file_get_contents('php://input');
             $inputData = json_decode($jsonBody, true) ?? [];
-        } else {
+        } else if ($method === 'POST') {
             $inputData = $_POST;
         }
     }

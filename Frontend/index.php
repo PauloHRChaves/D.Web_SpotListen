@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!--Nome da Aba-->
-    <title>D.Web-PHP</title>
+    <title>SpotListen</title>
 
     <!--Font-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,9 +76,6 @@
             margin-top: 80px;
             flex-grow: 1;
             overflow-y: auto;
-            /* background: radial-gradient(circle at top left, #c5c5c5ff, transparent 20%), radial-gradient(circle at bottom right, #aca6ffff, transparent 20%), 
-                radial-gradient(circle at 24px 340px, #a6ffdaff, transparent 20%),
-                  #00131bff; */
         }
 
         /* Scrollbar personalizado */
@@ -754,15 +751,12 @@
     <style>
         .songsterr {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 20px 0;
-            border-top: 1px solid #333;
+            width: 50%;
         }
 
         .songsterr .input {
-            width: 40%;
+            width: 100%;
             padding: 12px 15px;
             border: 1px solid #555;
             background-color: #1a1a1a;
@@ -785,7 +779,7 @@
         .songsterr #searchtab {
             border-radius: 1rem;
             padding: 12px 25px;
-            margin-left: 10px;
+            margin-top: 15px;
             background-color: #007bff;
             color: #ffffff;
             border: none;
@@ -793,7 +787,8 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: background-color 0.3s ease, transform 0.2s   ease;
+            width: 50%;
         }
 
         .songsterr #searchtab:hover {
@@ -804,6 +799,12 @@
         .songsterr #searchtab:active {
             background-color: #00852fff;
             transform: translateY(0);
+        }
+        .learn{
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            padding: 2rem 3rem;
         }
     </style>
 </head>
@@ -879,13 +880,22 @@
 
         <hr>
 
-        <div class="songsterr">
-            <h1 style="margin-right: 6%;">Descubra Como Tocar Qualquer Música</h1>
-            <div style="display: flex; display: flex; width: 100%; justify-content: center;">
-                <input type="text" name="tab" class="input" id="tabs" placeholder="Digite a nome da música e o nome do artista para mais precisão...">
-                <button id="searchtab">Buscar</button>
+        <h1 style="justify-self: center;margin-top:2rem">Descubra Como Tocar Qualquer Música</h1>
+        <section class="learn">      
+            <div class="songsterr">
+                <div style="display: flex;width: 100%;justify-content: center;flex-direction: column;align-items: center;">
+                    <input type="text" name="tab" class="input" id="tabs" placeholder="Nome da música + Nome do artista, para mais precisão...">
+                    <button id="searchtab">Buscar</button>
+                </div>
             </div>
-        </div>
+            <hr>
+            <div style="max-width: 700px;">
+                <p style="text-align: start; font-size: clamp(0.5rem, 2vw, 1.2rem);">Use a barra de pesquisa para encontrar tablaturas de milhões de músicas de milhares de artistas. 
+                    Seja você um baterista iniciante, um guitarrista experiente ou apenas queira aprender o riff daquela canção do Nirvana, nossa busca o levará diretamente ao 
+                    <strong style="color: #c6ddffff;">Songsterr</strong>.
+                </p>
+            </div>
+        </section>
 
         <script>
             const inputTabs = document.getElementById('tabs');

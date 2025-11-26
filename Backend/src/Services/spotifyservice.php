@@ -14,6 +14,7 @@ class SpotifyService extends HttpClient {
         $this->search = new Search();
         $this->insert = new Insert();
     }
+
     public function _requestSpotifyToken(string $grantType, array $params = []): array {
         $client_id = $_ENV['SPOTIFY_CLIENT_ID'];
         $client_secret = $_ENV['SPOTIFY_CLIENT_SECRET'];
@@ -254,14 +255,12 @@ class SpotifyService extends HttpClient {
         return $results;
     }
 
-
+    // Usado na pagina Genres
     public function searchArtistByNameSingle(string $artistName): array {
         $token = $this->getAccessToken()['access_token'];
         $headers = ["Authorization: Bearer $token"];
         
-        $encodedArtistName = urlencode($artistName);
-        
-        $url = "https://api.spotify.com/v1/search?q={$encodedArtistName}&type=artist&limit=10";
+        $url = "https://api.spotify.com/v1/search?q=". urlencode($artistName) ."&type=artist&limit=10";
 
         $request = [
             'url'     => $url,
@@ -396,6 +395,18 @@ class SpotifyService extends HttpClient {
         // return $allGenres;
     }
 
+    public function getMyTopArtist(int $userId): array {
+        $accessToken = $this->getUserToken($userId); 
+        $term = 'short_term';
+        
+        $currentUrl = "https://api.spotify.com/v1/me/top/artists?limit=1&time_range={$term}";
+        $headers = ["Authorization: Bearer $accessToken"];
+
+        $requestData = $this->_executarRequest($currentUrl, $headers); 
+                
+        return $requestData;
+    }
+
     public function dashboardGenres(array $genres): array {
         $genreCounts = array_count_values($genres);
 
@@ -407,4 +418,103 @@ class SpotifyService extends HttpClient {
         return $genreCounts;
     }
 
+    //
+    public function searchArtist2(string $artistName): array {
+        $token = $this->getAccessToken()['access_token'];
+        $headers = ["Authorization: Bearer $token"];
+        
+        $url = "https://api.spotify.com/v1/search?q=" . urlencode($artistName) . "&type=artist&limit=1";
+
+        $response = $this->_executarRequest($url, $headers);
+
+        $artistData = $response['artists']['items'][0];
+        
+        return 
+        [
+            'id'=> $artistData['id'],
+            'name'=> $artistData['name'],
+            'linkSpt'=> $artistData['external_urls']['spotify']?? null,
+            'popularity' => $artistData['popularity'] ?? null,
+            'followers_total' => $artistData['followers']['total'] ?? null,
+            'image_url'=> $artistData['images'][0]['url'] ?? null,
+        ];
+    }
+    public function searchArtistAlbum(string $artistid): array {
+        $token = $this->getAccessToken()['access_token'];
+        $headers = ["Authorization: Bearer $token"];
+        
+        $filteredAlbums = [];
+        $offset = 0;
+        $totalAlbums = 1; // Inicializa com 1 para garantir o primeiro loop
+        $limit = 50; // O limite máximo por chamada
+        
+        while ($offset < $totalAlbums) {
+            $url = "https://api.spotify.com/v1/artists/{$artistid}/albums?include_groups=album,single,compilation&market=BR&limit={$limit}&offset={$offset}";
+            
+            $response = $this->_executarRequest($url, $headers);
+            
+            if ($offset === 0) {
+                $totalAlbums = $response['total'] ?? 0;
+            }
+
+            $rawAlbums = $response['items'] ?? [];
+            foreach ($rawAlbums as $album) {
+                $imageUrl = $album['images'][0]['url'] ?? null;
+                
+                $filteredAlbums[] = [
+                    'name'         => $album['name'] ?? null,
+                    'spotify_link' => $album['external_urls']['spotify'] ?? '#',
+                    'release_date' => $album['release_date'] ?? null,
+                    'image_url'    => $imageUrl,
+                ];
+            }
+            $offset += $limit;
+            
+            // Medida de segurança para evitar loops infinitos se a API falhar
+            if (empty($rawAlbums)) break; 
+        }
+        
+        return 
+        [
+            //'total' => $totalAlbums, // Retorna o total original
+            'total' => count($filteredAlbums), // Retorna o total de itens coletados
+            'item'  => $filteredAlbums,
+        ];
+    }
+    public function searchArtistTopTracks(string $artistid): array {
+        $token = $this->getAccessToken()['access_token'];
+        $headers = ["Authorization: Bearer $token"];
+        
+        $url = "https://api.spotify.com/v1/artists/$artistid/top-tracks?market=BR";
+
+        $response = $this->_executarRequest($url, $headers);
+
+        $rawData = $response['tracks'] ?? [];
+
+        $filteredData = [];
+
+        foreach ($rawData as $data) {
+            $filteredData[] = [
+                'name'         => $data['name'] ?? null,
+                'spotify_link' => $data['external_urls']['spotify'] ?? '#',
+            ];
+        }
+        
+        return $filteredData;
+    }
+    
+    //
+    public function searchArtistSimilars(string $artistid): array {
+        $token = $this->getAccessToken()['access_token'];
+        $headers = ["Authorization: Bearer $token"];
+        
+        $url = "https://api.spotify.com/v1/artists/$artistid/related-artists";
+        try {
+            $response = $this->_executarRequest($url, $headers);
+            
+        } catch (\Exception $e) {
+            return ['error' => 'Falha na busca por artistas relacionados: ' . $e->getMessage()];
+        }
+        return $response;
+    }
 }

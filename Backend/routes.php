@@ -3,7 +3,7 @@ use src\Controllers\AuthController;
 use src\Controllers\SpotifyController;
 use src\Controllers\LastfmController;
 // use src\Controllers\MusicBrainzController;
-use src\Controllers\MyController;
+use src\Controllers\GeneralController;
 return [
     'GET' => [
         '/logged-in' => [AuthController::class, 'logged'],
@@ -15,6 +15,7 @@ return [
         '/spotify/my/recent-tracks' => [SpotifyController::class, 'recentTracks'],
         '/spotify/my/current-track' => [SpotifyController::class, 'currentTrack'],
         '/spotify/my/top-artists' => [SpotifyController::class, 'userTopArtists'],
+        '/spotify/my/fav-artists' => [SpotifyController::class, 'myTopArtist'],
 
         '/spotify/search/genre' => [SpotifyController::class, 'searchSpotifyGenre'],
         '/spotify/search/artist' => [SpotifyController::class, 'searchArtistByName'],
@@ -22,16 +23,16 @@ return [
         '/lasfm/top15artists' => [LastfmController::class, 'getLastfmArtists'],
         '/lasfm/top15tracks' => [LastfmController::class, 'getLastfmTracks'],
 
-        '/learning' => [SongsterrController::class, 'getTabs'],
-
-        '/user/get-spotify-info' => [MyController::class,'getSpotifyInfo'],
+        '/info/artists' => [GeneralController::class, 'getInfo'],
     ],
 
     'POST' => [
-        // REMOVER
-        // '/spotify/token' => [SpotifyController::class, 'spotifyToken'],
         '/login' => [AuthController::class, 'login'],
         '/register' => [AuthController::class, 'register'],
         '/logout' => [AuthController::class, 'logout'],
+    ],
+
+    'DELETE' => [
+        '/spotify/unlink' => [AuthController::class, 'unlinkspt'],
     ]
 ];

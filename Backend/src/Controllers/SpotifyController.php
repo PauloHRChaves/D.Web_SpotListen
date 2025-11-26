@@ -43,17 +43,26 @@ class SpotifyController {
     }
 
     //
-    public function currentTrack(): array {
-        $userId = $this->sptService->getAuthenticatedUserId();
-        $result = $this->sptService->getCurrentTrack($userId);
+    // public function currentTrack(): array {
+    //     $userId = $this->sptService->getAuthenticatedUserId();
+    //     $result = $this->sptService->getCurrentTrack($userId);
 
-        return $result;
-    }
+    //     return $result;
+    // }
 
     //
     public function userTopArtists(): array {
         $userId = $this->sptService->getAuthenticatedUserId();
         $result = $this->sptService->getUserTopArtists($userId);
+
+        return $result;
+    }
+
+    //
+    public function myTopArtist(): array {
+        $userId = $this->sptService->getAuthenticatedUserId();
+
+        $result = $this->sptService->getMyTopArtist($userId);
 
         return $result;
     }

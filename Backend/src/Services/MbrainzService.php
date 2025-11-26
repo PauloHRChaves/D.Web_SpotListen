@@ -4,17 +4,26 @@ namespace src\Services;
 use src\Infrastructure\HttpClient;
 
 class MbrainzService extends HttpClient {  
-    // public function Mbrainzinfo(string $appName, string $appVersion, string $appContact, string $artistName): array {
-    //     $url = "https://musicbrainz.org/ws/2/artist/?query=artist:{$artistName}&fmt=json";
-        
-    //     $userAgentValue = "{$appName}/{$appVersion} ({$appContact})";
-        
-    //     $headers = [
-    //         'User-Agent' => $userAgentValue
-    //     ];
-        
-    //     $data = $this->_executarRequest($url, $headers);
+    public function getArtistInfo(string $artistName): array {
+        $key = $_ENV['EMAIL'];
 
-    //     return $data;
-    // }
+        $encodedArtistName = urlencode($artistName);
+        $url = "https://musicbrainz.org/ws/2/artist/?query=artist:{$encodedArtistName}&fmt=json&limit=1";
+        
+        $headers = ["User-Agent: SpotList/1.0.0 ($key)"];
+
+        $data = $this->_executarRequest($url, $headers);
+        
+        $artists = $data['artists'];
+
+        $firstArtist = $artists[0];
+
+        $filteredInfo = [
+            'mbid'      => $firstArtist['id'] ?? null,
+            'begin'      => $firstArtist['life-span']['begin'] ?? null,
+            'end'      => $firstArtist['life-span']['end'] ?? null,
+        ];
+        
+        return $filteredInfo;
+    }
 }

@@ -7,6 +7,7 @@ use src\Infrastructure\HttpClient;
 
 use src\Infrastructure\Database\Search;
 use src\Infrastructure\Database\Insert;
+use src\Infrastructure\Database\Delete;
 
 use src\Exceptions\ApiException;
 
@@ -16,6 +17,7 @@ class AuthService {
     public function __construct() {
         $this->search = new Search();
         $this->insert = new Insert();
+        $this->delete = new Delete();
     }
 
     // Cadastro
@@ -178,5 +180,14 @@ class AuthService {
         ]);
         
         return true; 
+    }
+
+    //
+    public function processSpotifyUnlink(int $userId): void {
+        try {
+            $this->delete->unlinkSpotifyConnection($userId);
+        } catch (ApiException $e) {
+            throw new ApiException("Falha inesperada ao processar desvinculação: ", 500); 
+        }
     }
 }

@@ -15,9 +15,7 @@ class LastfmController {
 
     // Usado no Carousel
     public function getLastfmArtists(): array {
-        $apikey = $_ENV['LASTFM_KEY'];
-
-        $artists = $this->lfmService->getTopArtists($apikey);
+        $artists = $this->lfmService->getTopArtists();
         
         if (!is_array($artists) || empty($artists)) {
             error_log("Last.fm getTopArtists returned non-array data or empty array.");
@@ -52,9 +50,7 @@ class LastfmController {
 
     //
     public function getLastfmTracks(): array {
-        $apikey = $_ENV['LASTFM_KEY'];
-
-        $result = $this->lfmService->getTopTracks($apikey);
+        $result = $this->lfmService->getTopTracks();
 
         if (!is_array($result) || empty($result)) {
             error_log("Last.fm getTopTracks returned non-array data or empty array.");

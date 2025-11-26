@@ -7,30 +7,32 @@
     --color-accent-blue: #0070f3;
     --color-active-line: #1DB954;
     --color-text-black: #333;
+    --color-background: #000000;
+    --font-display: 'Work Sans', sans-serif;
 }
 @font-face {
     font-family: 'Greek';
     src: url('../fonts/dalek_pinpoint/DalekPinpointBold.ttf') format('truetype');
 }
 
+
 body {
     background-color: var(--color-background);
-    font-family: 'Work Sans', sans-serif;
+    font-family: var(--font-display);
     display: flex;
-
     flex-direction: column;
-
     background-attachment: fixed;
     background-size: cover;
+    color: var(--cor-texto-claro);
 }
 
-main{
+main {
     margin-top: 80px;
     flex-grow: 1;
     overflow-y: auto;
 }
 
-
+/* Scrollbar personalizado */
 main::-webkit-scrollbar {
     width: clamp(0.1rem, 0.7vw, 0.5rem);
 }

@@ -9,6 +9,7 @@ Temática: música.
     - <a href="https://developer.spotify.com/documentation/web-api">Spotify API</a>
     - <a href="https://www.last.fm/api">Last.fm API</a>
     - <a href="https://musicbrainz.org/doc/MusicBrainz_API">MusicBrainz API</a>
+    - <a href="https://www.theaudiodb.com/free_music_api">Theaudiodb</a>
 <br>
 
 ### Frontend tools:

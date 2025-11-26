@@ -1,33 +1,26 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!--Configurações de exibição (caracteres especiais/design responsivo)-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!--Nome da Aba-->
-    <title>D.Web-PHP</title>
+    <title>SpotListen - Profile</title>
 
-    <!--Font-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!--Favicon-->
     <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon_io/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon_io//favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon_io//favicon-16x16.png">
     <link rel="manifest" href="/static/favicon_io//site.webmanifest">
 
-    <!--Toastfy-->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     
-    <!--Inserir e estilizar cabeçalho na página-->
     <script src="../static/js/header.js"></script>
     <link rel="stylesheet" href="../static/css/header.css">
 
-    <!--Bootstrap Icons-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
 
     <style>
@@ -38,20 +31,26 @@
             --text-subtle: #aaaaaa;
             --border-radius: 12px;
             --spacing: 20px;
+            --color-background: #000000;
+            --font-display: 'Work Sans', sans-serif;
+        }
+        body {
+            background-color: var(--color-background);
+            font-family: var(--font-display);
+            display: flex;
+            flex-direction: column;
+            background-attachment: fixed;
+            background-size: cover;
+            color: var(--cor-texto-claro);
         }
 
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-        }
-        main{
-            background: linear-gradient(to bottom, #000312, #000c02);
+        main {
             margin-top: 80px;
             flex-grow: 1;
             overflow-y: auto;
         }
+
+        /* Scrollbar personalizado */
         main::-webkit-scrollbar {
             width: clamp(0.1rem, 0.7vw, 0.5rem);
         }
@@ -61,7 +60,7 @@
         }
 
         .profile-container {
-            background-color: var(--bg-dark);
+            background-color: linear-gradient(rgb(24 24 24 / 50%));
             color: var(--text-light);
         }
 
@@ -73,9 +72,13 @@
         .header-content {
             text-align: center;
             display: flex;
-            align-content: center;
             gap: 1rem;
             align-items: center;
+        }
+
+        .profile-actions {
+            margin-left: 20px;
+            align-self: center;
         }
 
         .profile-picture {
@@ -173,13 +176,13 @@
 
         .arrow-short {
             font-size: 2rem;
-                cursor: pointer;
-                flex-shrink: 0;
-                user-select: none;
-                color: #000000;
-                background-color: #ffffff;
-                display: flex;
-                border-radius: 50%;
+            cursor: pointer;
+            flex-shrink: 0;
+            user-select: none;
+            color: #000000;
+            background-color: #ffffff;
+            display: flex;
+            border-radius: 50%;
         }
 
         .songcontent {
@@ -234,7 +237,7 @@
             margin-top: 5px;
             
             white-space: nowrap; 
-            overflow: hidden;    
+            overflow: hidden;    
             text-overflow: ellipsis;
             width: 100%;
         }
@@ -290,10 +293,10 @@
                 background-color: #1DB954; 
                 color: white; 
                 border: none;
-                padding: 14px 24px;    
-                border-radius: 4rem; 
+                padding: 14px 24px;
                 font-weight: bold; 
                 cursor: pointer;
+                border-radius: 2rem;
                 transition: 0.2s ease-in-out;
             }
             #vincular-spotify:hover{
@@ -301,6 +304,21 @@
                 transform: scale(1.1);
                 transition: transform 0.2s ease-in-out;
             }
+        }
+
+        #desvincular-spotify {
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            display: none;
+        }
+        #desvincular-spotify:hover {
+            background-color: #d32f2f;
         }
     </style>
 
@@ -412,7 +430,6 @@
         <h3>Carregando seu perfil musical...</h3>
     </div>
 
-    <!-- Navigation Header -->
     <header id="header-placeholder"><?php include 'header.php'; ?></header>
 
     <main class="profile-container">
@@ -420,11 +437,11 @@
             <div class="header-content">
                 <img class="profile-picture" id="profile-pic" src="../static/imgs/profile-icon.png" alt="Foto de Perfil">
                 <h1 class="username" id="username-display"></h1>
-
-                <div id="current-track-container">
-                    <div id="track-info"></div>
+                
+                <div class="profile-actions">
+                    <button id="desvincular-spotify">Desvincular Spotify</button>
                 </div>
-
+                
             </div>
         </div>
 
@@ -436,7 +453,7 @@
                         <i class="bi bi-arrow-left-short arrow-short" onclick="scrollBooks(-1)"></i>
                         <div class="scroller-container">
                             <div class="scroller-wrapper" id="recent-tracks-container">
-                            </div>
+                                </div>
                         </div>
                         <i class="bi bi-arrow-right-short arrow-short" onclick="scrollBooks(1)"></i>
                     </div>
@@ -445,19 +462,19 @@
                 <section class="favorite-artists-list section-card collapsible">
                     <h2>Gêneros Mais Ouvidos</h2>
                     <div class="artist-item" id="myTopArtists">
-                    </div>
+                        </div>
                 </section>
 
                 <section class="saved-albums section-card collapsible">
                     <h2>Álbuns Salvos</h2>
-                </section>
+                    </section>
             </div>
 
             <div class="right-section">
                 <section class="created-playlists section-card collapsible">
                     <h2>Playlists</h2>
                     <div id="playlists-container" class="playlists-grid">
-                    </div>
+                        </div>
                 </section>
 
                 <section class="favorite-artists-side section-card">
@@ -476,25 +493,81 @@
     </main>
     
     <script>
+        // Variável global para rastrear o status de vinculação do Spotify
         let isSpotifyLinked = false;
         
+        // Variável para armazenar a session ID manual do localStorage
+        const manualSessionId = localStorage.getItem('manualSessionId'); 
+
+        // --- VARIÁVEIS DE URL DA API ---
+        const BASE_URL = 'http://127.0.0.1:8131';
+        const LOGIN_URL = 'http://127.0.0.1:8132/templates/auth/login.html';
+        const LOGGED_IN_URL = `${BASE_URL}/logged-in`;
+        const PLAYLISTS_URL = `${BASE_URL}/spotify/my/playlists`;
+        const RECENT_TRACKS_URL_BASE = `${BASE_URL}/spotify/my/recent-tracks`;
+        const MY_TOP_ARTISTS = `${BASE_URL}/spotify/my/top-artists`;
+        const UNLINK_URL = `${BASE_URL}/spotify/unlink`;
+
+        // --- FUNÇÕES DE UTILIDADE ---
+
+        /* Redireciona o usuário para a página de login e limpa o ID da sessão */
         const redirectToLogin = () => {
             localStorage.removeItem('manualSessionId');
-            window.location.replace('http://127.0.0.1:8132/templates/auth/login.html'); 
+            window.location.replace(LOGIN_URL); 
         };
         
+        function displayFeedback(message, type) {
+            Toastify({
+                text: message,
+                duration: 4000,
+                gravity: "top",
+                position: "center",
+                backgroundColor: type === 'error' ? "#350101ff" : "#1DB954", 
+            }).showToast();
+        }
+
+        /* Verifica e remove erros passados via URL após um redirecionamento */
+        // em caso do usuario tentar vincular a mesma conta 2 vezes
+        function handleUrlError() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorMessage = urlParams.get('error');
+            
+            if (errorMessage) {
+                displayFeedback(errorMessage, 'error');
+                urlParams.delete('error');
+
+                const newSearch = urlParams.toString().length > 0 ? '?' + urlParams.toString() : '';
+                window.history.replaceState({}, document.title, window.location.pathname + newSearch);
+            }
+        }
+        
+        /* Carrossel de playlists/itens */
+        function scrollBooks(direction) {
+            const scroller = document.querySelector('.scroller-container');
+            const scrollAmount = 209; 
+            if (scroller) {
+                scroller.scrollBy({
+                    left: direction * scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+
+        // --- FUNÇÃO DE AUTENTICAÇÃO E CARREGAMENTO DE DADOS ESSENCIAIS ---
+
+        /* Verifica o status de login e carrega os dados básicos do usuário (nome de usuário e foto).*/
         async function checkAndLoadEssentialUserData() {
-            const manualSessionId = localStorage.getItem('manualSessionId'); 
             const profilePicElement = document.getElementById('profile-pic');
             const usernameDisplayElement = document.getElementById('username-display');
-            const defaultProfileImg = '../static/imgs/profile-icon.png';
+            const defaultProfileImg = '/static/imgs/profile-icon.png';
 
             if (!manualSessionId) {
                 redirectToLogin();
                 return false;
             }
 
-            const url = `http://127.0.0.1:8131/logged-in?PHPSESSID=${manualSessionId}`;
+            const url = `${LOGGED_IN_URL}?PHPSESSID=${manualSessionId}`;
 
             try {
                 const response = await fetch(url, {
@@ -521,12 +594,12 @@
                         if (spotifyData.PROFILE_IMG) {
                             profileImgSrc = spotifyData.PROFILE_IMG;
                         }
-                    }else{
+                    } else {
                         isSpotifyLinked = false;
                     }
 
-                    usernameDisplayElement.textContent = displayName; 
-                    profilePicElement.src = profileImgSrc;
+                    if (usernameDisplayElement) usernameDisplayElement.textContent = displayName; 
+                    if (profilePicElement) profilePicElement.src = profileImgSrc;
                     
                     return true; 
                 } else {
@@ -534,55 +607,18 @@
                     return false;
                 }
             } catch (error) {
-                console.error('Erro de requisição:', error);
+                console.error('Erro de requisição (checkAndLoadEssentialUserData):', error);
                 redirectToLogin();
                 return false;
             }
         }
-    </script>
 
-    <script>
-        const manualSessionId = localStorage.getItem('manualSessionId'); 
-        
-        const PLAYLISTS_URL = 'http://127.0.0.1:8131/spotify/my/playlists';
-        const RECENT_TRACKS_URL_BASE = 'http://127.0.0.1:8131/spotify/my/recent-tracks';
-        // const CURRENT_TRACK_URL = 'http://127.0.0.1:8131/spotify/my/current-track'
-        const MY_TOP_ARTISTS = 'http://127.0.0.1:8131/spotify/my/top-artists';
+        // --- FUNÇÕES DE CARREGAMENTO DE DADOS DO SPOTIFY ---
 
-        function scrollBooks(direction) {
-            const scroller = document.querySelector('.scroller-container');
-            const scrollAmount = 209;
-            scroller.scrollBy({
-                left: direction * scrollAmount,
-                behavior: 'smooth'
-            });
-        }
-
-        function displayFeedback(message, type) {
-            Toastify({
-                text: message,
-                duration: 4000,
-                gravity: "top",
-                position: "center",
-                backgroundColor: "#350101ff",
-            }).showToast();
-        }
-
-        function handleUrlError() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const errorMessage = urlParams.get('error');
-            
-            if (errorMessage) {
-                displayFeedback(errorMessage);
-                urlParams.delete('error');
-
-                const newSearch = urlParams.toString().length > 0 ? '?' + urlParams.toString() : '';
-                window.history.replaceState({}, document.title, window.location.pathname + newSearch);
-            }
-        }
-
+        /* Carrega e exibe as playlists do usuário do Spotify */
         async function loadMyPlaylists() {
             const container = document.getElementById('playlists-container');
+            if (!container) return;
             container.innerHTML = ''; 
 
             if (!manualSessionId) {
@@ -631,13 +667,15 @@
                 });
 
             } catch (error) {
-                console.error('Erro de conexão:', error);
+                console.error('Erro de conexão (loadMyPlaylists):', error);
                 container.innerHTML = '<p>Ocorreu um erro de conexão.</p>';
             }
         }
 
+        /* Carrega e exibe as faixas reproduzidas recentemente pelo usuário no Spotify */
         async function loadRecentTracks() {
             const container = document.getElementById('recent-tracks-container');
+            if (!container) return;
             container.innerHTML = '';
 
             try {
@@ -666,13 +704,13 @@
                 tracks.forEach(item => {
                     const track = item.track;
                     const artists = track.artists.map(a => a.name).join(', ');
-                    const imageUrl = track.album.images[0].url;
+                    const imageUrl = track.album.images.length > 0 ? track.album.images[0].url : '../static/imgs/default-album.png';
 
                     const box = document.createElement('div');
                     box.className = 'box';
                     box.innerHTML = `
                         <div class="songsliked">
-                            <img src="${imageUrl}" alt="${track.name}"">
+                            <img src="${imageUrl}" alt="${track.name}">
                         </div>
                         <h3 class="songname">${track.name}</h3>
                         <p class="artist-name">${artists}</p>
@@ -681,66 +719,27 @@
                 });
 
             } catch (error) {
-                console.error('Erro de conexão:', error);
+                console.error('Erro de conexão (loadRecentTracks):', error);
                 container.innerHTML = '<p>Erro de conexão com a API.</p>';
             }
         }
 
-        async function loadCurrentTrack() {
-            const container = document.getElementById('track-info'); 
-
-            try {
-                const response = await fetch(`${CURRENT_TRACK_URL}?PHPSESSID=${manualSessionId}`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-
-                if (!response.ok || response.status === 204) {
-                    if (response.status !== 204) {
-                        const errorText = await response.text().catch(() => 'Erro desconhecido.');
-                        console.error(`Erro ao buscar faixa atual. Status: ${response.status}`, errorText);
-                    }
-                    container.innerHTML = '<p>Nada tocando agora.</p>';
-                    return;
-                }
-
-                const data = await response.json();
-
-                if (!data?.item) { 
-                    container.innerHTML = '<p>Nada tocando agora.</p>';
-                    return;
-                }
-
-                const track = data.item;
-                const imageUrl = track.album.images[0]?.url || '../static/imgs/profile-icon.png';
-                const artists = track.artists.map(a => a.name).join(', ');
-
-                container.innerHTML = `
-                    <div class="background-playing"><img class="playing" src="${imageUrl}"></div>
-                    <h3 style="margin: 0;">${track.name}</h3>
-                    <p style="margin: 5px 0 0 0;">${artists}</p>
-                `;
-
-            } catch (error) {
-                console.error('Erro ao carregar faixa atual:', error);
-                container.innerHTML = '<p>Erro ao obter faixa atual.</p>';
-            }
-        }
-
+        /* Carrega os dados de gêneros dos principais artistas do usuário no Spotify e desenha um gráfico de barras simples */
         async function loadAndDrawDashboard() {
             const MAX_GENRES_DISPLAY = 8;
+            const container = document.getElementById('myTopArtists');
+            if (!container) return;
+            container.innerHTML = ''; 
+            
             try {
                 const response = await fetch(`${MY_TOP_ARTISTS}?PHPSESSID=${manualSessionId}`, {
                     method: 'GET',
                     credentials: 'include'
                 });
 
-                const container = document.getElementById('myTopArtists');
-                container.innerHTML = ''; 
-
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({})); 
-                    console.error('Erro ao buscar genres:', errorData);
+                    console.error('Erro ao buscar gêneros:', errorData);
                     container.innerHTML = '<p>Vincule com a sua conta Spotify.</p>';
                     return;
                 }
@@ -753,8 +752,14 @@
                 const topLabels = labels.slice(0, MAX_GENRES_DISPLAY);
                 const topCounts = counts.slice(0, MAX_GENRES_DISPLAY);
 
+                if (topCounts.length === 0) {
+                    container.innerHTML = "<p>Não foi possível carregar os dados de gênero.</p>";
+                    return;
+                }
+                
                 const maxCount = Math.max(...topCounts);
 
+                // Desenha o gráfico de barras
                 topLabels.forEach((label, index) => {
                     const count = topCounts[index];
                     const percentage = (count / maxCount) * 100;
@@ -774,33 +779,61 @@
                 });
 
             } catch (error) {
-                console.error("Erro ao carregar dados do endpoint:", error);
+                console.error("Erro ao carregar dados do endpoint (loadAndDrawDashboard):", error);
                 document.getElementById('myTopArtists').innerHTML = 
                     "<p>Não foi possível carregar os dados de gênero.</p>";
             }
         }
+        
+        // --- FUNÇÃO CORRIGIDA PARA DESVINCULAR SPOTIFY ---
 
-        // window.addEventListener('load', async () => {
+        /* Lida com o processo de desvinculação da conta do Spotify */
+        const handleUnlinkSpotify = async () => {
+            if (!manualSessionId) {
+                redirectToLogin();
+                return;
+            }
 
-        //     const isAuthenticated = await checkAndLoadEssentialUserData();
-    
-        //     if (!isAuthenticated) {
-        //         return; 
-        //     }
+            if (!confirm('Tem certeza de que deseja desvincular sua conta do Spotify? Isso removerá o acesso aos seus dados musicais.')) {
+                return; 
+            }
 
-        //     handleUrlError();
+            const unlinkUrl = `${UNLINK_URL}?PHPSESSID=${manualSessionId}`;
 
-        //     await Promise.all([
-        //         loadMyPlaylists(),
-        //         loadRecentTracks(),
-        //         // loadCurrentTrack(), // Se estiver ativa, inclua
-        //         loadAndDrawDashboard()
-        //     ]);
+            try {
+                const response = await fetch(unlinkUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
 
-        //     // setInterval(loadCurrentTrack, 60000); 
+                let data = {};
+                
+                try {
+                    data = await response.json(); 
+                } catch (e) {
+                    console.warn("Falha ao analisar JSON, mas a resposta HTTP será checada.");
+                    
+                }
+                
+                if (response.ok) { 
+                    displayFeedback('Conta desvinculada com sucesso!', 'success');
+                    setTimeout(() => {
+                        window.location.reload(); 
+                    }, 1000); 
+                } else {
+                    throw new Error(`Falha no servidor com status: ${response.status}`);
+                }
+            } catch (error) {
+                // 5. Erro de Rede
+                // Exibe sua mensagem de erro genérica para qualquer falha de rede/conexão.
+                console.error('Erro de rede ou conexão:', error);
+                displayFeedback('HOUVE UM ERRO INTERNO !', 'error');
+            }
+        };
 
-        //     document.body.classList.add('loaded');
-        // });
+        // --- EXECUÇÃO PRINCIPAL NO CARREGAMENTO DA PÁGINA ---
 
         window.addEventListener('load', async () => {
             const isAuthenticated = await checkAndLoadEssentialUserData();
@@ -809,24 +842,42 @@
                 return; 
             }
 
+            // 2. Lida com mensagens de erro passadas pela URL
             handleUrlError();
 
             const mainContent = document.getElementById('main');
+            const unlinkButton = document.getElementById('desvincular-spotify');
             const linkSpotifyButtonId = 'vincular-spotify';
+
+            // Salva o conteúdo original do 'main' (layout do dashboard)
+            const originalMainContent = mainContent.innerHTML;
             
+            // Limpa o conteúdo principal antes de decidir o que exibir
+            mainContent.innerHTML = '';
+
             if (isSpotifyLinked) {
+                
+                // 3a. Se estiver vinculado: Repõe o conteúdo principal e carrega os dados
+                mainContent.innerHTML = originalMainContent;
+                
+                // Exibe o botão de desvincular e anexa o listener CORRIGIDO
+                unlinkButton.style.display = 'inline-block';
+                unlinkButton.addEventListener('click', handleUnlinkSpotify);
+
+                // Carrega todos os dados do Spotify em paralelo
                 await Promise.all([
                     loadMyPlaylists(),
                     loadRecentTracks(),
-                    // loadCurrentTrack(),
                     loadAndDrawDashboard()
                 ]);
                 
-                // setInterval(loadCurrentTrack, 60000); 
-
             } else {
-                // Se NÃO estiver vinculado
+                
+                // 3b. Se NÃO estiver vinculado: Oculta o botão de desvincular e exibe a mensagem de vincular
+                unlinkButton.style.display = 'none';
+
                 mainContent.innerHTML = `
+                    <div class="left-section" style="flex: 100%; min-width: 100%;">
                     <div class="vinc">
                         <h2>Você ainda não vinculou sua conta ao Spotify.</h2>
                         <p style="margin-bottom: 30px;">Vincule agora para ver suas estatísticas!</p>
@@ -834,18 +885,21 @@
                             Vincular ao Spotify
                         </button>
                     </div>
+                    </div>
                 `;
                 
+                // Adiciona o listener para o botão de vincular recém-criado
                 document.getElementById(linkSpotifyButtonId).addEventListener('click', () => {
-                    const manualSessionId = localStorage.getItem('manualSessionId');
-                    if (manualSessionId) {
-                        window.location.href = `http://127.0.0.1:8131/spotify/auth?PHPSESSID=${manualSessionId}`;
+                    const currentManualSessionId = localStorage.getItem('manualSessionId');
+                    if (currentManualSessionId) {
+                        window.location.href = `${BASE_URL}/spotify/auth?PHPSESSID=${currentManualSessionId}`;
                     } else {
                         redirectToLogin();
                     }
                 });
             }
             
+            // 4. Finaliza o carregamento visual da página
             document.body.classList.add('loaded');
         });
     </script>
