@@ -1,8 +1,13 @@
 <?php
+// DESLIGAR a exibição de erros no output
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+
 // Desabilita o uso do Cookie de Sessão
 ini_set('session.use_cookies', 0);
 // Permiti IDs de Sessão que não sejam via Cookies
 ini_set('session.use_only_cookies', 0);
+error_reporting(E_ALL);
 
 // Verifica se o ID de Sessão foi passado na URL e força o PHP a usar o ID encontrado na URL
 if (isset($_GET['PHPSESSID'])) {
@@ -30,16 +35,14 @@ spl_autoload_register(function ($class) {
 
 require ROOT_PATH . 'bootstrap.php';
 
-header("Access-Control-Allow-Origin: http://127.0.0.1:8132");
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+// header("Access-Control-Allow-Origin: *");
+// header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE");
+// header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
+// if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+//     http_response_code(200);
+//     exit;
+// }
 
 use src\Exceptions\ApiException;
 
@@ -85,7 +88,7 @@ try {
 
         $data = array_map('castType', requestType($request_method));
         $responseData = $controller->$method(...array_values($data));
-
+        header("Content-Type: application/json; charset=UTF-8");
         echo json_encode($responseData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     } else {
         http_response_code(404);

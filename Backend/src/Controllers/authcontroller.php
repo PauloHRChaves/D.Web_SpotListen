@@ -55,17 +55,19 @@ class AuthController {
         $error = $_GET['error'] ?? null;
 
         if ($error) {
-            header('Location: http://127.0.0.1:8132/templates/profile.php?error=denied');
+            // header('Location: http://127.0.0.1:8132/templates/profile.html?error=denied');
+            header('Location: https://spot-listen.vercel.app/templates/profile.html?error=denied');
             exit;
         }
 
         try {
             $this->authService->processSpotifyCallback($code, $state);
-
-            header('Location: http://127.0.0.1:8132/templates/profile.php');
+            // header('Location: http://127.0.0.1:8132/templates/profile.html');
+            header('Location: https://spot-listen.vercel.app/templates/profile.html');
             exit;
         } catch (ApiException $e) {
-            header('Location: http://127.0.0.1:8132/templates/profile.php?error=' . urlencode($e->getMessage()));
+            // header('Location: http://127.0.0.1:8132/templates/profile.html?error=' . urlencode($e->getMessage())
+            header('Location: https://spot-listen.vercel.app/templates/profile.html?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
