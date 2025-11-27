@@ -24,8 +24,8 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     
     <!--Inserir e estilizar cabeçalho na página-->
-    <script src="/static/js/header.js" defer></script>
     <link rel="stylesheet" href="/static/css/header.css">
+    <script src="/static/js/header.js" defer></script>
 
     <!--Bootstrap Icons-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
@@ -48,7 +48,7 @@
     <style>
         @font-face {
             font-family: 'Greek';
-            src: url('static/fonts/dalek_pinpoint/DalekPinpointBold.ttf') format('truetype');
+            src: url('/static/fonts/dalek_pinpoint/DalekPinpointBold.ttf') format('truetype');
         }
         :root {
             --color-primary: #1ED760;
@@ -198,20 +198,6 @@
 
         .cta-button i {
             font-size: 1.4rem;
-        }
-
-        .secondary-link {
-            display: block;
-            margin-top: 15px;
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.2s;
-            justify-self: end;
-        }
-
-        .secondary-link:hover {
-            color: var(--color-active-line);
         }
 
         .hero-background-fade {
@@ -688,6 +674,7 @@
             overflow: hidden;
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            line-clamp: 2;
             -webkit-box-orient: vertical;
             white-space: normal;
         }
@@ -810,7 +797,7 @@
 </head>
 <body>
     <!--Cabeçalho de navegação-->
-    <header id="header-placeholder"><?php include 'templates/header.php'; ?></header>
+    <header id="header-placeholder"></header>
 
     <!--Todo conteúdo da pagina-->
     <main>
@@ -824,11 +811,10 @@
                         e descubra padrões que definem seus gostos musicais ao longo do tempo.
                     </p>
                     
-                    <a href="templates/auth/login.html" class="cta-button pulse-effect">
+                    <a href="/templates/auth/login.html" class="cta-button pulse-effect">
                         <i class="bi bi-spotify"></i> CONECTAR COM SPOTIFY
                     </a>
-                    
-                    <a href="" class="secondary-link">Saiba mais</a>
+                
                 </div>
             </div>
             <div class="hero-background-fade"></div>
@@ -843,35 +829,35 @@
             </div>
             <hr>
             <div class="genres-grid">
-                <a href="/templates/genres.php?genre=pop" class="genre-card">
+                <a href="/templates/genres.html?genre=pop" class="genre-card">
                     <i class="bi bi-star-fill"></i>
                     <h3>POP</h3>
                 </a>
-                <a href="/templates/genres.php?genre=rock" class="genre-card">
+                <a href="/templates/genres.html?genre=rock" class="genre-card">
                     <i class="bi bi-headphones"></i>
                     <h3>ROCK</h3>
                 </a>
-                <a href="/templates/genres.php?genre=hip%20hop" class="genre-card">
+                <a href="/templates/genres.html?genre=hip%20hop" class="genre-card">
                     <i class="bi bi-boombox-fill"></i>
                     <h3>HIP HOP</h3>
                 </a>
-                <a href="/templates/genres.php?genre=electronic" class="genre-card">
+                <a href="/templates/genres.html?genre=electronic" class="genre-card">
                     <i class="bi bi-lightning-charge-fill"></i>
                     <h3>Eletrônica</h3>
                 </a>
-                <a href="/templates/genres.php?genre=reggae" class="genre-card">
+                <a href="/templates/genres.html?genre=reggae" class="genre-card">
                     <i class="bi bi-peace"></i>
                     <h3>Reggae</h3>
                 </a>
-                <a href="/templates/genres.php?genre=brazil%20mpb" class="genre-card">
+                <a href="/templates/genres.html?genre=brazil%20mpb" class="genre-card">
                     <i class="bi bi-music-player-fill"></i>
                     <h3>MPB</h3>
                 </a>
-                <a href="/templates/genres.php?genre=classic" class="genre-card">
+                <a href="/templates/genres.html?genre=classic" class="genre-card">
                     <i class="bi bi-music-note-list"></i>
                     <h3>Classic</h3>
                 </a>
-                <a href="/templates/genres.php?genre=indie" class="genre-card">
+                <a href="/templates/genres.html?genre=indie" class="genre-card">
                     <i class="bi bi-play-circle"></i>
                     <h3>Indie</h3>
                 </a>
@@ -931,7 +917,7 @@
 
         <hr>
         <div class="top15">
-            <img src="static/imgs/top15.png" alt="top15"> 
+            <img src="/static/imgs/top15.png" alt="top15"> 
             <h1>SEMANAL</h1>
         </div>
 
@@ -949,7 +935,7 @@
             <h2 class="section-title topweekly track">Tracks</h2>
             <div class="track-list-wrapper-container"> 
                 <div class="track-list-wrapper" id="track-list-wrapper">
-                    </div>
+                </div>
             </div>
         </section>
 

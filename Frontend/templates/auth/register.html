@@ -108,100 +108,104 @@
     </main>
 
     <script>
-        function showToast() {
-            Toastify({
-                text: 'login Realizado.',
-                duration: 4000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#303F55",
-            }).showToast();
-        }
-    </script>
+        const BACKEND_BASE_URL = 'http://127.0.0.1:8131';
 
-    <script>
+        // --- Funções de Feedback ---
         function showToast(mensage) {
             Toastify({
                 text: mensage,
                 duration: 4000,
                 gravity: "top",
                 position: "center",
-                backgroundColor: "#013504",
+                backgroundColor: "#013504", 
             }).showToast();
         }
         
         const regmessageContainer = document.getElementById('register-message-container');
-        function showMessagereg(message, type) {
+
+        function showMessagereg(message) {
             regmessageContainer.textContent = message;
-            regmessageContainer.className = `message-box ${type}`;
+            regmessageContainer.className = `message-box`; 
             regmessageContainer.style.display = 'block';
         }
 
+        // --- Lógica de Registro (Submit) ---
         const registerForm = document.querySelector("#register-section .form");
-        registerForm.addEventListener('submit', async (e) => { 
-            e.preventDefault();
 
-            const email = document.getElementById('register-Email').value.trim();
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('register-password').value.trim();
-            const confirmPassword = document.getElementById('confirm-password').value.trim();
+        if (registerForm) {
+            registerForm.addEventListener('submit', async (e) => { 
+                e.preventDefault();
 
-            // if (!password || !email || !username || !confirmPassword) {
-            //     showMessagereg('Por favor, preencha todos os campos.', 'error');
-            //     return;
-            // }
-            // if (username.length < 4) {
-            //     showMessagereg('O nome de usuário deve ter no mínimo 4 caracteres.', 'error');
-            //     return;
-            // }
-            // if (password.length < 8) {
-            //     showMessagereg('A senha deve ter no mínimo 8 caracteres.', 'error');
-            //     return;
-            // }
-            // if (password !== confirmPassword) {
-            //     showMessagereg('As senhas não coincidem!', 'error');
-            //     return;
-            // }
-            
-            const data = {
-                email: email, 
-                username: username,
-                password: password,
-            };
+                // Coleta de dados (Inputs)
+                const email = document.getElementById('register-Email').value.trim();
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('register-password').value.trim();
+                const confirmPassword = document.getElementById('confirm-password').value.trim();
 
-            try {
-                const response = await fetch('http://127.0.0.1:8131/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json' 
-                    },
-                    body: JSON.stringify(data) 
-                });
-
-                if (!response.ok) {
-                    let errorMessage = 'Erro ao registrar usuário.';
-                    try {
-                        const errorData = await response.json();
-                        errorMessage = errorData.message || errorMessage; 
-                    } catch (e) {
-                        errorMessage = `Erro do Servidor: Status ${response.status}`;
-                    }
-                    showMessagereg(errorMessage, 'error');
+                if (!password || !email || !username || !confirmPassword) {
+                    showMessagereg('Por favor, preencha todos os campos.');
+                    return;
+                }
+                if (username.length < 4) {
+                    showMessagereg('O nome de usuário deve ter no mínimo 4 caracteres.');
+                    return;
+                }
+                if (password.length < 8) {
+                    showMessagereg('A senha deve ter no mínimo 8 caracteres.');
+                    return;
+                }
+                if (password !== confirmPassword) {
+                    showMessagereg('As senhas não coincidem!');
                     return;
                 }
 
-                showToast('CADASTRO REALIZADO!');
-                setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+                const data = {
+                    email: email, 
+                    username: username,
+                    password: password,
+                };
 
-            } catch (error) {
-                console.error('Erro na requisição:', error);
-                showMessagereg('Erro de rede. Verifique a conexão com o servidor.', 'error');
-            }
-        });
+                try {
+                    const registerEndpoint = `${BACKEND_BASE_URL}/register`;
+
+                    const response = await fetch(registerEndpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json' 
+                        },
+                        body: JSON.stringify(data) 
+                    });
+
+                    if (!response.ok) {
+                        let errorMessage = 'Erro ao registrar usuário.';
+                        try {
+                            const errorData = await response.json();
+                            // Usa a mensagem de erro do servidor
+                            errorMessage = errorData.message || errorMessage; 
+                        } catch (e) {
+                            errorMessage = `Erro do Servidor: Status ${response.status}`;
+                        }
+                        showMessagereg(errorMessage);
+                        return;
+                    }
+
+                    // Sucesso
+                    showToast('CADASTRO REALIZADO! Você será redirecionado para o login.');
+                    // Redireciona para a página de login
+                    setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+
+                } catch (error) {
+                    console.error('Erro na requisição:', error);
+                    showMessagereg('Erro de rede. Verifique a conexão com o servidor.');
+                }
+            });
+        } else {
+            console.error('Elemento do formulário de registro (#register-section .form) não encontrado.');
+        }
     </script>
 
-    
     <script>
+        // --- Lógica de Alternância de Senha (Mantida e Limpa) ---
         document.addEventListener('DOMContentLoaded', () => {
             
             const passwordInput = document.getElementById('register-password');
@@ -209,36 +213,37 @@
             const toggleIcon = document.getElementById('togglePassword');
             const toggleIcon2 = document.getElementById('togglePassword2');
 
-            toggleIcon.addEventListener('click', function() {
-                
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                
-                passwordInput.setAttribute('type', type);
-                
-                if (type === 'text') {
-                    toggleIcon.classList.remove('bi-eye-fill');
-                    toggleIcon.classList.add('bi-eye-slash-fill');
-                } else {
-                    toggleIcon.classList.remove('bi-eye-slash-fill');
-                    toggleIcon.classList.add('bi-eye-fill');
-                }
-            });
+            // Toggle da primeira senha
+            if (toggleIcon && passwordInput) {
+                toggleIcon.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    
+                    if (type === 'text') {
+                        toggleIcon.classList.remove('bi-eye-fill');
+                        toggleIcon.classList.add('bi-eye-slash-fill');
+                    } else {
+                        toggleIcon.classList.remove('bi-eye-slash-fill');
+                        toggleIcon.classList.add('bi-eye-fill');
+                    }
+                });
+            }
             
-            toggleIcon2.addEventListener('click', function() {
-                
-                const type = passwordInput2.getAttribute('type') === 'password' ? 'text' : 'password';
-                
-                passwordInput2.setAttribute('type', type);
-                
-                if (type === 'text') {
-                    toggleIcon2.classList.remove('bi-eye-fill');
-                    toggleIcon2.classList.add('bi-eye-slash-fill');
-                } else {
-                    toggleIcon2.classList.remove('bi-eye-slash-fill');
-                    toggleIcon2.classList.add('bi-eye-fill');
-                }
-            });
-
+            // Toggle da confirmação de senha
+            if (toggleIcon2 && passwordInput2) {
+                toggleIcon2.addEventListener('click', function() {
+                    const type = passwordInput2.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput2.setAttribute('type', type);
+                    
+                    if (type === 'text') {
+                        toggleIcon2.classList.remove('bi-eye-fill');
+                        toggleIcon2.classList.add('bi-eye-slash-fill');
+                    } else {
+                        toggleIcon2.classList.remove('bi-eye-slash-fill');
+                        toggleIcon2.classList.add('bi-eye-fill');
+                    }
+                });
+            }
         });
     </script>
 </body>

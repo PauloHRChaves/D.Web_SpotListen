@@ -131,26 +131,23 @@
             color: var(--cor-texto-secundario);
             font-size: 16px;
             margin-bottom: 20px;
-            /* Permite que os spans das tags fiquem lado a lado */
             display: flex; 
             flex-wrap: wrap;
             align-items: center;
         }
         
-        /* NOVO ESTILO PARA CADA TAG INDIVIDUALMENTE */
         .artist-tag {
             display: inline-block;
             padding: 2px 8px; 
             margin-right: 8px; 
-            margin-bottom: 5px; /* Para melhor espaçamento em várias linhas */
+            margin-bottom: 5px;
             border-radius: 12px; 
             background-color: rgba(255, 255, 255, 0.1);
             color: var(--cor-texto-claro); 
             font-size: 0.8em; 
             font-weight: 500;
-            text-transform: capitalize; /* Garante que a primeira letra maiúscula do JS seja mantida */
+            text-transform: capitalize;
         }
-        /* FIM NOVO ESTILO */
 
         .follow-button {
             padding: 12px 30px;
@@ -258,12 +255,14 @@
             overflow: hidden;
             display: -webkit-box;
             -webkit-line-clamp: 4;
+            line-clamp: 4;
             -webkit-box-orient: vertical;
             text-overflow: ellipsis;
         }
 
         .bio-text.expanded {
             -webkit-line-clamp: unset;
+            line-clamp: unset;
             overflow: visible;
 
             p{
@@ -323,19 +322,18 @@
 
         .album-card {
             min-width: 180px;
-            max-width: 180px; /* Garante que todos tenham a mesma largura */
+            max-width: 180px;
             background-color: var(--cor-fundo-card);
             padding: 15px;
             border-radius: 10px;
-            transition: background-color 0.3s ease, transform 0.1s ease; /* Adiciona transição para o hover */
+            transition: background-color 0.3s ease, transform 0.1s ease;
             cursor: pointer;
-            text-align: left; /* Garante que o texto comece à esquerda */
+            text-align: left;
         }
         
-        /* Efeito Hover na Card */
         .album-card:hover {
-            background-color: #383838; /* Cor um pouco mais clara no hover */
-            transform: translateY(-2px); /* Efeito de elevação sutil */
+            background-color: #383838;
+            transform: translateY(-2px);
         }
 
         .album-card img {
@@ -343,25 +341,24 @@
             height: 150px;
             object-fit: cover;
             border-radius: 4px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Sombra para destacar a capa */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             margin-bottom: 12px;
         }
         
-        /* Estilos de Texto Específicos */
         .album-card-title {
-            font-size: 1rem; /* 16px */
-            font-weight: 600; /* Medium/Semi-bold */
+            font-size: 1rem;
+            font-weight: 600;
             color: var(--cor-texto-claro);
-            white-space: nowrap; /* Impede quebras */
-            overflow: hidden; /* Oculta o excesso */
-            text-overflow: ellipsis; /* Adiciona "..." */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             margin: 0 0 4px 0;
             line-height: 1.2;
         }
 
         .album-card-year {
-            font-size: 0.875rem; /* 14px (um pouco maior que o 'xs' original) */
-            color: var(--cor-texto-secundario); /* Cor cinza suave */
+            font-size: 0.875rem;
+            color: var(--cor-texto-secundario);
             margin: 0;
         }
         .related-artists {
@@ -471,9 +468,7 @@
 
 <body>
     
-    <header id="header-placeholder">
-        <?php include 'header.php'; ?>
-    </header>
+    <header id="header-placeholder"></header>
 
     <div id="loading-overlay">
         <div class="spinner"></div>
@@ -494,6 +489,8 @@
     </main>
 
     <script>
+        const BASE_URL = 'http://127.0.0.1:8131';
+
         // --- ESTRUTURA INICIAL DO CONTEÚDO ---
         const ALL_CONTENT_STRUCTURE = `
             <div class="artist-hero">
@@ -571,7 +568,7 @@
         `;
 
 
-        // Função auxiliar para formatar números grandes (ex: 23600685 -> 23.600.685)
+        // Função auxiliar para formatar números grandes
         function formatNumber(num) {
             if (typeof num !== 'number' || isNaN(num)) {
                 return 'N/A';
@@ -580,7 +577,7 @@
             return new Intl.NumberFormat('pt-BR').format(num);
         }
         
-        // --- FUNÇÃO DE FEEDBACK SIMPLIFICADA (REDUNDÂNCIA REMOVIDA) ---
+        // --- FUNÇÃO DE FEEDBACK SIMPLIFICADA ---
         function displayFeedback(message, type) {
             Toastify({
                 text: message,
@@ -685,7 +682,7 @@
             showLoading(artistName);
             setupContentForLoading(); 
 
-            const endpoint = `http://127.0.0.1:8131/info/artists?artist=${encodeURIComponent(artistName)}`;
+            const endpoint = `${BASE_URL}/info/artists?artist=${encodeURIComponent(artistName)}`;
 
             try {
                 const response = await fetch(endpoint);

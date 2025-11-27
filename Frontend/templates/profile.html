@@ -18,8 +18,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     
-    <script src="../static/js/header.js"></script>
-    <link rel="stylesheet" href="../static/css/header.css">
+    <link rel="stylesheet" href="/static/css/header.css">
+    <script src="/static/js/header.js"></script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
 
@@ -231,13 +231,11 @@
             border-radius: 0.5rem;
         }
 
-        .box .songname, 
-        .box .artist-name {
+        .box .songname, .box .artist-name {
             font-size: clamp(1rem, 1vh, 2rem); 
             margin-top: 5px;
-            
             white-space: nowrap; 
-            overflow: hidden;    
+            overflow: hidden;
             text-overflow: ellipsis;
             width: 100%;
         }
@@ -283,8 +281,6 @@
             text-align: center; 
             padding: 1rem; 
             color: #fff;
-
-            h2{}
 
             p{font-size: 1.3rem;}
 
@@ -430,7 +426,7 @@
         <h3>Carregando seu perfil musical...</h3>
     </div>
 
-    <header id="header-placeholder"><?php include 'header.php'; ?></header>
+    <header id="header-placeholder"></header>
 
     <main class="profile-container">
         <div class="profile-header">
@@ -501,7 +497,9 @@
 
         // --- VARIÁVEIS DE URL DA API ---
         const BASE_URL = 'http://127.0.0.1:8131';
+
         const LOGIN_URL = 'http://127.0.0.1:8132/templates/auth/login.html';
+
         const LOGGED_IN_URL = `${BASE_URL}/logged-in`;
         const PLAYLISTS_URL = `${BASE_URL}/spotify/my/playlists`;
         const RECENT_TRACKS_URL_BASE = `${BASE_URL}/spotify/my/recent-tracks`;
@@ -842,7 +840,6 @@
                 return; 
             }
 
-            // 2. Lida com mensagens de erro passadas pela URL
             handleUrlError();
 
             const mainContent = document.getElementById('main');

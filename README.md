@@ -20,15 +20,12 @@ Temática: música.
 - ```PHP```
 
 <br>
-
-**Recomendações:** Dashboard com Google looker
-
-<br>
 <hr>
 
 # SITES DE APOIO:
-- <a href="https://app.diagrams.net/?src=about#G11QIKXCWC59igkm2y7gtMlJptwaTAB7co#%7B%22pageId%22%3A%22N5WJ_hQnht7kS6Dh2qQb%22%7D">DB Diagram</a>
 - <a href="https://icons.getbootstrap.com/">Bootstrap Icons</a>
+- <a href="https://color.adobe.com">Adobe Colors</a>
+- <a href="https://uiverse.io/">Bootstrap</a>
 
 # Backend:
 > Instalar PHP
@@ -49,12 +46,14 @@ Modificar arquivo **php.ini**
 
 Arquitetura básica das pastas:
 <pre>
-├── migrations/         -> versionamento do Banco de Dados
-├── public/             -> Ponto de partida
+├── migrations/             -> versionamento do Banco de Dados
+├── public/                 -> Ponto de partida
 │   └── index.php           -> Front Controller (arquivo pontapé)
-├── src/                -> Source - contém toda lógica de negócio
+├── src/                    -> Source - contém toda lógica de negócio
+│   ├── Config/
 │   ├── Controllers/
 │   ├── Exceptions/
+│   ├── Infrastructure/
 │   └── Services/
 ├── bootstrap.php           -> Iniciar o sistema e conexões 
 └── routes.php              -> Arquivo com os Endpoints
@@ -69,10 +68,10 @@ Arquitetura básica das pastas:
 │   ├── css/
 │   ├── imgs/
 │   └── js/
-└── templates/          -> Paginas
-    ├── auth/           -> Paginas de autenticação
-    ├── index.php       -> HOMEPAGE
-    └── header.php      -> Cabeçalho de navegação
+├── templates/          -> Paginas
+│   ├── auth/           -> Paginas de autenticação
+│   └── header.html     -> Cabeçalho de navegação
+└── index.html  
 </pre>
 
 <br>
