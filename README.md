@@ -79,6 +79,8 @@ Arquitetura básica das pastas:
 
 # INICIANDO PROJETO (LOCAL):
 
+CRIE OU ADICIONE UM ARQUIVO NOMEADO ".env" na pasta do Backend/
+
 ### Para "rodar" o Backend é fazer a BUILD DO BANCO DE DADOS: (ATENÇÃO AO ARQUVIO .ENV)
 ```
 php Backend/migrations/build.php
