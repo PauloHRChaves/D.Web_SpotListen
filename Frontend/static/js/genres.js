@@ -4,8 +4,11 @@ let currentSearchTerm = params.get('query') || '';
 let currentOffset = 0;
 const limit = 25;
 
-const API_GENRE_URL = `https://spotlisten-api.loca.lt/spotify/search/genre`;
-const API_ARTIST_SEARCH_URL = `https://spotlisten-api.loca.lt/spotify/search/artist`;
+const BASE_URL =  'http://127.0.0.1:8131';
+// const BASE_URL = 'https://spotlisten-api.loca.lt';
+
+const API_GENRE_URL = `${BASE_URL}/spotify/search/genre`;
+const API_ARTIST_SEARCH_URL = `${BASE_URL}/spotify/search/artist`;
 
 let container, prevButton, nextButton, pageInfo, tagsContainer, searchInput, searchButton;
 
