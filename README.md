@@ -77,7 +77,7 @@ Arquitetura básica das pastas:
 <br>
 <hr>
 
-# INICIANDO PROJETO:
+<!-- # INICIANDO PROJETO:
 
 ### Para "rodar" o Backend é necessario os comandos:
 ```
@@ -92,4 +92,4 @@ php -S 127.0.0.1:8131 -t Backend/public
 php -S 127.0.0.1:8132 -t Frontend
 ```
 
-#### Acesse a página: http://127.0.0.1:8132
+#### Acesse a página: http://127.0.0.1:8132 -->

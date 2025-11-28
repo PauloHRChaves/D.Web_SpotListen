@@ -2,12 +2,12 @@
 // DESLIGAR a exibição de erros no output
 ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
+error_reporting(E_ALL);
 
 // Desabilita o uso do Cookie de Sessão
 ini_set('session.use_cookies', 0);
 // Permiti IDs de Sessão que não sejam via Cookies
 ini_set('session.use_only_cookies', 0);
-error_reporting(E_ALL);
 
 // Verifica se o ID de Sessão foi passado na URL e força o PHP a usar o ID encontrado na URL
 if (isset($_GET['PHPSESSID'])) {
@@ -29,20 +29,19 @@ spl_autoload_register(function ($class) {
     
     if (file_exists($file)) { 
         require $file; 
-    } 
+    }
 });
-//--------------------------------------------------------------//
 
 require ROOT_PATH . 'bootstrap.php';
 
-// header("Access-Control-Allow-Origin: *");
-// header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE");
-// header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-
-// if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-//     http_response_code(200);
+// if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+//     header("Access-Control-Allow-Origin: *");
+//     header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE");
+//     header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Bypass-Tunnel-Reminder");
+//     http_response_code(204);
 //     exit;
 // }
+
 
 use src\Exceptions\ApiException;
 

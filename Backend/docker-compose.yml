@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ../:/var/www/html
+      - .:/var/www/html
 
   # Serviço NGINX
   nginx:
@@ -14,7 +14,7 @@ services:
     ports:
       - "8131:8131"
     volumes:
-      - ../:/var/www/html
+      - .:/var/www/html
       - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - php
